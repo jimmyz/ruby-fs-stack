@@ -1,17 +1,24 @@
 = ruby-fs-stack
 
-Description goes here.
+This project aims to provide functionality for all of the 
+API modules provided by FamilySearch.
 
-== Note on Patches/Pull Requests
- 
-* Fork the project.
-* Make your feature addition or bug fix.
-* Add tests for it. This is important so I don't break it in a
-  future version unintentionally.
-* Commit, do not mess with rakefile, version, or history.
-  (if you want to have your own version, that is fine but
-   bump version in a commit by itself I can ignore when I pull)
-* Send me a pull request. Bonus points for topic branches.
+This will eventually be packaged as a gem. This is waiting
+on permissions from FamilySearch to redistribute the sample 
+module code found here[https://devnet.familysearch.org/downloads/sample-clients].
+
+Until the code is available for redistribution, follow the
+instructions found in the lib/ruby-fs-stack/enunciate/README 
+file.
+
+== Example Usage
+
+Coming soon.
+
+== Discussion
+
+A Google Group has been set up for questions and discussion
+around the ruby-fs-stack project.
 
 == Copyright
 

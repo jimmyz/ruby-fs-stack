@@ -1,0 +1,8 @@
+Until the license changes for the Enunciate sample code, 
+it cannot be checked into the Github project and redistributed as a gem.
+
+In the meantime, download the following file(s) and place it in this directory
+http://www.dev.usys.org/familytree/familytree.rb
+
+Currently, there is a bug in the Enunciate files, which requires you to edit it to add the following line to the top:
+require 'rubygems'
