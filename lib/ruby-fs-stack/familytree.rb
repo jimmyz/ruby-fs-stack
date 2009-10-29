@@ -92,12 +92,26 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
         nil
       end
     end
-  
+    
+    # Convenience method for adding the gender.
+    #
+    # ====Params
+    # <tt>value</tt> - 'Male' or 'Female'
     def add_gender(value)
       add_assertions!
       assertions.add_gender(value)
     end
     
+    # Convenience method for adding a name. It fills in the necessary
+    # structure underneath to create the name.
+    # 
+    # ====Params
+    # <tt>value</tt> - the name to be added
+    # 
+    # ====Example
+    # 
+    #   person.add_name 'Parker Felch' # Sets the fullText to "Parker Felch"
+    #   person.add_name 'Parker Jones /Felch/' # Does not set the fullText, but sets the name pieces.
     def add_name(value)
       add_assertions!
       assertions.add_name(value)
@@ -111,7 +125,8 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       end
     end
     
-    # It should r
+    # It should return the selected birth assertion unless it is
+    # not set in which case it will return the first
     def birth
       birth = births.find{|b|!b.selected.nil?}
       birth ||= births[0]

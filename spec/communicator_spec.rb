@@ -1,24 +1,6 @@
 require File.dirname(__FILE__) + '/spec_helper'
 require 'communicator'
 
-module HttpCommunicatorHelper
-  
-  def stub_net_objects
-    @request = mock("Net::HTTP::Get|Post")
-    @request.stub!(:[]=)
-    @request.stub!(:body=)
-    @http = mock("Net::HTTP")
-    Net::HTTP.stub!(:new).and_return(@http)
-    Net::HTTP::Get.stub!(:new).and_return(@request)
-    Net::HTTP::Post.stub!(:new).and_return(@request)
-    @http.stub!(:use_ssl=)
-    @http.stub!(:ca_file=)
-    @http.stub!(:verify_mode=)
-    @http.stub!(:start)
-  end
-  
-end
-
 describe FsCommunicator do
   include HttpCommunicatorHelper
   describe "initializing" do
