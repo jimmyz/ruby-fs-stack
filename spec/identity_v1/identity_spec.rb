@@ -33,11 +33,18 @@ describe FsCommunicator do
       response = @com.identity_v1.authenticate(:username => 'user', :password => 'pass')
     end
     
-    it "should return an Org::Familysearch::Ws::Identity::V1::Schema::Identity object" do
-      identity = @com.identity_v1.authenticate(:username => 'user', :password => 'pass')
-      identity.should be_instance_of(Org::Familysearch::Ws::Identity::V1::Schema::Identity)
-      identity.session.id.should == 'USYS6325F49E7E47C181EA7E73E897F9A8ED.ptap009-034'
+    it "should return true if successful" do
+      success = @com.identity_v1.authenticate(:username => 'user', :password => 'pass')
+      success.should == true
     end
     
+    it "should set the communicator's session to the logged in session" do
+      @com.identity_v1.authenticate(:username => 'user', :password => 'pass')
+      @com.session.should == 'USYS6325F49E7E47C181EA7E73E897F9A8ED.ptap009-034'
+    end
+    
+    it "should return false if the login was not successful" do
+      pending
+    end
   end
 end

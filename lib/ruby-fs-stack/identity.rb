@@ -24,6 +24,10 @@ module IdentityV1
       url = Base + 'login'
       response = @communicator.get(url, credentials)
       login_result = Org::Familysearch::Ws::Identity::V1::Schema::Identity.from_json JSON.parse(response.body)
+      if login_result.statusCode == 200
+        @communicator.session = login_result.session.id
+        return true
+      end
     end
   end
   
