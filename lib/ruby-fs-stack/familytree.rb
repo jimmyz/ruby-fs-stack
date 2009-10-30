@@ -6,6 +6,51 @@ with_warnings_suppressed do
   require 'ruby-fs-stack/enunciate/familytree'
 end
 
+
+module FamilytreeV2
+  
+  # This method gets mixed into the FsCommunicator so that
+  # you can make calls on the fs_familytree_v1 module
+  def familytree_v2
+    @familytree_v2_com ||= Communicator.new self # self at this point refers to the FsCommunicator instance
+  end
+  
+  class Communicator
+    Base = '/familytree/v2/'
+    
+    # ==params
+    # fs_communicator: FsCommunicator instance
+    def initialize(fs_communicator)
+      @fs_communicator = fs_communicator
+    end
+    
+    # ===params
+    # <tt>id</tt> should be a string of the persons identifier. For the 'me' person, use :me or 'me'
+    # <tt>options</tt> NOT IMPLEMENTED YET
+    def person(id, options = {})
+      id = id.to_s
+      if id == 'me'
+        url = Base + 'person'
+      else
+        url = Base + 'person/' + id
+      end
+      response = @fs_communicator.get(url)
+      familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.from_json JSON.parse(response.body)
+      person = familytree.persons.find{|p| p.requestedId == id }
+      person ||= familytree.persons.first if id == 'me'
+      person
+    end
+  end
+  
+end
+
+# Mix in the module so that the fs_familytree_v1 can be called
+class FsCommunicator
+  include FamilytreeV2
+end
+
+
+
 module Org::Familysearch::Ws::Familytree::V2::Schema
   
   class GenderAssertion
