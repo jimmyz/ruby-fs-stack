@@ -8,12 +8,14 @@ on permissions from FamilySearch to redistribute the sample
 module code found here[https://devnet.familysearch.org/downloads/sample-clients].
 
 Until the code is available for redistribution, follow the
-instructions found in the lib/ruby-fs-stack/enunciate/README 
+instructions found in the lib/ruby-fs-stack/enunciate/README[http://github.com/jimmyz/ruby-fs-stack/blob/master/lib/ruby-fs-stack/enunciate/README]
 file.
 
 == Example Usage
 
-Coming soon.
+# Example code will be posted here as soon as it is packaged as a gem.
+
+See examples/login_example.rb[http://github.com/jimmyz/ruby-fs-stack/tree/master/examples/login_example.rb]
 
 == Discussion
 

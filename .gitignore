@@ -3,4 +3,5 @@
 coverage
 rdoc
 pkg
-lib/ruby-fs-stack/enunciate/*.rb
+lib/ruby-fs-stack/enunciate/familytree.rb
+lib/ruby-fs-stack/enunciate/identity.rb
