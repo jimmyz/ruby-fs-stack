@@ -1,5 +1,5 @@
 require 'rubygems'
-require 'communicator'
+require 'fs_communicator'
 # Including more than one enunciate library raises a warning of
 # already initialized constant.
 require 'ruby-fs-stack/warning_suppressor'

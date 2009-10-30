@@ -1,5 +1,5 @@
 require File.dirname(__FILE__) + '/spec_helper'
-require 'communicator'
+require 'fs_communicator'
 
 describe FsCommunicator do
   include HttpCommunicatorHelper

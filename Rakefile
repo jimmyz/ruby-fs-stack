@@ -6,11 +6,14 @@ begin
   Jeweler::Tasks.new do |gem|
     gem.name = "ruby-fs-stack"
     gem.summary = %Q{Ruby wrapper for all FamilySearch APIs.}
-    gem.description = %Q{TODO: longer description of your gem}
+    gem.description = %Q{A library that enables you to read and update information with the new.familysearch.org API.}
     gem.email = "jimmy.zimmerman@gmail.com"
     gem.homepage = "http://github.com/jimmyz/ruby-fs-stack"
     gem.authors = ["Jimmy Zimmerman"]
     gem.add_development_dependency "rspec"
+    gem.add_dependency('json', '>=1.1.7')
+    gem.files << "lib/ruby-fs-stack/enunciate/identity.rb"
+    gem.files << "lib/ruby-fs-stack/enunciate/familytree.rb"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
 rescue LoadError
