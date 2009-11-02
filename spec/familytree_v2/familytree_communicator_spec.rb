@@ -57,6 +57,11 @@ describe FamilytreeV2::Communicator do
       person.id.should_not be_nil
     end
     
+    it "should call /familytree/v2/person?names=none if options set" do
+      @fs_com_mock.should_receive(:get).with('/familytree/v2/person?names=none').and_return(@res)
+      @ft_v2_com.person(:me, :names => 'none')
+    end
+    
   end
   
 end

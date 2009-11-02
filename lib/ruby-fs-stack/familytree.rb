@@ -1,4 +1,6 @@
 require 'rubygems'
+require 'ruby-fs-stack/fs_communicator'
+require 'ruby-fs-stack/fs_utils'
 # Including more than one enunciate library raises a warning of
 # already initialized constant.
 require 'ruby-fs-stack/warning_suppressor'
@@ -34,6 +36,7 @@ module FamilytreeV2
       else
         url = Base + 'person/' + id
       end
+      url += "?"+FsUtils.querystring_from_hash(options) unless options.empty?
       response = @fs_communicator.get(url)
       familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.from_json JSON.parse(response.body)
       person = familytree.persons.find{|p| p.requestedId == id }

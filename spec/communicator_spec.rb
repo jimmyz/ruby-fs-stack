@@ -1,5 +1,5 @@
 require File.dirname(__FILE__) + '/spec_helper'
-require 'fs_communicator'
+require 'ruby-fs-stack/fs_communicator'
 
 describe FsCommunicator do
   include HttpCommunicatorHelper
@@ -78,7 +78,7 @@ describe FsCommunicator do
     end
     
     it "should set the ca file to the entrust certificate (for FamilySearch systems)" do
-      @http.should_receive(:ca_file=).with(File.join(File.dirname(__FILE__),'..','lib','assets','entrust-ca.crt'))
+      @http.should_receive(:ca_file=).with(File.join(File.dirname(__FILE__),'..','lib','ruby-fs-stack','assets','entrust-ca.crt'))
       do_get(@url)
     end
     
@@ -156,7 +156,7 @@ describe FsCommunicator do
     end
     
     it "should set the ca file to the entrust certificate (for FamilySearch systems)" do
-      @http.should_receive(:ca_file=).with(File.join(File.dirname(__FILE__),'..','lib','assets','entrust-ca.crt'))
+      @http.should_receive(:ca_file=).with(File.join(File.dirname(__FILE__),'..','lib','ruby-fs-stack','assets','entrust-ca.crt'))
       do_post(@url)
     end
         
