@@ -16,6 +16,7 @@ file.
 # Example code will be posted here as soon as it is packaged as a gem.
 
 See examples/login_example.rb[http://github.com/jimmyz/ruby-fs-stack/tree/master/examples/login_example.rb]
+
 See examples/familytree_example.rb[http://github.com/jimmyz/ruby-fs-stack/tree/master/examples/familytree_example.rb]
 
 == Discussion

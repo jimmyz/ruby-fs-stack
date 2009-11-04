@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'ruby-fs-stack/fs_communicator'
 require 'ruby-fs-stack/fs_utils'
+
 # Including more than one enunciate library raises a warning of
 # already initialized constant.
 require 'ruby-fs-stack/warning_suppressor'
@@ -12,7 +13,7 @@ end
 module FamilytreeV2
   
   # This method gets mixed into the FsCommunicator so that
-  # you can make calls on the fs_familytree_v1 module
+  # you can make calls on the familytree_v2 module
   def familytree_v2
     @familytree_v2_com ||= Communicator.new self # self at this point refers to the FsCommunicator instance
   end
@@ -20,7 +21,7 @@ module FamilytreeV2
   class Communicator
     Base = '/familytree/v2/'
     
-    # ==params
+    # ===params
     # fs_communicator: FsCommunicator instance
     def initialize(fs_communicator)
       @fs_communicator = fs_communicator
@@ -28,7 +29,16 @@ module FamilytreeV2
     
     # ===params
     # <tt>id</tt> should be a string of the persons identifier. For the 'me' person, use :me or 'me'
-    # <tt>options</tt> NOT IMPLEMENTED YET
+    # <tt>options</tt> accepts a hash of parameters as documented by the API.
+    # For full parameter documentation, see DevNet[https://devnet.familysearch.org/docs/api-manual-reference-system/familytree-v2/r_api_family_tree_person_read_v2.html]
+    #
+    # ===Example
+    #   # communicator is an authenticated FsCommunicator object
+    #   # Request a person with no assertions, only the version.
+    #   p = communicator.familytree_v2.person :me, :names => 'none', :genders => 'none', :events => 'none'
+    #   
+    #   p.version # => '90194378772'
+    #   p.id # => 'KW3B-NNM'
     def person(id, options = {})
       id = id.to_s
       if id == 'me'
