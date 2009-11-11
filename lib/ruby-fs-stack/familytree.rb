@@ -55,7 +55,11 @@ module FamilytreeV2
     end
     
     def save_person(person)
-      url = Base + 'person'
+      if person.id.nil?
+        url = Base + 'person'
+      else
+        url = Base + 'person/' + person.id
+      end
       familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.new
       familytree.persons = [person]
       response = @fs_communicator.post(url,familytree.to_json)

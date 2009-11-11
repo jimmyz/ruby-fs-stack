@@ -78,6 +78,12 @@ describe FamilytreeV2::Communicator do
       Org::Familysearch::Ws::Familytree::V2::Schema::Person.new
     end
     
+    def existing_person
+      person_json  = read_file('KJ86-3VD_version.js')
+      ft = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.from_json JSON.parse(person_json)
+      ft.persons.first
+    end
+    
     describe "saving new persons" do
       before(:each) do
         @person = new_person
@@ -98,6 +104,23 @@ describe FamilytreeV2::Communicator do
         res.id.should == 'KW3B-G7P'
         res.version.should == '65537'
       end
+    end
+    
+    describe "saving an existing person" do
+      before(:each) do
+        @person = existing_person
+        @person.add_name 'Parker Felch'
+        @person.add_gender 'Male'
+        ft = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.new
+        ft.persons = [@person]
+        @payload = ft.to_json
+      end
+      
+      it "should call POST on the /familytree/v2/person/KJ86-3VD endpoint" do
+        @fs_com_mock.should_receive(:post).with('/familytree/v2/person/KJ86-3VD',@payload).and_return(@res)
+        @ft_v2_com.save_person(@person)
+      end
+      
     end
     
   end
