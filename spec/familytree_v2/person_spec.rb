@@ -216,12 +216,11 @@ describe Org::Familysearch::Ws::Familytree::V2::Schema::Person do
     end
 
     it "should provide easy access methods for assigning birth" do
-      pending
       place = "Tuscarawas, Ohio, United States"
       date = "15 Jan 1844"
       @person.add_birth :place => place, :date => date
-      @person.birth.place.original.should eql(place)
-      @person.birth.date.original.should eql(date)
+      @person.birth.value.date.original.should eql(date)
+      @person.birth.value.place.original.should eql(place)
     end
 
     it "should provide easy access methods for assigning death" do

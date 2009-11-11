@@ -116,6 +116,34 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       self.value.add_form(value)
     end
   end
+  
+  class EventValue
+    def add_date(value)
+      self.date = GenDate.new
+      self.date.original = value
+    end
+    
+    def add_place(value)
+      self.place = Place.new
+      self.place.original = value
+    end
+  end
+  
+  class EventAssertion
+    # ====Params
+    # * <tt>options</tt> - requires a :type option and accepts an (optional) :date and :place option
+    # 
+    # ====Example
+    #
+    #   person.add_birth :date => '12 Aug 1902', :place => 'United States'
+    def add_value(options)
+      raise ArgumentError, "missing option[:type]" if options[:type].nil?
+      self.value = EventValue.new
+      self.value.type = options[:type]
+      self.value.add_date(options[:date]) if options[:date]
+      self.value.add_place(options[:place]) if options[:place]
+    end
+  end
 
   class PersonAssertions
     def add_gender(value)
@@ -130,6 +158,15 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       n = NameAssertion.new
       n.add_value(value)
       self.names << n
+    end
+    
+    
+    def add_birth(options)
+      options[:type] = 'Birth'
+      self.events ||= []
+      e = EventAssertion.new
+      e.add_value(options)
+      self.events << e
     end
   end
 
@@ -195,6 +232,19 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       birth = births.find{|b|!b.selected.nil?}
       birth ||= births[0]
       birth
+    end
+    
+    # Add an event with type of Birth
+    #
+    # ====Params
+    # * <tt>options</tt> - accepts a :date and :place option
+    # 
+    # ====Example
+    #
+    #   person.add_birth :date => '12 Aug 1902', :place => 'United States'
+    def add_birth(options)
+      add_assertions!
+      assertions.add_birth(options)
     end
   
     protected
