@@ -1,6 +1,10 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 describe FamilytreeV2::Communicator do
+  def read_file(filename)
+    fname = File.join(File.dirname(__FILE__),'json','person',filename)
+    File.read(fname)
+  end
   
   describe "fs_familytree_v1 call on the FsCommunicator" do
     before(:each) do
@@ -21,10 +25,6 @@ describe FamilytreeV2::Communicator do
   
   
   describe "person read" do
-    def read_file(filename)
-      fname = File.join(File.dirname(__FILE__),'json','person',filename)
-      File.read(fname)
-    end
     
     before(:each) do
       @fs_com_mock = mock("FsCommunicator")
@@ -60,6 +60,44 @@ describe FamilytreeV2::Communicator do
     it "should call /familytree/v2/person?names=none if options set" do
       @fs_com_mock.should_receive(:get).with('/familytree/v2/person?names=none').and_return(@res)
       @ft_v2_com.person(:me, :names => 'none')
+    end
+    
+  end
+  
+  describe "save_person" do
+    before(:each) do
+      @fs_com_mock = mock("FsCommunicator")
+      @res = mock("HTTP::Response")
+      @json = read_file('post_response.js')
+      @res.stub!(:body).and_return(@json)
+      @fs_com_mock.stub!(:post).and_return(@res)
+      @ft_v2_com = FamilytreeV2::Communicator.new @fs_com_mock
+    end
+    
+    def new_person
+      Org::Familysearch::Ws::Familytree::V2::Schema::Person.new
+    end
+    
+    describe "saving new persons" do
+      before(:each) do
+        @person = new_person
+        @person.add_name 'Parker Felch'
+        @person.add_gender 'Male'
+        ft = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.new
+        ft.persons = [@person]
+        @payload = ft.to_json
+      end
+      
+      it "should call POST on the /familytree/v2/person url" do
+        @fs_com_mock.should_receive(:post).with('/familytree/v2/person',@payload).and_return(@res)
+        @ft_v2_com.save_person(@person)
+      end
+      
+      it "should return the person record from the response" do
+        res = @ft_v2_com.save_person(@person)
+        res.id.should == 'KW3B-G7P'
+        res.version.should == '65537'
+      end
     end
     
   end

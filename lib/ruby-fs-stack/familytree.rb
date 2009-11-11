@@ -53,6 +53,16 @@ module FamilytreeV2
       person ||= familytree.persons.first if id == 'me'
       person
     end
+    
+    def save_person(person)
+      url = Base + 'person'
+      familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.new
+      familytree.persons = [person]
+      response = @fs_communicator.post(url,familytree.to_json)
+      res_familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.from_json JSON.parse(response.body)
+      person = res_familytree.persons.first
+      return person
+    end
   end
   
 end
