@@ -84,11 +84,18 @@ describe Org::Familysearch::Ws::Familytree::V2::Schema::Person do
           names.first.should == "Parker Felch"
         end
         
+        it "should return a name pieced together from pieces" do
+          @person.add_name("Parker James /Felch/")
+          names = @person.full_names
+          names[3].should == "Parker James Felch"
+        end
+        
         describe "full_name" do
 
           it "should return the first name" do
             @person.full_name.should == "Parker Felch"
           end
+          
         end
       end
       

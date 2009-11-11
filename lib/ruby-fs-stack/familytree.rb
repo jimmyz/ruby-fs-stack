@@ -90,13 +90,17 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
         self.pieces = self.pieces + family_pieces.split(" ").collect do |piece|
           p = NamePiece.new
           p.type = "Family"
-          p.predelimiters = " "
+          p.predelimiters = ""
           p.value = piece
           p
         end
       else
         self.fullText = name
       end
+    end
+    
+    def buildFullText
+      self.pieces.collect{|piece| "#{piece.predelimiters}#{piece.value}#{piece.postdelimiters}"}.join('')
     end
   end
   
@@ -175,7 +179,7 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
     def full_names
       if assertions && assertions.names
         return assertions.names.collect do |name|
-          name.value.forms[0].fullText
+          (name.value.forms[0].fullText.nil?) ? name.value.forms[0].buildFullText : name.value.forms[0].fullText
         end
       else
         []
