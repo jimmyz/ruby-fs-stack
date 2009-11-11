@@ -163,10 +163,8 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       n.add_value(value)
       self.names << n
     end
-    
-    
-    def add_birth(options)
-      options[:type] = 'Birth'
+        
+    def add_event(options)
       self.events ||= []
       e = EventAssertion.new
       e.add_value(options)
@@ -223,11 +221,7 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
     end
     
     def births
-      if assertions && assertions.events
-        assertions.events.select{|e| e.value.type == 'Birth'}
-      else
-        []
-      end
+      select_events('Birth')
     end
     
     # It should return the selected birth assertion unless it is
@@ -236,6 +230,18 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       birth = births.find{|b|!b.selected.nil?}
       birth ||= births[0]
       birth
+    end
+    
+    def deaths
+      select_events('Death')
+    end
+    
+    # It should return the selected death assertion unless it is
+    # not set in which case it will return the first
+    def death
+      death = deaths.find{|b|!b.selected.nil?}
+      death ||= deaths[0]
+      death
     end
     
     # Add an event with type of Birth
@@ -248,13 +254,37 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
     #   person.add_birth :date => '12 Aug 1902', :place => 'United States'
     def add_birth(options)
       add_assertions!
-      assertions.add_birth(options)
+      options[:type] = 'Birth'
+      assertions.add_event(options)
+    end
+        
+    # Add an event with type of Birth
+    #
+    # ====Params
+    # * <tt>options</tt> - accepts a :date and :place option
+    # 
+    # ====Example
+    #
+    #   person.add_birth :date => '12 Aug 1902', :place => 'United States'
+    def add_death(options)
+      add_assertions!
+      options[:type] = 'Death'
+      assertions.add_event(options)
     end
   
     protected
     def add_assertions!
       if assertions.nil?
         self.assertions = PersonAssertions.new
+      end
+    end
+    
+    private
+    def select_events(type)
+      if assertions && assertions.events
+        assertions.events.select{|e| e.value.type == type}
+      else
+        []
       end
     end
   

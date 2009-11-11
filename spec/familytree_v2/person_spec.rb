@@ -193,6 +193,70 @@ describe Org::Familysearch::Ws::Familytree::V2::Schema::Person do
       end
     end
     
+    describe "deaths" do
+      describe "for persons with at least one death event" do
+        before(:each) do
+          @person = parse_person
+        end
+        
+        it "should return an array of the death events" do
+          deaths = @person.deaths
+          deaths.should be_a_kind_of(Array)
+          deaths.each do |e|
+            e.value.type.should == 'Death'
+          end
+        end
+      end
+      
+      describe "for persons without a death" do
+        def add_events_array
+          @person.assertions.names = []
+        end
+        
+        before(:each) do
+          @person = parse_person('KJ86-3VD_version.js')
+        end
+
+        it "should return [] if no assertions" do
+          @person.deaths.should == []
+        end
+
+        it "should return [] if no events" do
+          add_assertions
+          @person.deaths.should == []
+        end
+
+        it "should return [] if no events of type Death are found" do
+          add_assertions
+          add_events_array
+          @person.deaths.should == []
+        end
+        
+      end
+      
+    end
+    
+    describe "death" do
+      
+      before(:each) do
+        @person = parse_person
+      end
+      
+      it "should return the 'selected' death if an assertion is selected" do
+        pending
+        @person.deaths[1].selected = true
+        @person.death.should == @person.deaths[1]
+      end
+      
+      it "should return the first death if no assertions are selected" do
+        @person.death.should == @person.deaths[0]
+      end
+      
+      it "should return nil if no deaths" do
+        @person = parse_person('KJ86-3VD_version.js')
+        @person.death.should == nil
+      end
+    end
     
   end
   
@@ -231,12 +295,11 @@ describe Org::Familysearch::Ws::Familytree::V2::Schema::Person do
     end
 
     it "should provide easy access methods for assigning death" do
-      pending
       place = "Tuscarawas, Ohio, United States"
       date = "16 Jan 1855"
       @person.add_death :place => place, :date => date
-      @person.death.place.original.should eql(place)
-      @person.death.date.original.should eql("16 Jan 1855")
+      @person.death.value.place.original.should eql(place)
+      @person.death.value.date.original.should eql("16 Jan 1855")
     end
 
     it "should provide easy access method for assigning marriage (with spouse)" do
