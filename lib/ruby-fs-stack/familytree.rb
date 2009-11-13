@@ -162,6 +162,26 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       self.value.add_place(options[:place]) if options[:place]
     end
   end
+  
+  class OrdinanceValue
+    
+    def add_date(value)
+      self.date = GenDate.new
+      self.date.original = value
+    end
+    
+  end
+  
+  class OrdinanceAssertion
+    
+    def add_value(options)
+      raise ArgumentError, "missing option[:type]" if options[:type].nil?
+      self.value = OrdinanceValue.new
+      self.value.type = options[:type]
+      self.value.add_date(options[:date]) if options[:date]
+      self.value.temple = options[:temple] if options[:temple]
+    end
+  end
 
   class PersonAssertions
     def add_gender(value)
@@ -183,6 +203,13 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       e = EventAssertion.new
       e.add_value(options)
       self.events << e
+    end
+    
+    def add_ordinance(options)
+      self.ordinances ||= []
+      o = OrdinanceAssertion.new
+      o.add_value(options)
+      self.ordinances << o
     end
   end
 
@@ -285,18 +312,97 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       options[:type] = 'Death'
       assertions.add_event(options)
     end
+    
+    def baptisms
+      select_ordinances('Baptism')
+    end
+    
+    def confirmations
+      select_ordinances('Confirmation')
+    end
+    
+    def initiatories
+      select_ordinances('Initiatory')
+    end
+    
+    def endowments
+      select_ordinances('Endowment')
+    end
+    
+    # Add a baptism ordinance
+    # 
+    # ====Params
+    # * <tt>options</tt> - accepts a :date and :temple option
+    #
+    # ====Example
+    #
+    #   person.add_baptism :date => '14 Aug 2009', :temple => 'SGEOR'
+    def add_baptism(options)
+      add_assertions!
+      options[:type] = 'Baptism'
+      assertions.add_ordinance(options)
+    end
+    
+    # Add a confirmation ordinance
+    # 
+    # ====Params
+    # * <tt>options</tt> - accepts a :date and :temple option
+    #
+    # ====Example
+    #
+    #   person.add_confirmation :date => '14 Aug 2009', :temple => 'SGEOR'
+    def add_confirmation(options)
+      add_assertions!
+      options[:type] = 'Confirmation'
+      assertions.add_ordinance(options)
+    end
+    
+    # Add a initiatory ordinance
+    # 
+    # ====Params
+    # * <tt>options</tt> - accepts a :date and :temple option
+    #
+    # ====Example
+    #
+    #   person.add_initiatory :date => '14 Aug 2009', :temple => 'SGEOR'
+    def add_initiatory(options)
+      add_assertions!
+      options[:type] = 'Initiatory'
+      assertions.add_ordinance(options)
+    end
+    
+    # Add a endowment ordinance
+    # 
+    # ====Params
+    # * <tt>options</tt> - accepts a :date and :temple option
+    #
+    # ====Example
+    #
+    #   person.add_endowment :date => '14 Aug 2009', :temple => 'SGEOR'
+    def add_endowment(options)
+      add_assertions!
+      options[:type] = 'Endowment'
+      assertions.add_ordinance(options)
+    end
   
-    protected
+    private
     def add_assertions!
       if assertions.nil?
         self.assertions = PersonAssertions.new
       end
     end
     
-    private
     def select_events(type)
       if assertions && assertions.events
         assertions.events.select{|e| e.value.type == type}
+      else
+        []
+      end
+    end
+    
+    def select_ordinances(type)
+      if assertions && assertions.ordinances
+        assertions.ordinances.select{|e| e.value.type == type}
       else
         []
       end

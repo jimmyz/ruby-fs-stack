@@ -210,7 +210,7 @@ describe Org::Familysearch::Ws::Familytree::V2::Schema::Person do
       
       describe "for persons without a death" do
         def add_events_array
-          @person.assertions.names = []
+          @person.assertions.events = []
         end
         
         before(:each) do
@@ -258,6 +258,178 @@ describe Org::Familysearch::Ws::Familytree::V2::Schema::Person do
       end
     end
     
+    describe "baptisms" do
+      describe "for persons with at least one baptism" do
+        before(:each) do
+          @person = parse_person
+        end
+
+        it "should return an array of the baptism" do
+          baptisms = @person.baptisms
+          baptisms.should be_a_kind_of(Array)
+          baptisms.each do |e|
+            e.value.type.should == 'Baptism'
+          end
+        end
+      end
+
+      describe "for persons without a baptism" do
+        def add_ordinances_array
+          @person.assertions.ordinances = []
+        end
+
+        before(:each) do
+          @person = parse_person('KJ86-3VD_version.js')
+        end
+
+        it "should return [] if no assertions" do
+          @person.baptisms.should == []
+        end
+
+        it "should return [] if no ordinances" do
+          add_assertions
+          @person.baptisms.should == []
+        end
+
+        it "should return [] if no ordinances of type Baptism are found" do
+          add_assertions
+          add_ordinances_array
+          @person.baptisms.should == []
+        end
+
+      end
+
+    end
+
+    describe "confirmations" do
+      describe "for persons with at least one confirmation" do
+        before(:each) do
+          @person = parse_person
+        end
+
+        it "should return an array of the confirmation" do
+          confirmations = @person.confirmations
+          confirmations.should be_a_kind_of(Array)
+          confirmations.each do |e|
+            e.value.type.should == 'Confirmation'
+          end
+        end
+      end
+
+      describe "for persons without a confirmation" do
+        def add_ordinances_array
+          @person.assertions.ordinances = []
+        end
+
+        before(:each) do
+          @person = parse_person('KJ86-3VD_version.js')
+        end
+
+        it "should return [] if no assertions" do
+          @person.confirmations.should == []
+        end
+
+        it "should return [] if no ordinances" do
+          add_assertions
+          @person.confirmations.should == []
+        end
+
+        it "should return [] if no ordinances of type Confirmation are found" do
+          add_assertions
+          add_ordinances_array
+          @person.confirmations.should == []
+        end
+
+      end
+
+    end
+
+    describe "initiatories" do
+      describe "for persons with at least one confirmation" do
+        before(:each) do
+          @person = parse_person
+        end
+
+        it "should return an array of the confirmation" do
+          initiatories = @person.initiatories
+          initiatories.should be_a_kind_of(Array)
+          initiatories.each do |e|
+            e.value.type.should == 'Initiatory'
+          end
+        end
+      end
+
+      describe "for persons without a confirmation" do
+        def add_ordinances_array
+          @person.assertions.ordinances = []
+        end
+
+        before(:each) do
+          @person = parse_person('KJ86-3VD_version.js')
+        end
+
+        it "should return [] if no assertions" do
+          @person.initiatories.should == []
+        end
+
+        it "should return [] if no ordinances" do
+          add_assertions
+          @person.initiatories.should == []
+        end
+
+        it "should return [] if no ordinances of type Initiatory are found" do
+          add_assertions
+          add_ordinances_array
+          @person.initiatories.should == []
+        end
+
+      end
+
+    end
+
+    describe "endowments" do
+      describe "for persons with at least one confirmation" do
+        before(:each) do
+          @person = parse_person
+        end
+
+        it "should return an array of the confirmation" do
+          endowments = @person.endowments
+          endowments.should be_a_kind_of(Array)
+          endowments.each do |e|
+            e.value.type.should == 'Endowment'
+          end
+        end
+      end
+
+      describe "for persons without a confirmation" do
+        def add_ordinances_array
+          @person.assertions.ordinances = []
+        end
+
+        before(:each) do
+          @person = parse_person('KJ86-3VD_version.js')
+        end
+
+        it "should return [] if no assertions" do
+          @person.endowments.should == []
+        end
+
+        it "should return [] if no ordinances" do
+          add_assertions
+          @person.endowments.should == []
+        end
+
+        it "should return [] if no ordinances of type Endowment are found" do
+          add_assertions
+          add_ordinances_array
+          @person.endowments.should == []
+        end
+
+      end
+
+    end
+    
   end
   
   describe "convenience methods for adding data" do
@@ -300,6 +472,35 @@ describe Org::Familysearch::Ws::Familytree::V2::Schema::Person do
       @person.add_death :place => place, :date => date
       @person.death.value.place.original.should eql(place)
       @person.death.value.date.original.should eql("16 Jan 1855")
+    end
+    
+    it "should provide easy access methods for writing LDS ordinances" do
+      date = "16 Jan 2009"
+      temple = "SGEOR"
+      
+      #baptisms
+      @person.add_baptism :date => date, :temple => temple
+      @person.baptisms.size.should == 1
+      @person.baptisms.first.value.date.original.should == date
+      @person.baptisms.first.value.temple.should == temple
+      
+      #confirmations
+      @person.add_confirmation :date => date, :temple => temple
+      @person.confirmations.size.should == 1
+      @person.confirmations.first.value.date.original.should == date
+      @person.confirmations.first.value.temple.should == temple
+      
+      #initiatory
+      @person.add_initiatory :date => date, :temple => temple
+      @person.initiatories.size.should == 1
+      @person.initiatories.first.value.date.original.should == date
+      @person.initiatories.first.value.temple.should == temple
+      
+      #endowment
+      @person.add_endowment :date => date, :temple => temple
+      @person.endowments.size.should == 1
+      @person.endowments.first.value.date.original.should == date
+      @person.endowments.first.value.temple.should == temple
     end
 
     it "should provide easy access method for assigning marriage (with spouse)" do
