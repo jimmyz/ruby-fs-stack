@@ -477,30 +477,45 @@ describe Org::Familysearch::Ws::Familytree::V2::Schema::Person do
     it "should provide easy access methods for writing LDS ordinances" do
       date = "16 Jan 2009"
       temple = "SGEOR"
+      place = "St. George, Utah, United States"
       
       #baptisms
-      @person.add_baptism :date => date, :temple => temple
+      @person.add_baptism :date => date, :temple => temple, :place => place
       @person.baptisms.size.should == 1
       @person.baptisms.first.value.date.original.should == date
       @person.baptisms.first.value.temple.should == temple
+      @person.baptisms.first.value.place.original.should == place
       
       #confirmations
-      @person.add_confirmation :date => date, :temple => temple
+      @person.add_confirmation :date => date, :temple => temple, :place => place
       @person.confirmations.size.should == 1
       @person.confirmations.first.value.date.original.should == date
       @person.confirmations.first.value.temple.should == temple
+      @person.confirmations.first.value.place.original.should == place
       
       #initiatory
-      @person.add_initiatory :date => date, :temple => temple
+      @person.add_initiatory :date => date, :temple => temple, :place => place
       @person.initiatories.size.should == 1
       @person.initiatories.first.value.date.original.should == date
       @person.initiatories.first.value.temple.should == temple
+      @person.initiatories.first.value.place.original.should == place
       
       #endowment
-      @person.add_endowment :date => date, :temple => temple
+      @person.add_endowment :date => date, :temple => temple, :place => place
       @person.endowments.size.should == 1
       @person.endowments.first.value.date.original.should == date
       @person.endowments.first.value.temple.should == temple
+      @person.endowments.first.value.place.original.should == place
+      
+      #sealing_to_parents
+      @person.add_sealing_to_parents :date => date, :temple => temple, :place => place, :mother => 'KWQS-BBR', :father => 'KWQS-BBQ'
+      @person.sealing_to_parents.size.should == 1
+      @person.sealing_to_parents.first.value.date.original.should == date
+      @person.sealing_to_parents.first.value.temple.should == temple
+      @person.sealing_to_parents.first.value.place.original.should == place
+      @person.sealing_to_parents.first.value.parents.size.should == 2
+      @person.sealing_to_parents.first.value.parents.find{|p|p.gender == 'Male'}.id.should == 'KWQS-BBQ'
+      @person.sealing_to_parents.first.value.parents.find{|p|p.gender == 'Female'}.id.should == 'KWQS-BBR'
     end
 
     it "should provide easy access method for assigning marriage (with spouse)" do

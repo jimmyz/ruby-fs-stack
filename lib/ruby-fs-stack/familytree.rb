@@ -170,16 +170,48 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       self.date.original = value
     end
     
+    def add_place(value)
+      self.place = Place.new
+      self.place.original = value
+    end
+    
+    def add_mother(mother_id)
+      add_parent('Female',mother_id)
+    end
+    
+    def add_father(father_id)
+      add_parent('Male',father_id)
+    end
+    
+    def add_parent(gender, id)
+      add_parents!
+      parent = PersonReference.new
+      parent.id = id
+      parent.gender = gender
+      self.parents << parent
+    end
+    
+    private
+    def add_parents!
+      self.parents ||= []
+    end
+    
   end
   
   class OrdinanceAssertion
     
     def add_value(options)
       raise ArgumentError, "missing option[:type]" if options[:type].nil?
+      raise ArgumentError, "missing option[:place]" if options[:place].nil?
       self.value = OrdinanceValue.new
       self.value.type = options[:type]
       self.value.add_date(options[:date]) if options[:date]
+      self.value.add_place(options[:place]) if options[:place]
       self.value.temple = options[:temple] if options[:temple]
+      if options[:type] == 'Sealing to Parents'
+        self.value.add_mother(options[:mother])
+        self.value.add_father(options[:father])
+      end
     end
   end
 
@@ -329,14 +361,18 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       select_ordinances('Endowment')
     end
     
+    def sealing_to_parents
+      select_ordinances('Sealing to Parents')
+    end
+    
     # Add a baptism ordinance
     # 
     # ====Params
-    # * <tt>options</tt> - accepts a :date and :temple option
+    # * <tt>options</tt> - accepts a :date, :place, and :temple option
     #
     # ====Example
     #
-    #   person.add_baptism :date => '14 Aug 2009', :temple => 'SGEOR'
+    #   person.add_baptism :date => '14 Aug 2009', :temple => 'SGEOR', :place => 'Salt Lake City, Utah'
     def add_baptism(options)
       add_assertions!
       options[:type] = 'Baptism'
@@ -346,11 +382,11 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
     # Add a confirmation ordinance
     # 
     # ====Params
-    # * <tt>options</tt> - accepts a :date and :temple option
+    # * <tt>options</tt> - accepts a :date, :place, and :temple option
     #
     # ====Example
     #
-    #   person.add_confirmation :date => '14 Aug 2009', :temple => 'SGEOR'
+    #   person.add_confirmation :date => '14 Aug 2009', :temple => 'SGEOR', :place => 'Salt Lake City, Utah'
     def add_confirmation(options)
       add_assertions!
       options[:type] = 'Confirmation'
@@ -360,11 +396,11 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
     # Add a initiatory ordinance
     # 
     # ====Params
-    # * <tt>options</tt> - accepts a :date and :temple option
+    # * <tt>options</tt> - accepts a :date, :place, and :temple option
     #
     # ====Example
     #
-    #   person.add_initiatory :date => '14 Aug 2009', :temple => 'SGEOR'
+    #   person.add_initiatory :date => '14 Aug 2009', :temple => 'SGEOR', :place => 'Salt Lake City, Utah'
     def add_initiatory(options)
       add_assertions!
       options[:type] = 'Initiatory'
@@ -374,14 +410,30 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
     # Add a endowment ordinance
     # 
     # ====Params
-    # * <tt>options</tt> - accepts a :date and :temple option
+    # * <tt>options</tt> - accepts a :date, :place, and :temple option
     #
     # ====Example
     #
-    #   person.add_endowment :date => '14 Aug 2009', :temple => 'SGEOR'
+    #   person.add_endowment :date => '14 Aug 2009', :temple => 'SGEOR', :place => 'Salt Lake City, Utah'
     def add_endowment(options)
       add_assertions!
       options[:type] = 'Endowment'
+      assertions.add_ordinance(options)
+    end
+    
+    # Add a sealing to parents ordinance
+    # 
+    # ====Params
+    # * <tt>options</tt> - accepts a :date, :place, :temple, :mother, and :father option
+    #
+    # ====Example
+    #
+    #   person.add_sealing_to_parents :date => '14 Aug 2009', :temple => 'SGEOR', :place => 'Salt Lake City, Utah'
+    def add_sealing_to_parents(options)
+      raise ArgumentError, ":mother option is required" if options[:mother].nil?
+      raise ArgumentError, ":father option is required" if options[:father].nil?
+      add_assertions!
+      options[:type] = 'Sealing to Parents'
       assertions.add_ordinance(options)
     end
   
