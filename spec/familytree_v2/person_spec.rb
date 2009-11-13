@@ -440,6 +440,9 @@ describe Org::Familysearch::Ws::Familytree::V2::Schema::Person do
     it "should provide easy access method for adding a new gender assertion" do
       @person.add_gender "Male"
       @person.gender.should eql("Male")
+      @person = new_person
+      @person.add_gender "Female"
+      @person.gender.should == 'Female'
     end
 
     it "should provide easy access method for adding a new name" do
@@ -518,189 +521,21 @@ describe Org::Familysearch::Ws::Familytree::V2::Schema::Person do
       @person.sealing_to_parents.first.value.parents.find{|p|p.gender == 'Female'}.id.should == 'KWQS-BBR'
     end
 
-    it "should provide easy access method for assigning marriage (with spouse)" do
-      pending
-      place = "Tuscarawas, Ohio, United States"
-      date = "16 Jan 1855"
-      spouse = new_person
-      spouse.id = 'KWQS-BBQ'
-      @person.add_marriage :place => place, :date => date, :spouse => spouse.id
-      @person.marriages.first.spouse.ref.should eql('KWQS-BBQ')
-      @person.marriages.first.spouse.role.should eql('Unknown')
-      @person.add_gender 'Female'
-      @person.add_marriage :place => place, :date => date, :spouse => spouse.id
-      @person.marriages.should have(2).things
-      @person.marriages[1].spouse.ref.should eql('KWQS-BBQ')
-      @person.marriages[1].spouse.role.should eql('Man')
+    it "should be able to build a relationship write request for a parent relationship" do
+      @person.create_relationship :type => 'parent', :with => 'KWQS-BBR', :lineage => 'Biological'
+      @person.relationships.parents.size.should == 1
+      @person.relationships.parents[0].id.should == 'KWQS-BBR'
+      @person.relationships.parents[0].assertions.characteristics[0].value.lineage.should == 'Biological'
+      @person.relationships.parents[0].assertions.characteristics[0].value.type.should == 'Lineage'
+    end
+    
+    it "should be able to build a relationship write request for a spouse relationship" do
+      @person.create_relationship :type => 'spouse', :with => 'KWQS-BBZ'
+      @person.relationships.spouses.size.should == 1
+      @person.relationships.spouses[0].id.should == 'KWQS-BBZ'
+      @person.relationships.spouses[0].assertions.exists[0].value.should be_instance_of(Org::Familysearch::Ws::Familytree::V2::Schema::ExistsValue)
     end
 
-
-    it "should provide easy access method for assigning divorce (with spouse)" do
-      pending
-      place = "Tuscarawas, Ohio, United States"
-      date = "16 Jan 1855"
-      spouse = new_person
-      spouse.id = 'KWQS-BBQ'
-      @person.add_divorce :place => place, :date => date, :spouse => spouse.id
-      @person.events.should have(1).things
-      @person.events.first.type.should eql('Divorce')
-    end
-
-    it "should allow for notes to be passed as an option to an event assertion such as birth and death" do
-      pending
-      notes = "Found in 1880 Census."
-      @person.add_birth :place => 'Tuscarawas, Ohio, United States', :notes => notes
-      @person.births.first.notes.first.value.should eql(notes)
-    end
-
-    it "should allow for notes to be passed as an option for marriage and divorce" do
-      pending
-      marriage_note = "Found in 1850 Census."
-      divorce_note = "Found in 1890 Census."
-      @person.add_marriage :date => '1830', :spouse => 'KWQS-BBQ', :notes => marriage_note
-      @person.add_divorce :date => '1880', :spouse => 'KWQS-BBQ', :notes => divorce_note
-      @person.marriages.first.notes.first.value.should eql(marriage_note)
-      @person.divorces.first.notes.first.value.should eql(divorce_note)
-    end
-
-    # Currently, there is no way of determining mother or father in the 'fact'
-    # schema of an individual person. Determining father or mother must be done
-    # by grabbing a parent's person document and examining gender. Therefore, it
-    # is not possible to provide mother/father access directly when assigning relationships.
-    # There is only a 'parent' relationship.
-    it "should be able to add a parent by id and be contained in a parent_refs array" do
-      pending
-      @person.add_parent('KWQS-BBQ')
-      @person.parent_refs.should include('KWQS-BBQ')
-    end
-
-    it "should not add another parent if the parent already exists" do
-      pending
-      @person.add_parent('KWQS-BBQ')
-      @person.facts.should have(1).things
-      @person.add_parent('KWQS-BBQ')
-      @person.facts.should have(1).things
-    end
-
-    it "should add duplicate parent if force option is true" do
-      pending
-      @person.add_parent('KWQS-BBQ')
-      @person.facts.should have(1).things
-      @person.add_parent('KWQS-BBQ', :force => true)
-      @person.facts.should have(2).things
-    end
-
-    it "should be able to find all parent assertions" do
-      pending
-      @person.add_parent('KWQS-BBQ')
-      @person.add_parent('KWQS-BBP')
-      @person.add_parent('KWQS-BBR')
-      @person.add_parent('KWQS-BBS')
-      @person.parent_assertions.should have(4).things
-    end
-
-    it "should be able to a child by and be contained in a child_refs array" do
-      pending
-      @person.add_child('KWQS-BBQ')
-      @person.child_refs.should include('KWQS-BBQ')
-    end
-
-    it "should not add another child if the child already exists" do
-      pending
-      @person.add_child('KWQS-BBQ')
-      @person.facts.should have(1).things
-      @person.add_child('KWQS-BBQ')
-      @person.facts.should have(1).things
-    end
-
-    it "should add duplicate child if the force option is set" do
-      pending
-      @person.add_child('KWQS-BBQ')
-      @person.facts.should have(1).things
-      @person.add_child('KWQS-BBQ', :force => true)
-      @person.facts.should have(2).things
-    end
-
-    it "should be able to assign an id as a spouse and be contained in a spouse_refs array" do
-      pending
-      @person.add_spouse('KWQS-BBQ')
-      @person.spouse_refs.should include('KWQS-BBQ')
-    end
-
-    it "should not add another spouse if the spouse already exists" do
-      pending
-      @person.add_spouse('KWQS-BBQ')
-      @person.relationships.should have(1).things
-      @person.add_spouse('KWQS-BBQ')
-      @person.relationships.should have(1).things
-    end
-
-    it "should add a duplicate spouse if the force option is set to true" do
-      pending
-      @person.add_spouse('KWQS-BBQ')
-      @person.relationships.should have(1).things
-      @person.add_spouse('KWQS-BBQ', :force => true)
-      @person.relationships.should have(2).things
-    end
-
-    it "should be able to find all parent assertions" do
-      pending
-      @person.add_spouse('KWQS-BBQ')
-      @person.add_spouse('KWQS-BBP')
-      @person.add_spouse('KWQS-BBR')
-      @person.add_spouse('KWQS-BBS')
-      @person.spouse_assertions.should have(4).things
-    end
-
-    describe "adding assertions with tempIds" do
-      it "should be able to add a name with a tempId" do
-        pending
-        @person.add_name("John Hammond", :tempId => 'nameTempId')
-        @person.names.first.tempId.should eql('nameTempId')
-      end
-
-      it "should be able to add a gender with a tempId" do
-        pending
-        @person.add_gender("Male", :tempId => 'new_gender_01')
-        @person.genders.first.tempId.should eql('new_gender_01')
-      end
-
-      it "should be able to add a birth with tempId" do
-        pending
-        @person.add_birth :date => 'Jun 1809', :place => 'United States', :tempId => '54321'
-        @person.births.first.tempId.should eql('54321')
-      end
-
-      it "should be able to add a death with tempId" do
-        pending
-        @person.add_death :date => 'Jun 1809', :place => 'United States', :tempId => '54321'
-        @person.deaths.first.tempId.should eql('54321')
-      end
-
-      it "should be able to add a parent with a tempId" do
-        pending
-        @person.add_parent '5535-12W', :tempId => '54321'
-        @person.parent_assertions.first.tempId.should eql('54321')
-      end
-
-      it "should be able to add a child with a tempId" do
-        pending
-        @person.add_child '5545-33R', :tempId => '67843'
-        @person.child_assertions.first.tempId.should eql('67843')
-      end
-
-      it "should be able to add a marriage with a tempId" do
-        pending
-        @person.add_marriage :date => 'Jun 1809', :place => 'United States', :spouse => 'KWQS-BBQ', :tempId => '0987'
-        @person.marriages.first.tempId.should eql('0987')
-      end
-
-      it "should be able to add a spouse with a tempId" do
-        pending
-        @person.add_spouse 'KWQS-BBQ', :tempId => '9876'
-        @person.spouse_assertions.first.tempId.should eql('9876')
-      end
-    end
   end
   
 end

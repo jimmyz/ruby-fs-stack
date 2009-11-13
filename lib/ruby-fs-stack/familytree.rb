@@ -67,6 +67,52 @@ module FamilytreeV2
       person = res_familytree.persons.first
       return person
     end
+    
+    # ====Params
+    # * <tt>base_id</tt> - The root person for creating the relationship
+    # * <tt>options</tt> - Should include either :parent, :spouse, or :child. :lineage is optional
+    #
+    # :lineage can be set to the following values:
+    # * 'Biological'
+    # * 'Adoptive'
+    # * 'Foster'
+    # * 'Guardianship'
+    # * 'Step'
+    # * 'Other'
+    #
+    # If the :lineage is set, the parent-child relationships will be written via a characteristic.
+    # Otherwise, an exists assertion will be created to just establish the relationship.
+    # ====Example
+    #
+    #    communicator.familytree_v2.write_relationship 'KWQS-BBQ', :parent => 'KWQS-BBT', :lineage => 'Biological' 
+    #    communicator.familytree_v2.write_relationship 'KWQS-BBQ', :parent => 'KWQS-BBT', :lineage => 'Adoptive'
+    def write_relationship(base_id,options)
+      r_type = get_relationship_type(options)
+      to_id = options[r_type.to_sym]
+      url = "#{Base}person/#{base_id}/#{r_type}/#{to_id}"
+      res = @fs_communicator.get(url)
+      if res.code == '404'
+        person = Org::Familysearch::Ws::Familytree::V2::Schema::Person.new
+        person.id = base_id
+        r_options = {:type => r_type, :with => to_id}
+        r_options[:lineage] = options[:lineage] if options[:lineage]
+        person.create_relationship r_options
+      end
+      familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.new
+      familytree.persons = [person]
+      response = @fs_communicator.post(url,familytree.to_json)
+      res_familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.from_json JSON.parse(response.body)
+      person = res_familytree.persons.first
+      return person 
+    end
+    
+    private
+    #options will either have a :parent, :child, or :spouse key. We need to find which one
+    def get_relationship_type(options)
+      keys = options.keys.collect{|k|k.to_s}
+      key = keys.find{|k| ['parent','child','spouse'].include? k} 
+      key
+    end
   end
   
 end
@@ -219,7 +265,7 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
     def add_gender(value)
       self.genders ||= []
       g = GenderAssertion.new
-      g.add_value('Male')
+      g.add_value(value)
       self.genders << g
     end
     
@@ -243,6 +289,81 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       o.add_value(options)
       self.ordinances << o
     end
+  end
+  
+  class CharacteristicAssertion
+    # ====Params
+    # * <tt>options</tt> - same as RelationshipAssertions#add_characteristic
+    def add_value(options)
+      self.value = CharacteristicValue.new
+      self.value.type = options[:type]
+      self.value.lineage = options[:lineage] if options[:lineage]
+    end
+  end
+  
+  class ExistsAssertion
+    def add_value
+      self.value = ExistsValue.new
+    end
+  end
+  
+  class RelationshipAssertions
+    # ====Params
+    # * <tt>options</tt> - :type ('Lineage' or valid CharacteristicType), :lineage => 'Biological', etc.
+    def add_characteristic(options)
+      self.characteristics ||= []
+      characteristic = CharacteristicAssertion.new
+      characteristic.add_value(options)
+      self.characteristics << characteristic
+    end
+    
+    def add_exists
+      self.exists ||= []
+      exist = ExistsAssertion.new
+      exist.add_value
+      self.exists << exist
+    end
+  end
+  
+  class Relationship
+    def add_lineage_characteristic(lineage)
+      add_assertions!
+      self.assertions.add_characteristic(:type => 'Lineage', :lineage => lineage)
+    end
+    
+    def add_exists
+      add_assertions!
+      self.assertions.add_exists
+    end
+    
+    private
+    def add_assertions!
+      self.assertions ||= RelationshipAssertions.new
+    end
+  end
+  
+  class PersonRelationships
+    # ====Params
+    # * <tt>options</tt> - requires the following: 
+    # ** :type - 'parent', 'child', 'spouse'
+    # ** :with - ID of the person with whom you are making the relationship
+    # ** :lineage (optional) - 'Biological', 'Adoptive', etc.
+    def add_relationship(options)
+      relationship = Relationship.new
+      relationship.id = options[:with]
+      if options[:lineage]
+        relationship.add_lineage_characteristic(options[:lineage]) if options[:lineage]
+      else
+        relationship.add_exists
+      end
+      command = get_command(options[:type])
+      self.send(command.to_sym,[relationship])
+    end
+    
+    private 
+    def get_command(type)
+      (type == 'child') ? 'children=' : "#{type}s="
+    end    
   end
 
   class Person
@@ -436,8 +557,27 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       options[:type] = 'Sealing to Parents'
       assertions.add_ordinance(options)
     end
+    
+    # This method should really only be called from FamilytreeV2::Communicator#write_relationships
+    # 
+    # ====Params
+    # * <tt>options</tt> - requires the following: 
+    # ** :type - 'parent', 'child', 'spouse'
+    # ** :with - ID of the person with whom you are making the relationship
+    # ** :lineage (optional) - 'Biological', 'Adoptive', etc.
+    def create_relationship(options)
+      raise ArgumentError, ":type option is required" if options[:type].nil?
+      raise ArgumentError, ":with option is required" if options[:with].nil?
+      add_relationships!
+      self.relationships.add_relationship(options)
+    end
   
     private
+    
+    def add_relationships!
+      self.relationships ||= PersonRelationships.new
+    end
+    
     def add_assertions!
       if assertions.nil?
         self.assertions = PersonAssertions.new

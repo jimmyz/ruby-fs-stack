@@ -123,6 +123,54 @@ describe FamilytreeV2::Communicator do
       
     end
     
+    describe "writing relationships" do
+      before(:each) do
+        @fs_com_mock = mock("FsCommunicator")
+        @res = mock("HTTP::Response")
+        @ft_v2_com = FamilytreeV2::Communicator.new @fs_com_mock
+      end
+      
+      describe "for relationships that don't yet exist" do
+        before(:each) do
+          @json = read_file('relationship_not_found.js') 
+          @res.stub!(:body).and_return(@json)
+          @res.stub!(:code).and_return('404')
+          @fs_com_mock.stub!(:get).and_return(@res)
+          
+          @post_json = read_file('relationship_update.js')
+          @post_res = mock("HTTP::Response")
+          @post_res.stub!(:body).and_return(@post_json)
+          @fs_com_mock.stub!(:post).and_return(@post_res)
+                    
+          @person = new_person
+          Org::Familysearch::Ws::Familytree::V2::Schema::Person.stub!(:new).and_return(@person)
+          
+        end
+        
+        it "should first try to read the relationship" do
+          @fs_com_mock.should_receive(:get).with('/familytree/v2/person/KWQS-BBQ/parent/KWQS-BBR').and_return(@res)
+          @ft_v2_com.write_relationship 'KWQS-BBQ', :parent => 'KWQS-BBR', :lineage => 'Biological'
+        end
+        
+        it "should create a new person with a relationship since it wasn't yet found" do
+          Org::Familysearch::Ws::Familytree::V2::Schema::Person.should_receive(:new).and_return(@person)
+          @person.should_receive(:id=).with('KWQS-BBQ')
+          @person.should_receive(:create_relationship).with(:type => 'parent', :with => 'KWQS-BBR', :lineage => 'Biological')
+          @ft_v2_com.write_relationship 'KWQS-BBQ', :parent => 'KWQS-BBR', :lineage => 'Biological'
+        end
+        
+        it "should post a familytree request with the person to the correct endpoint" do
+          @person.create_relationship(:type => 'parent', :with => 'KWQS-BBR', :lineage => 'Biological')
+          @person.id = 'KWQS-BBQ'
+          familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.new
+          
+          familytree.persons = [@person]
+          @fs_com_mock.should_receive(:post).with('/familytree/v2/person/KWQS-BBQ/parent/KWQS-BBR', familytree.to_json).and_return(@post_res)
+          @ft_v2_com.write_relationship 'KWQS-BBQ', :parent => 'KWQS-BBR', :lineage => 'Biological'
+        end
+      end
+    end
+    
   end
   
 end
