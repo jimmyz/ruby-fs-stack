@@ -360,6 +360,48 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       self.send(command.to_sym,[relationship])
     end
     
+    # Overriding the Enunciate code because of a bug (parents, spouses, and children were not pluralized)
+    # the json hash for this PersonRelationships
+    def to_jaxb_json_hash
+      _h = {}
+      if !parents.nil?
+        _ha = Array.new
+        parents.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['parents'] = _ha
+      end
+      if !spouses.nil?
+        _ha = Array.new
+        spouses.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['spouses'] = _ha
+      end
+      if !children.nil?
+        _ha = Array.new
+        children.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['children'] = _ha
+      end
+      return _h
+    end
+    
+    # Overriding the Enunciate code because of a bug
+    #initializes this PersonRelationships with a json hash
+    def init_jaxb_json_hash(_o)
+      if !_o['parents'].nil?
+        @parents = Array.new
+        _oa = _o['parents']
+        _oa.each { | _item | @parents.push Org::Familysearch::Ws::Familytree::V2::Schema::Relationship.from_json(_item) }
+      end
+      if !_o['spouses'].nil?
+        @spouses = Array.new
+        _oa = _o['spouses']
+        _oa.each { | _item | @spouses.push Org::Familysearch::Ws::Familytree::V2::Schema::Relationship.from_json(_item) }
+      end
+      if !_o['children'].nil?
+        @children = Array.new
+        _oa = _o['children']
+        _oa.each { | _item | @children.push Org::Familysearch::Ws::Familytree::V2::Schema::Relationship.from_json(_item) }
+      end
+    end
+    
     private 
     def get_command(type)
       (type == 'child') ? 'children=' : "#{type}s="
