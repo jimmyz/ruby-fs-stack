@@ -21,7 +21,7 @@ describe FsCommunicator do
     before(:each) do
       filename = File.join(File.dirname(__FILE__),'json','login.js')
       body = File.read(filename)
-      @mock_response = mock('HTTP::Response', :body => body)
+      @mock_response = mock('HTTP::Response', :body => body, :code => '200')
       @http.should_receive(:start).and_return(@mock_response)
       @request.should_receive(:basic_auth).with('user','pass')
       @request.should_receive(:[]=).with('User-Agent',@com.user_agent)

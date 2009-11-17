@@ -2,7 +2,7 @@ require 'net/https'
 require 'uri'
 
 class FsCommunicator
-  attr_accessor :domain, :key, :user_agent, :session
+  attr_accessor :domain, :key, :user_agent, :session, :handle_throttling
   
   def initialize(options = {})
     # merge default options with options hash
@@ -10,12 +10,14 @@ class FsCommunicator
       :domain => 'http://www.dev.usys.org',
       :key => '',
       :user_agent => 'FsCommunicator/0.1 (Ruby)', # should be overridden by options user_agent
-      :session => nil
+      :session => nil,
+      :handle_throttling => false
     }.merge(options)
     @domain = o[:domain]
     @key = o[:key]
     @user_agent = o[:user_agent]
     @session = o[:session]
+    @handle_throttling = o[:handle_throttling]
   end
   
   def post(url,payload)
@@ -34,6 +36,11 @@ class FsCommunicator
     res = http.start do |ht|
       ht.request(request)
     end
+    if res.code == '503' && @handle_throttling
+      sleep 15
+      res = post(url,payload)
+    end
+    return res
   end
   
   def get(url,credentials = {})
@@ -53,6 +60,11 @@ class FsCommunicator
     res = http.start do |ht|
       ht.request(request)
     end
+    if res.code == '503' && @handle_throttling
+      sleep 15
+      res = get(url,credentials)
+    end
+    return res
   end
   
   private
