@@ -159,6 +159,13 @@ describe FamilytreeV2::Communicator do
           @ft_v2_com.write_relationship 'KWQS-BBQ', :parent => 'KWQS-BBR', :lineage => 'Biological'
         end
         
+        it "should add a marriage event if sent an event key" do
+          Org::Familysearch::Ws::Familytree::V2::Schema::Person.should_receive(:new).and_return(@person)
+          @person.should_receive(:id=).with('KWQS-BBQ')
+          @person.should_receive(:create_relationship).with(:type => 'spouse', :with => 'KWQS-BBR', :event => {:type => 'Marriage', :place => 'United States', :date => '1800'})
+          @ft_v2_com.write_relationship 'KWQS-BBQ', :spouse => 'KWQS-BBR', :event => {:type => 'Marriage', :place => 'United States', :date => '1800'}
+        end
+        
         it "should post a familytree request with the person to the correct endpoint" do
           @person.create_relationship(:type => 'parent', :with => 'KWQS-BBR', :lineage => 'Biological')
           @person.id = 'KWQS-BBQ'
@@ -168,6 +175,7 @@ describe FamilytreeV2::Communicator do
           @fs_com_mock.should_receive(:post).with('/familytree/v2/person/KWQS-BBQ/parent/KWQS-BBR', familytree.to_json).and_return(@post_res)
           @ft_v2_com.write_relationship 'KWQS-BBQ', :parent => 'KWQS-BBR', :lineage => 'Biological'
         end
+        
       end
     end
     

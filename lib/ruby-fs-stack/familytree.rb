@@ -70,7 +70,7 @@ module FamilytreeV2
     
     # ====Params
     # * <tt>base_id</tt> - The root person for creating the relationship
-    # * <tt>options</tt> - Should include either :parent, :spouse, or :child. :lineage is optional
+    # * <tt>options</tt> - Should include either :parent, :spouse, or :child. :lineage and :event is optional
     #
     # :lineage can be set to the following values:
     # * 'Biological'
@@ -79,6 +79,11 @@ module FamilytreeV2
     # * 'Guardianship'
     # * 'Step'
     # * 'Other'
+    # 
+    # :event should be a hash with the following values
+    # ** :type - "Marriage", etc. (REQUIRED)
+    # ** :place - "Utah, United States" (optional)
+    # ** :date - "Nov 2009"
     #
     # If the :lineage is set, the parent-child relationships will be written via a characteristic.
     # Otherwise, an exists assertion will be created to just establish the relationship.
@@ -86,17 +91,22 @@ module FamilytreeV2
     #
     #    communicator.familytree_v2.write_relationship 'KWQS-BBQ', :parent => 'KWQS-BBT', :lineage => 'Biological' 
     #    communicator.familytree_v2.write_relationship 'KWQS-BBQ', :parent => 'KWQS-BBT', :lineage => 'Adoptive'
+    #    communicator.familytree_v2.write_relationship 'KWQS-BBQ', :spouse => 'KWRT-BBZ', :event => {:type => 'Marriage', :date => '15 Aug 1987', :place => 'Utah, United States'}
     def write_relationship(base_id,options)
       r_type = get_relationship_type(options)
-      to_id = options[r_type.to_sym]
-      url = "#{Base}person/#{base_id}/#{r_type}/#{to_id}"
+      with_id = options[r_type.to_sym]
+      r_options = {:type => r_type, :with => with_id}
+      r_options[:event] = options[:event] if options[:event]
+      url = "#{Base}person/#{base_id}/#{r_type}/#{with_id}"
       res = @fs_communicator.get(url)
       if res.code == '404'
         person = Org::Familysearch::Ws::Familytree::V2::Schema::Person.new
         person.id = base_id
-        r_options = {:type => r_type, :with => to_id}
+        
         r_options[:lineage] = options[:lineage] if options[:lineage]
         person.create_relationship r_options
+      else
+        # TODO
       end
       familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.new
       familytree.persons = [person]
@@ -317,6 +327,18 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       self.characteristics << characteristic
     end
     
+    # ====Params
+    # * <tt>options</tt> - Accepts the following options
+    # ** :type - 'Marriage', etc. REQUIRED
+    # ** :date - 'Utah, United States' (optional)
+    # ** :place - '16 Nov 1987' (optional)
+    def add_event(options)
+      self.events ||= []
+      event = EventAssertion.new
+      event.add_value(options)
+      self.events << event
+    end
+    
     def add_exists
       self.exists ||= []
       exist = ExistsAssertion.new
@@ -336,6 +358,16 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       self.assertions.add_exists
     end
     
+    # ====Params
+    # * <tt>event_hash</tt> - Accepts the following options
+    # ** :type - 'Marriage', etc. REQUIRED
+    # ** :date - 'Utah, United States' (optional)
+    # ** :place - '16 Nov 1987' (optional)
+    def add_event(event_hash)
+      add_assertions!
+      self.assertions.add_event(event_hash)
+    end
+    
     private
     def add_assertions!
       self.assertions ||= RelationshipAssertions.new
@@ -348,6 +380,7 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
     # ** :type - 'parent', 'child', 'spouse'
     # ** :with - ID of the person with whom you are making the relationship
     # ** :lineage (optional) - 'Biological', 'Adoptive', etc.
+    # ** :event - a hash with values {:type => 'Marriage', :date => '15 Nov 2007', :place => 'Utah, United States'}
     def add_relationship(options)
       relationship = Relationship.new
       relationship.id = options[:with]
@@ -355,6 +388,9 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
         relationship.add_lineage_characteristic(options[:lineage]) if options[:lineage]
       else
         relationship.add_exists
+      end
+      if options[:event]
+        relationship.add_event(options[:event])
       end
       command = get_command(options[:type])
       self.send(command.to_sym,[relationship])
@@ -607,6 +643,7 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
     # ** :type - 'parent', 'child', 'spouse'
     # ** :with - ID of the person with whom you are making the relationship
     # ** :lineage (optional) - 'Biological', 'Adoptive', etc.
+    # ** :event - a hash with values {:type => 'Marriage', :date => '15 Nov 2007', :place => 'Utah, United States'}
     def create_relationship(options)
       raise ArgumentError, ":type option is required" if options[:type].nil?
       raise ArgumentError, ":with option is required" if options[:with].nil?
