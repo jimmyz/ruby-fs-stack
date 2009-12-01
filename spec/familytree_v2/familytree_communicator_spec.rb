@@ -143,6 +143,7 @@ describe FamilytreeV2::Communicator do
           @fs_com_mock.stub!(:post).and_return(@post_res)
                     
           @person = new_person
+          @person2 = new_person
           Org::Familysearch::Ws::Familytree::V2::Schema::Person.stub!(:new).and_return(@person)
           
         end
@@ -166,13 +167,76 @@ describe FamilytreeV2::Communicator do
           @ft_v2_com.write_relationship 'KWQS-BBQ', :spouse => 'KWQS-BBR', :event => {:type => 'Marriage', :place => 'United States', :date => '1800'}
         end
         
+        it "should add an ordinances if sent an ordinance key" do
+          Org::Familysearch::Ws::Familytree::V2::Schema::Person.should_receive(:new).and_return(@person)
+          @person.should_receive(:id=).with('KWQS-BBQ')
+          @person.should_receive(:create_relationship).with(:type => 'spouse', :with => 'KWQS-BBR', :ordinance => {:type => 'Sealing_to_Spouse', :place => 'United States', :date => '1800', :temple => 'SLAKE'})
+          @ft_v2_com.write_relationship 'KWQS-BBQ', :spouse => 'KWQS-BBR', :ordinance => {:type => 'Sealing_to_Spouse', :place => 'United States', :date => '1800', :temple => 'SLAKE'}
+        end
+        
         it "should post a familytree request with the person to the correct endpoint" do
-          @person.create_relationship(:type => 'parent', :with => 'KWQS-BBR', :lineage => 'Biological')
-          @person.id = 'KWQS-BBQ'
+          @person2.create_relationship(:type => 'parent', :with => 'KWQS-BBR', :lineage => 'Biological')
+          @person2.id = 'KWQS-BBQ'
           familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.new
           
-          familytree.persons = [@person]
+          familytree.persons = [@person2]
           @fs_com_mock.should_receive(:post).with('/familytree/v2/person/KWQS-BBQ/parent/KWQS-BBR', familytree.to_json).and_return(@post_res)
+          @ft_v2_com.write_relationship 'KWQS-BBQ', :parent => 'KWQS-BBR', :lineage => 'Biological'
+        end
+        
+      end
+      
+      describe "for relationships that already exist" do
+        before(:each) do
+          @json = read_file('relationship_read.js') 
+          
+          @res.stub!(:body).and_return(@json)
+          @res.stub!(:code).and_return('200')
+          @fs_com_mock.stub!(:get).and_return(@res)
+          
+          @post_json = read_file('relationship_update.js')
+          @post_res = mock("HTTP::Response")
+          @post_res.stub!(:body).and_return(@post_json)
+          @fs_com_mock.stub!(:post).and_return(@post_res)
+          
+          # Create a payload to compare against
+          ft = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.from_json JSON.parse(@json)
+          person = ft.persons.find{|p|p.id=='KWQS-BBQ'}
+          person.create_relationship :type => 'parent', :with => 'KWQS-BBR', :lineage => 'Biological'
+          familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.new
+          familytree.persons = [person]
+          @req_payload = familytree.to_json          
+                    
+          @familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.from_json JSON.parse(@json)
+          Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.stub!(:from_json).and_return(@familytree)
+          
+          @person = @familytree.persons.find{|p|p.id=='KWQS-BBQ'}
+        end
+        
+        it "should first try to read the relationship" do
+          @fs_com_mock.should_receive(:get).with('/familytree/v2/person/KWQS-BBQ/parent/KWQS-BBR').and_return(@res)
+          @ft_v2_com.write_relationship 'KWQS-BBQ', :parent => 'KWQS-BBR', :lineage => 'Biological'
+        end
+        
+        it "should create a new person with a relationship since it wasn't yet found" do
+          @person.should_not_receive(:id=).with('KWQS-BBQ')
+          @person.should_receive(:create_relationship).with(:type => 'parent', :with => 'KWQS-BBR', :lineage => 'Biological')
+          @ft_v2_com.write_relationship 'KWQS-BBQ', :parent => 'KWQS-BBR', :lineage => 'Biological'
+        end
+        
+        it "should add a marriage event if sent an event key" do
+          @person.should_receive(:create_relationship).with(:type => 'spouse', :with => 'KWQS-BBR', :event => {:type => 'Marriage', :place => 'United States', :date => '1800'})
+          @ft_v2_com.write_relationship 'KWQS-BBQ', :spouse => 'KWQS-BBR', :event => {:type => 'Marriage', :place => 'United States', :date => '1800'}
+        end
+        
+        it "should add an ordinances if sent an ordinance key" do
+          @person.should_receive(:create_relationship).with(:type => 'spouse', :with => 'KWQS-BBR', :ordinance => {:type => 'Sealing_to_Spouse', :place => 'United States', :date => '1800', :temple => 'SLAKE'})
+          @ft_v2_com.write_relationship 'KWQS-BBQ', :spouse => 'KWQS-BBR', :ordinance => {:type => 'Sealing_to_Spouse', :place => 'United States', :date => '1800', :temple => 'SLAKE'}
+        end
+        
+        it "should post a familytree request with the person to the correct endpoint" do
+          
+          @fs_com_mock.should_receive(:post).with('/familytree/v2/person/KWQS-BBQ/parent/KWQS-BBR', @req_payload).and_return(@post_res)
           @ft_v2_com.write_relationship 'KWQS-BBQ', :parent => 'KWQS-BBR', :lineage => 'Biological'
         end
         

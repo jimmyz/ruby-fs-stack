@@ -519,6 +519,16 @@ describe Org::Familysearch::Ws::Familytree::V2::Schema::Person do
       @person.sealing_to_parents.first.value.parents.size.should == 2
       @person.sealing_to_parents.first.value.parents.find{|p|p.gender == 'Male'}.id.should == 'KWQS-BBQ'
       @person.sealing_to_parents.first.value.parents.find{|p|p.gender == 'Female'}.id.should == 'KWQS-BBR'
+      @person.sealing_to_parents.first.value.type.should == "Sealing_to_Parents"
+      
+      #sealing_to_spouse
+      @person.create_relationship :type => 'spouse', :with => 'KWQS-BBR', :ordinance => {:date => date, :temple => temple, :place => place, :type => "Sealing_to_Spouse"}
+      @person.sealing_to_spouses('KWQS-BBR').size.should == 1
+      sts = @person.sealing_to_spouses('KWQS-BBR')
+      sts.first.value.type.should == "Sealing_to_Spouse"
+      sts.first.value.date.original.should == date
+      sts.first.value.temple.should == temple
+      sts.first.value.place.original.should == place
     end
 
     it "should be able to build a relationship write request for a parent relationship" do
@@ -544,6 +554,8 @@ describe Org::Familysearch::Ws::Familytree::V2::Schema::Person do
       @person.relationships.spouses[0].assertions.events[0].value.date.original.should == '15 Nov 2007'
       @person.relationships.spouses[0].assertions.events[0].value.place.original.should == 'Utah, United States'
       @person.relationships.spouses[0].assertions.exists[0].value.should be_instance_of(Org::Familysearch::Ws::Familytree::V2::Schema::ExistsValue)
+      @person.create_relationship :type => 'spouse', :with => 'KWQS-BBZ', :event => {:type => 'Marriage',:place =>"Utah, United States", :date => '15 Nov 2007'}
+      @person.relationships.spouses[0].assertions.events.size.should == 2
     end
     
   end
