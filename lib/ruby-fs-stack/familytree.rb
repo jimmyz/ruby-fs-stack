@@ -99,29 +99,58 @@ module FamilytreeV2
     #    communicator.familytree_v2.write_relationship 'KWQS-BBQ', :parent => 'KWQS-BBT', :lineage => 'Adoptive'
     #    communicator.familytree_v2.write_relationship 'KWQS-BBQ', :spouse => 'KWRT-BBZ', :event => {:type => 'Marriage', :date => '15 Aug 1987', :place => 'Utah, United States'}
     def write_relationship(base_id,options)
-      r_type = get_relationship_type(options)
-      with_id = options[r_type.to_sym]
-      r_options = {:type => r_type, :with => with_id}
-      r_options[:event] = options[:event] if options[:event]
-      r_options[:ordinance] = options[:ordinance] if options[:ordinance]
-      url = "#{Base}person/#{base_id}/#{r_type}/#{with_id}"
-      res = @fs_communicator.get(url)
-      if res.code == '404'
+      
+      relationship_type = get_relationship_type(options)
+      with_id = options[relationship_type.to_sym]
+            
+      url = "#{Base}person/#{base_id}/#{relationship_type}/#{with_id}"
+
+      # Get the existing person/relationship or create a new person
+      unless person = relationship(base_id,options)
         person = Org::Familysearch::Ws::Familytree::V2::Schema::Person.new
         person.id = base_id
-      else
-        familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.from_json JSON.parse(res.body)
-        person = familytree.persons.find{|p|p.id == base_id}
       end
+      
+      # Add the relationship to the person with all of the correct options
+      r_options = {:type => relationship_type, :with => with_id}
+      r_options[:event] = options[:event] if options[:event]
+      r_options[:ordinance] = options[:ordinance] if options[:ordinance]
       r_options[:lineage] = options[:lineage] if options[:lineage]
       person.create_relationship r_options
       
+      # Create the payload
       familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.new
       familytree.persons = [person]
+      
+      # Post the response and return the resulting person/relationship record from response
       response = @fs_communicator.post(url,familytree.to_json)
       res_familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.from_json JSON.parse(response.body)
       person = res_familytree.persons.first
       return person 
+    end
+    
+    # ====Params
+    # * <tt>base_id</tt> - The root person for creating the relationship
+    # * <tt>options</tt> - Should include either :parent, :spouse, or :child. :lineage and :event is optional
+    #
+    # If the :lineage is set, the parent-child relationships will be written via a characteristic.
+    # Otherwise, an exists assertion will be created to just establish the relationship.
+    # ====Example
+    #
+    #    communicator.familytree_v2.relationship 'KWQS-BBQ', :parent => 'KWQS-BBT'
+    #    communicator.familytree_v2.relationship 'KWQS-BBQ', :parent => 'KWQS-BBT'
+    def relationship(base_id,options)
+      r_type = get_relationship_type(options)
+      with_id = options[r_type.to_sym]
+      url = "#{Base}person/#{base_id}/#{r_type}/#{with_id}"
+      res = @fs_communicator.get(url)
+      if res.code == '404'
+        return nil
+      else
+        familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.from_json JSON.parse(res.body)
+        person = familytree.persons.find{|p|p.id == base_id}
+        return person
+      end
     end
     
     private

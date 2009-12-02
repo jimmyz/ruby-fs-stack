@@ -123,6 +123,39 @@ describe FamilytreeV2::Communicator do
       
     end
     
+    describe "reading relationships" do
+      before(:each) do
+        @fs_com_mock = mock("FsCommunicator")
+        @res = mock("HTTP::Response")
+        @ft_v2_com = FamilytreeV2::Communicator.new @fs_com_mock
+      end
+      
+      describe "for relationships that already exist" do
+        before(:each) do
+          @json = read_file('relationship_read.js') 
+          
+          @res.stub!(:body).and_return(@json)
+          @res.stub!(:code).and_return('200')
+          @fs_com_mock.stub!(:get).and_return(@res)              
+          
+        end
+        
+        it "should read the relationship" do
+          @fs_com_mock.should_receive(:get).with('/familytree/v2/person/KWQS-BBQ/parent/KWQS-BBR').and_return(@res)
+          @ft_v2_com.relationship 'KWQS-BBQ', :parent => 'KWQS-BBR'
+        end
+        
+        it "should return a person" do
+          @fs_com_mock.should_receive(:get).with('/familytree/v2/person/KWQS-BBQ/parent/KWQS-BBR').and_return(@res)
+          person = @ft_v2_com.relationship 'KWQS-BBQ', :parent => 'KWQS-BBR'
+          person.id.should == 'KWQS-BBQ'
+          person.relationships.parents[0].id.should == 'KWQS-BBR'
+        end
+        
+      end
+      
+    end
+    
     describe "writing relationships" do
       before(:each) do
         @fs_com_mock = mock("FsCommunicator")
