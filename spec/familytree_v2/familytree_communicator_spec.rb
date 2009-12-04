@@ -123,6 +123,38 @@ describe FamilytreeV2::Communicator do
       
     end
     
+    describe "search" do
+      before(:each) do
+        @fs_com_mock = mock("FsCommunicator")
+        @res = mock("HTTP::Response")
+        @ft_v2_com = FamilytreeV2::Communicator.new @fs_com_mock
+        
+        @json = read_file('../search.js') 
+        @res.stub!(:body).and_return(@json)
+        @res.stub!(:code).and_return('200')
+        @fs_com_mock.stub!(:get).and_return(@res)
+      end
+      
+      it "should call the search endpoint" do
+        @fs_com_mock.should_receive(:get).with("/familytree/v2/search?name=John")
+        @ft_v2_com.search :name => "John"
+      end
+      
+      it "should return the SearchResult element" do
+        search_results = @ft_v2_com.search :name => "John"
+        search_results.class.should == Org::Familysearch::Ws::Familytree::V2::Schema::SearchResults
+        search_results.partial.should == 246
+        search_results.close.should == 100
+        search_results.count.should == 40
+      end
+      
+      it "should serialize embedded parent parameters" do
+        @fs_com_mock.should_receive(:get).with("/familytree/v2/search?father.name=John")
+        @ft_v2_com.search :father => {:name => "John"}
+      end
+      
+    end
+    
     describe "writing relationships" do
       before(:each) do
         @fs_com_mock = mock("FsCommunicator")

@@ -69,6 +69,18 @@ module FamilytreeV2
     end
     
     # ====Params
+    # <tt>search_params</tt> - A hash of search parameters matching API doc
+    def search(search_params)
+      url = Base + 'search'
+      url += "?" + FsUtils.querystring_from_hash(search_params) unless search_params.empty?
+      response = @fs_communicator.get(url)
+      familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.from_json JSON.parse(response.body)
+      # require 'pp'
+      # pp familytree
+      familytree.searches[0]
+    end
+    
+    # ====Params
     # * <tt>base_id</tt> - The root person for creating the relationship
     # * <tt>options</tt> - Should include either :parent, :spouse, or :child. :lineage and :event is optional
     #
@@ -216,6 +228,18 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       self.value.type = options[:type]
       self.value.add_date(options[:date]) if options[:date]
       self.value.add_place(options[:place]) if options[:place]
+    end
+    
+    # To make porting code from v1 to v2 easier, date will reference
+    # value.date
+    def date
+      value.date
+    end
+    
+    # To make porting code from v1 to v2 easier, date will reference
+    # value.date
+    def place
+      value.place
     end
   end
   
@@ -679,5 +703,29 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       end
     end
   
+  end
+  
+  class SearchPerson
+    alias :name :full_name
+    def events
+      (assertions && assertions.events) ? assertions.events : []
+    end
+    
+    # Always will return nil. Method is here for v1 backwards compatibility
+    def marriage
+      nil
+    end
+  end
+  
+  class SearchResult
+    alias :ref :id
+    
+    def father
+      parents.find{|p|p.gender == 'Male'}
+    end
+    
+    def mother
+      parents.find{|p|p.gender == 'Female'}
+    end
   end
 end
