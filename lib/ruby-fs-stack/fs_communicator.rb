@@ -4,6 +4,18 @@ require 'uri'
 class FsCommunicator
   attr_accessor :domain, :key, :user_agent, :session, :handle_throttling
   
+  # ====Params
+  # <tt>options</tt> - a hash with the following options
+  # * :domain - Defaults to "http://www.dev.usys.org" (the Reference System)
+  # * :key - Your developer key. Defaults to ''
+  # * :user_agent - Your User-Agent string. This should be overridden by your app. It
+  #   defaults to "FsCommunicator/0.1 (Ruby)"
+  # * :session - A session string if you already have one.
+  # * :handle_throttling - (true|false) Defaults to false. If true, when a 503 response
+  #   is received from the API, it will sleep 15 seconds, and try again until successful.
+  #   You will likely want this turned off when running this library from Rails or any other
+  #   system that is single-threaded so as to not sleep the entire process until throttling 
+  #   is successful.
   def initialize(options = {})
     # merge default options with options hash
     o = {
