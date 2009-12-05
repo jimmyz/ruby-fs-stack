@@ -11,9 +11,7 @@ begin
     gem.homepage = "http://github.com/jimmyz/ruby-fs-stack"
     gem.authors = ["Jimmy Zimmerman"]
     gem.add_development_dependency "rspec"
-    gem.add_dependency('json', '>=1.1.7')
-    gem.files << "lib/ruby-fs-stack/enunciate/identity.rb"
-    gem.files << "lib/ruby-fs-stack/enunciate/familytree.rb"
+    gem.requirements << "This gem requires a json gem (json, json_pure, or json-jruby)."
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
 rescue LoadError

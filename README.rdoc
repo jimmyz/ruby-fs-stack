@@ -5,21 +5,86 @@ API modules provided by FamilySearch.
 
 == Installation
 
-This project is being configured as a Ruby Gem. Instructions will be posted here
-as soon you can install the gem from RubyForge.
+If you haven't added gemcutter.org to your gem sources, run
+
+  gem sources -a http://gemcutter.org
+
+Install the ruby-fs-stack gem
+
+  sudo gem install ruby-fs-stack
+  
+=== JSON gem
+Ruby-fs-stack needs a json gem, but does not force it as a dependency.
+
+  sudo gem install json
+
+or if you are using JRuby
+
+  sudo gem install json-jruby
+
+or for the pure Ruby implementation
+
+  sudo gem install json_pure
 
 == Example Usage
 
-# Example code will be posted here as soon as it is packaged as a gem.
+=== Authenticating with FamilySearch
 
-See examples/login_example.rb[http://github.com/jimmyz/ruby-fs-stack/tree/master/examples/login_example.rb]
+  require 'ruby-fs-stack'
 
-See examples/familytree_example.rb[http://github.com/jimmyz/ruby-fs-stack/tree/master/examples/familytree_example.rb]
+  communicator = FsCommunicator.new :domain => 'http://www.dev.usys.org', # or 'https://api.familysearch.org'
+                                    :key => 'DEVELOPER-KEY',
+                                    :user_agent => 'Ruby-Fs-Stack/v.1 (JimmyZimmerman) FsCommunicator/0.1 (Ruby)'
+
+  communicator.identity_v1.authenticate :username => 'USERNAME', :password => 'PASSWORD' #=> true
+  communicator.session #=> "USYSE4EF197..."
+
+=== Reading Person Records
+
+  me = communicator.familytree_v2.person :me
+  puts "My name: " + me.full_name
+  puts "My birthdate: " + me.birth.value.date.normalized
+
+  # Read only the version number for a person
+  vperson = communicator.familytree_v2.person 'KW3B-NNM', :names => 'none', :genders => 'none', :events => 'none'
+  puts "Person's version: " + vperson.person
+  
+  # read the person and the parent, family, and child information
+  person = ftcom.person 'KW3B-NNM', :parents => 'summary', :families => 'all', :children => 'all'
+  
+  puts "Gender: " + person.gender
+  puts "First parent ID: " + person.parents[0].parents[0].id
+  puts "First child ID: " + person.families[0].children[0].id
+  puts "First spouse's gender: " + person.families[0].parents[1].gender
+  puts "First spouse's ID: " + person.families[0].parents[1].id
+  
+=== Searching Records
+
+  search = communicator.familytree_v2.search  :givenName => "John", 
+                                              :familyName => "Doe",
+                                              :birthDate => "12 Jun 1812",
+                                              :birthPlace => "Virginia, United States",
+                                              :father => {:givenName => "Robert"},
+                                              :maxResults => 10
+  search.count #=> 10
+  search.close #=> 2
+  search.partial #=> 16
+  search.results.each do |result|
+    puts result.score #=> 4.0
+    puts result.id #=> "KW3B-JXV"
+    puts result.person.full_name #=> "John Doe"
+    puts result.person.birth.date.original #=> "abt 1812"
+    puts result.father.full_name #=> "Robert Doe"
+    puts result.mother.full_name #=> "Ruby Johnson"
+    puts result.spouses.first.full_name #=> "Sarah Franklin"
+  end
 
 == Discussion
 
 A Google Group has been set up for questions and discussion
 around the ruby-fs-stack project.
+
+http://groups.google.com/group/ruby-fs-stack
 
 == Copyright
 

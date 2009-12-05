@@ -30,14 +30,13 @@ Gem::Specification.new do |s|
      "lib/ruby-fs-stack/enunciate/LICENSE",
      "lib/ruby-fs-stack/enunciate/README",
      "lib/ruby-fs-stack/enunciate/familytree.rb",
-     "lib/ruby-fs-stack/enunciate/familytree.rb",
-     "lib/ruby-fs-stack/enunciate/identity.rb",
      "lib/ruby-fs-stack/enunciate/identity.rb",
      "lib/ruby-fs-stack/familytree.rb",
      "lib/ruby-fs-stack/fs_communicator.rb",
      "lib/ruby-fs-stack/fs_utils.rb",
      "lib/ruby-fs-stack/identity.rb",
      "lib/ruby-fs-stack/warning_suppressor.rb",
+     "ruby-fs-stack.gemspec",
      "spec/communicator_spec.rb",
      "spec/familytree_v2/familytree_communicator_spec.rb",
      "spec/familytree_v2/json/match_KW3B-NNM.js",
@@ -56,11 +55,11 @@ Gem::Specification.new do |s|
      "spec/ruby-fs-stack_spec.rb",
      "spec/spec_helper.rb"
   ]
-  s.has_rdoc = true
   s.homepage = %q{http://github.com/jimmyz/ruby-fs-stack}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.1}
+  s.requirements = ["This gem requires a json gem (json, json_pure, or json-jruby)."]
+  s.rubygems_version = %q{1.3.5}
   s.summary = %q{Ruby wrapper for all FamilySearch APIs.}
   s.test_files = [
     "spec/communicator_spec.rb",
@@ -77,17 +76,14 @@ Gem::Specification.new do |s|
 
   if s.respond_to? :specification_version then
     current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
-    s.specification_version = 2
+    s.specification_version = 3
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
       s.add_development_dependency(%q<rspec>, [">= 0"])
-      s.add_runtime_dependency(%q<json>, [">= 1.1.7"])
     else
       s.add_dependency(%q<rspec>, [">= 0"])
-      s.add_dependency(%q<json>, [">= 1.1.7"])
     end
   else
     s.add_dependency(%q<rspec>, [">= 0"])
-    s.add_dependency(%q<json>, [">= 1.1.7"])
   end
 end
