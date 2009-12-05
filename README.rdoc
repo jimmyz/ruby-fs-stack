@@ -3,13 +3,10 @@
 This project aims to provide functionality for all of the 
 API modules provided by FamilySearch.
 
-This will eventually be packaged as a gem. This is waiting
-on permissions from FamilySearch to redistribute the sample 
-module code found here[https://devnet.familysearch.org/downloads/sample-clients].
+== Installation
 
-Until the code is available for redistribution, follow the
-instructions found in the lib/ruby-fs-stack/enunciate/README[http://github.com/jimmyz/ruby-fs-stack/blob/master/lib/ruby-fs-stack/enunciate/README]
-file.
+This project is being configured as a Ruby Gem. Instructions will be posted here
+as soon you can install the gem from RubyForge.
 
 == Example Usage
 

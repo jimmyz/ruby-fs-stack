@@ -1,0 +1,15 @@
+===FamilySearch Enunciate-generated Sample Code License Agreement
+
+Code located in the lib/ruby-fs-stack/enunciate directory is licensed
+under the FamilySearch API License Agreement as "Sample Code"
+
+https://devnet.familysearch.org/certification/affiliate-programs/familysearch-legal-agreements/APILicense.pdf
+
+It can be Sublicensed under the conditions of Section 2.1(a)
+
+4.2 Limits on Sublicensing. Except as set forth in this section (and Sections 2.1(a), 2.1(e), and 2.1(f) with respect to the Sample Code),
+
+You may do the following under this Agreement:
+2.1(a) Use the Sample Code within Your Application or within an open source project used to interface with the API;
+2.1(e) Disclose to the public, including through open source software development projects or online forums, the structure of the API, the Sample Code, and the structure of Databases or Content, provided that (i) You properly identify these by reference to the FamilySearch trademark; and (ii) You do not violate any other term of this Agreement that relates to the protection of personal information;
+2.1(f) Disclose to the public, including through open source software development projects or online forums, the means by which third party developers can (i) interface with the API to create new applications; or (ii) interface with Your Application or an open source project that interfaces with the API to make use of any functionality that Your Application or an open source project that interfaces with the API provides;

@@ -3,7 +3,6 @@
 coverage
 rdoc
 pkg
-lib/ruby-fs-stack/enunciate/*.rb
 examples/familytree_example_with_creds.rb
 *.gemspec
 *.gem

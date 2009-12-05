@@ -1,6 +1,6 @@
-Until the license changes for the Enunciate sample code, 
-it cannot be checked into the Github project and redistributed as a gem.
+The FamilySearch API License agreement has been modified
+to allow the distribution of the enunciate code libraries
+to be distributed in Open Source projects under the terms
+in lib/ruby-fs-stack/enunciate/LICENSE.
 
-In the meantime, download the following file(s) and place it in this directory
-http://www.dev.usys.org/familytree/familytree.rb
-http://www.dev.usys.org/identity/identity.rb
+No further action needs to be taken to use this library.
