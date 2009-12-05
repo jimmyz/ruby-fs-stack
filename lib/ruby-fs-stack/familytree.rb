@@ -97,6 +97,12 @@ module FamilytreeV2
     # ** :place - "Utah, United States" (optional)
     # ** :date - "Nov 2009"
     #
+    # :ordinance should be a hash with the following values
+    # ** :type - "Sealing_to_Spouse", etc. (REQUIRED)
+    # ** :place - "Utah, United States" (optional)
+    # ** :date - "Nov 2009"
+    # ** :temple - 'SLAKE'
+    #
     # If the :lineage is set, the parent-child relationships will be written via a characteristic.
     # Otherwise, an exists assertion will be created to just establish the relationship.
     # ====Example
@@ -105,27 +111,58 @@ module FamilytreeV2
     #    communicator.familytree_v2.write_relationship 'KWQS-BBQ', :parent => 'KWQS-BBT', :lineage => 'Adoptive'
     #    communicator.familytree_v2.write_relationship 'KWQS-BBQ', :spouse => 'KWRT-BBZ', :event => {:type => 'Marriage', :date => '15 Aug 1987', :place => 'Utah, United States'}
     def write_relationship(base_id,options)
-      r_type = get_relationship_type(options)
-      with_id = options[r_type.to_sym]
-      r_options = {:type => r_type, :with => with_id}
-      r_options[:event] = options[:event] if options[:event]
-      url = "#{Base}person/#{base_id}/#{r_type}/#{with_id}"
-      res = @fs_communicator.get(url)
-      if res.code == '404'
+      
+      relationship_type = get_relationship_type(options)
+      with_id = options[relationship_type.to_sym]
+            
+      url = "#{Base}person/#{base_id}/#{relationship_type}/#{with_id}"
+
+      # Get the existing person/relationship or create a new person
+      unless person = relationship(base_id,options)
         person = Org::Familysearch::Ws::Familytree::V2::Schema::Person.new
         person.id = base_id
-        
-        r_options[:lineage] = options[:lineage] if options[:lineage]
-        person.create_relationship r_options
-      else
-        # TODO
       end
+      
+      # Add the relationship to the person with all of the correct options
+      r_options = {:type => relationship_type, :with => with_id}
+      r_options[:event] = options[:event] if options[:event]
+      r_options[:ordinance] = options[:ordinance] if options[:ordinance]
+      r_options[:lineage] = options[:lineage] if options[:lineage]
+      person.create_relationship r_options
+      
+      # Create the payload
       familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.new
       familytree.persons = [person]
+      
+      # Post the response and return the resulting person/relationship record from response
       response = @fs_communicator.post(url,familytree.to_json)
       res_familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.from_json JSON.parse(response.body)
       person = res_familytree.persons.first
       return person 
+    end
+    
+    # ====Params
+    # * <tt>base_id</tt> - The root person for creating the relationship
+    # * <tt>options</tt> - Should include either :parent, :spouse, or :child. :lineage and :event is optional
+    #
+    # If the :lineage is set, the parent-child relationships will be written via a characteristic.
+    # Otherwise, an exists assertion will be created to just establish the relationship.
+    # ====Example
+    #
+    #    communicator.familytree_v2.relationship 'KWQS-BBQ', :parent => 'KWQS-BBT'
+    #    communicator.familytree_v2.relationship 'KWQS-BBQ', :parent => 'KWQS-BBT'
+    def relationship(base_id,options)
+      r_type = get_relationship_type(options)
+      with_id = options[r_type.to_sym]
+      url = "#{Base}person/#{base_id}/#{r_type}/#{with_id}"
+      res = @fs_communicator.get(url)
+      if res.code == '404'
+        return nil
+      else
+        familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.from_json JSON.parse(res.body)
+        person = familytree.persons.find{|p|p.id == base_id}
+        return person
+      end
     end
     
     private
@@ -288,7 +325,7 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       self.value.add_date(options[:date]) if options[:date]
       self.value.add_place(options[:place]) if options[:place]
       self.value.temple = options[:temple] if options[:temple]
-      if options[:type] == 'Sealing to Parents'
+      if options[:type] == OrdinanceType::Sealing_to_Parents
         self.value.add_mother(options[:mother])
         self.value.add_father(options[:father])
       end
@@ -363,6 +400,19 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       self.events << event
     end
     
+    # ====Params
+    # * <tt>options</tt> - Accepts the following options
+    # ** :type - 'Sealing_to_Spouse', etc. REQUIRED
+    # ** :date - 'Utah, United States' (optional)
+    # ** :place - '16 Nov 1987' (optional)
+    # ** :temple - 'SLAKE'
+    def add_ordinance(options)
+      self.ordinances ||= []
+      ordinance = OrdinanceAssertion.new
+      ordinance.add_value(options)
+      self.ordinances << ordinance
+    end
+    
     def add_exists
       self.exists ||= []
       exist = ExistsAssertion.new
@@ -392,6 +442,17 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       self.assertions.add_event(event_hash)
     end
     
+    # ====Params
+    # * <tt>ordinance_hash</tt> - Accepts the following options
+    # ** :type - 'Sealing_to_Spouse', etc. REQUIRED
+    # ** :date - 'Utah, United States' (optional)
+    # ** :place - '16 Nov 1987' (optional)
+    # ** :temple - 'SLAKE'
+    def add_ordinance(ordinance_hash)
+      add_assertions!
+      self.assertions.add_ordinance(ordinance_hash)
+    end
+    
     private
     def add_assertions!
       self.assertions ||= RelationshipAssertions.new
@@ -399,15 +460,26 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
   end
   
   class PersonRelationships
+    def initialize
+      @parents = []
+      @spouses = []
+      @children = []
+    end
+    
     # ====Params
     # * <tt>options</tt> - requires the following: 
     # ** :type - 'parent', 'child', 'spouse'
     # ** :with - ID of the person with whom you are making the relationship
     # ** :lineage (optional) - 'Biological', 'Adoptive', etc.
     # ** :event - a hash with values {:type => 'Marriage', :date => '15 Nov 2007', :place => 'Utah, United States'}
+    # ** :ordinance - a hash with values {:date => '15 Nov 2007', :temple => 'SLAKE', :place => 'Utah, United States', :type => "Sealing_to_Spouse"}
     def add_relationship(options)
-      relationship = Relationship.new
-      relationship.id = options[:with]
+      g_command = get_command(options[:type])
+      relationship = self.send(g_command.to_sym).find{|r|r.id == options[:with]}
+      if relationship.nil?
+        relationship = Relationship.new
+        relationship.id = options[:with]
+      end
       if options[:lineage]
         relationship.add_lineage_characteristic(options[:lineage]) if options[:lineage]
       else
@@ -416,8 +488,11 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       if options[:event]
         relationship.add_event(options[:event])
       end
-      command = get_command(options[:type])
-      self.send(command.to_sym,[relationship])
+      if options[:ordinance]
+        relationship.add_ordinance(options[:ordinance])
+      end
+      s_command = set_command(options[:type])
+      self.send(s_command.to_sym,[relationship])
     end
     
     # Overriding the Enunciate code because of a bug (parents, spouses, and children were not pluralized)
@@ -462,9 +537,13 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       end
     end
     
-    private 
+    private
     def get_command(type)
-      (type == 'child') ? 'children=' : "#{type}s="
+      (type == 'child') ? 'children' : "#{type}s"
+    end
+     
+    def set_command(type)
+      get_command(type)+"="
     end    
   end
 
@@ -585,7 +664,11 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
     end
     
     def sealing_to_parents
-      select_ordinances('Sealing to Parents')
+      select_ordinances(OrdinanceType::Sealing_to_Parents)
+    end
+    
+    def sealing_to_spouses(id)
+      select_relationship_ordinances(:relationship_type => 'spouse', :id => id, :type => OrdinanceType::Sealing_to_Spouse)
     end
     
     # Add a baptism ordinance
@@ -656,7 +739,7 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       raise ArgumentError, ":mother option is required" if options[:mother].nil?
       raise ArgumentError, ":father option is required" if options[:father].nil?
       add_assertions!
-      options[:type] = 'Sealing to Parents'
+      options[:type] = OrdinanceType::Sealing_to_Parents
       assertions.add_ordinance(options)
     end
     
@@ -700,6 +783,19 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
         assertions.ordinances.select{|e| e.value.type == type}
       else
         []
+      end
+    end
+    
+    # only ordinance type is Sealing_to_Spouse
+    def select_relationship_ordinances(options)
+      raise ArgumentError, ":id required" if options[:id].nil?
+      if self.relationships
+        spouse_relationship = self.relationships.spouses.find{|s|s.id == options[:id]}
+        if spouse_relationship && spouse_relationship.assertions && spouse_relationship.assertions.ordinances
+          spouse_relationship.assertions.ordinances
+        else
+          []
+        end
       end
     end
   
