@@ -219,7 +219,11 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
     end
     
     def buildFullText
-      self.pieces.collect{|piece| "#{piece.predelimiters}#{piece.value}#{piece.postdelimiters}"}.join('')
+      if self.pieces.nil?
+        return ''
+      else
+        self.pieces.collect{|piece| "#{piece.predelimiters}#{piece.value}#{piece.postdelimiters}"}.join('')
+      end
     end
   end
   

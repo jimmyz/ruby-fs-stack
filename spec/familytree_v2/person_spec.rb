@@ -3,6 +3,8 @@ require 'ruby-fs-stack/familytree'
 
 
 describe Org::Familysearch::Ws::Familytree::V2::Schema::Person do
+  FamTreeV2 = Org::Familysearch::Ws::Familytree::V2::Schema
+  
   def new_person
     Org::Familysearch::Ws::Familytree::V2::Schema::Person.new
   end
@@ -105,6 +107,13 @@ describe Org::Familysearch::Ws::Familytree::V2::Schema::Person do
           @person.assertions.names = []
         end
         
+        def add_blank_form
+          nameAssertion = FamTreeV2::NameAssertion.new
+          nameAssertion.value = FamTreeV2::NameValue.new
+          nameAssertion.value.forms = [FamTreeV2::NameForm.new]
+          @person.assertions.names[0] = nameAssertion
+        end
+        
         before(:each) do
           @person = parse_person('KJ86-3VD_version.js')
         end
@@ -122,6 +131,13 @@ describe Org::Familysearch::Ws::Familytree::V2::Schema::Person do
           add_assertions
           add_names_array
           @person.full_names.should == []
+        end
+        
+        it "should return [] if a only a blank nameform" do
+          add_assertions
+          add_names_array
+          add_blank_form
+          @person.full_names.should == ['']
         end
         
       end
