@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{ruby-fs-stack}
-  s.version = "0.2.1"
+  s.version = "0.2.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jimmy Zimmerman"]
-  s.date = %q{2009-12-09}
+  s.date = %q{2009-12-10}
   s.description = %q{A library that enables you to read and update information with the new.familysearch.org API.}
   s.email = %q{jimmy.zimmerman@gmail.com}
   s.extra_rdoc_files = [
@@ -47,6 +47,7 @@ Gem::Specification.new do |s|
      "spec/familytree_v2/json/person/relationship_read.js",
      "spec/familytree_v2/json/person/relationship_update.js",
      "spec/familytree_v2/json/search.js",
+     "spec/familytree_v2/match_results_spec.rb",
      "spec/familytree_v2/person_spec.rb",
      "spec/familytree_v2/search_results_spec.rb",
      "spec/fs_utils_spec.rb",
@@ -64,6 +65,7 @@ Gem::Specification.new do |s|
   s.test_files = [
     "spec/communicator_spec.rb",
      "spec/familytree_v2/familytree_communicator_spec.rb",
+     "spec/familytree_v2/match_results_spec.rb",
      "spec/familytree_v2/person_spec.rb",
      "spec/familytree_v2/search_results_spec.rb",
      "spec/fs_utils_spec.rb",
@@ -80,10 +82,13 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
       s.add_development_dependency(%q<rspec>, [">= 0"])
+      s.add_development_dependency(%q<fakeweb>, [">= 0"])
     else
       s.add_dependency(%q<rspec>, [">= 0"])
+      s.add_dependency(%q<fakeweb>, [">= 0"])
     end
   else
     s.add_dependency(%q<rspec>, [">= 0"])
+    s.add_dependency(%q<fakeweb>, [">= 0"])
   end
 end
