@@ -156,6 +156,47 @@ describe FamilytreeV2::Communicator do
       
     end
     
+    describe "match" do
+      
+      before(:each) do
+        @fs_com_mock = mock("FsCommunicator")
+        @res = mock("HTTP::Response")
+        @ft_v2_com = FamilytreeV2::Communicator.new @fs_com_mock
+        
+        @json = read_file('../match_KW3B-NNM.js') 
+        @res.stub!(:body).and_return(@json)
+        @res.stub!(:code).and_return('200')
+        @fs_com_mock.stub!(:get).and_return(@res)
+      end
+      
+      it "should call the match endpoint" do
+        @fs_com_mock.should_receive(:get).with("/familytree/v2/match?name=John")
+        @ft_v2_com.match :name => "John"
+      end
+      
+      it "should return the MatchResults element" do
+        search_results = @ft_v2_com.match :name => "John"
+        search_results.class.should == Org::Familysearch::Ws::Familytree::V2::Schema::MatchResults
+        search_results.count.should == 4
+      end
+      
+      it "should serialize embedded parent parameters" do
+        @fs_com_mock.should_receive(:get).with("/familytree/v2/match?father.name=John")
+        @ft_v2_com.match :father => {:name => "John"}
+      end
+      
+      it "should accept an id as the first parameter" do
+        @fs_com_mock.should_receive(:get).with("/familytree/v2/match/KWQS-BBQ")
+        @ft_v2_com.match 'KWQS-BBQ'
+      end
+      
+      it "should accept an id AND hash if passed" do
+        @fs_com_mock.should_receive(:get).with("/familytree/v2/match/KWQS-BBQ?maxResults=5")
+        @ft_v2_com.match 'KWQS-BBQ', :maxResults => 5
+      end
+      
+    end
+    
     describe "reading relationships" do
       
       describe "for relationships that already exist" do

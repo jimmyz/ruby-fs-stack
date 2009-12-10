@@ -81,6 +81,30 @@ module FamilytreeV2
     end
     
     # ====Params
+    # <tt>id_or_hash</tt> - Either an ID or a hash of match parameters matching API doc
+    # <tt>hash</tt> - if the first parameter is an ID, then this will contain the hash
+    # of match parameters.
+    def match(id_or_hash, hash={})
+      url = Base + 'match'
+      if id_or_hash.kind_of? String
+        id = id_or_hash
+        url += "/#{id}"
+        params_hash = hash
+      elsif id_or_hash.kind_of? Hash
+        id = nil
+        params_hash = id_or_hash
+      else
+        raise ArgumentError, "first parameter must be a kind of String or Hash"
+      end
+      url += "?" + FsUtils.querystring_from_hash(params_hash) unless params_hash.empty?
+      response = @fs_communicator.get(url)
+      familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.from_json JSON.parse(response.body)
+      # require 'pp'
+      # pp familytree
+      familytree.matches[0]
+    end
+    
+    # ====Params
     # * <tt>base_id</tt> - The root person for creating the relationship
     # * <tt>options</tt> - Should include either :parent, :spouse, or :child. :lineage and :event is optional
     #
@@ -807,6 +831,7 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
   
   class SearchPerson
     alias :name :full_name
+    alias :ref :id
     def events
       (assertions && assertions.events) ? assertions.events : []
     end
