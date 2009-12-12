@@ -1,6 +1,8 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
 describe FamilytreeV2::Communicator do
+  FamilyTreeV2 = Org::Familysearch::Ws::Familytree::V2::Schema
+  
   def read_file(filename)
     fname = File.join(File.dirname(__FILE__),'json','person',filename)
     File.read(fname)
@@ -72,6 +74,23 @@ describe FamilytreeV2::Communicator do
       @ft_v2_com.person(:me, :names => 'none')
     end
     
+  end
+  
+  describe "person read w/ multiple IDs" do
+    before(:each) do
+      @fs_com_mock = mock("FsCommunicator")
+      @res = mock("HTTP::Response")
+      @json = read_file('multiple_version_read.js')
+      @res.stub!(:body).and_return(@json)
+      @fs_com_mock.stub!(:get).and_return(@res)
+      @ft_v2_com = FamilytreeV2::Communicator.new @fs_com_mock
+    end
+    
+    it "should accept an array of person IDs" do
+      @fs_com_mock.should_receive(:get).with('/familytree/v2/person/KW3B-VCY,KW3B-VCB,KW3B-VC1?names=none').and_return(@res)
+      results = @ft_v2_com.person ["KW3B-VCY", "KW3B-VCB", "KW3B-VC1"], :names => 'none'
+      results.should be_a_kind_of(Array)
+    end
   end
   
   describe "save_person" do
@@ -349,6 +368,51 @@ describe FamilytreeV2::Communicator do
         @ft_v2_com.write_relationship 'KWQS-BBQ', :parent => 'KWQS-BBR', :lineage => 'Biological'
       end
       
+    end
+  end
+  
+  describe "combining persons" do
+    def new_person(id,version)
+      p = FamilyTreeV2::Person.new
+      p.id = id
+      p.version = version
+      p
+    end
+    
+    before(:each) do
+      @fs_com_mock = mock("FsCommunicator")
+      @post_res = mock("HTTP::Response")
+      @post_res.stub!(:body).and_return(read_file('../combine_response.js'))
+      
+      @ft_v2_com = FamilytreeV2::Communicator.new @fs_com_mock
+      
+      @persons = [new_person('KWQS-BBQ','1'),new_person('KWQS-BBR','2'),new_person('KWQS-BBB','3')]
+      @ft_v2_com.stub!(:person).and_return(@persons)
+      @fs_com_mock.stub!(:post).and_return(@post_res)
+    end
+    
+    it "should accept an array of IDs and return the response person" do
+      new_person = @ft_v2_com.combine ['KWQS-BBQ','KWQS-BBR','KWQS-BBB']
+      new_person.should be_instance_of(FamilyTreeV2::Person)
+    end
+    
+    it "should perform a person (version) read on all of the IDs passed" do
+      @ft_v2_com.should_receive(:person).with(['KWQS-BBQ','KWQS-BBR','KWQS-BBB'],{:genders => 'none', :events => 'none', :names => 'none'}).and_return(@persons)
+      result = @ft_v2_com.combine ['KWQS-BBQ','KWQS-BBR','KWQS-BBB']
+    end
+    
+    it "should call post on /familytree/v2/person" do
+      familytree = FamilyTreeV2::FamilyTree.new
+      FamilyTreeV2::FamilyTree.should_receive(:new).and_return(familytree,familytree)
+      familytree.should_receive(:to_json).and_return('ftjson')
+      @fs_com_mock.should_receive(:post).with('/familytree/v2/person','ftjson').and_return(@post_res)
+      result = @ft_v2_com.combine ['KWQS-BBQ','KWQS-BBR','KWQS-BBB']
+    end
+    
+    it "should result in a new person record with an id and version" do
+      result = @ft_v2_com.combine ['KWQS-BBQ','KWQS-BBR','KWQS-BBB']
+      result.id.should == "KW3B-VZC"
+      result.version.should == "65537"
     end
   end
   

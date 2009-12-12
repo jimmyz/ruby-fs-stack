@@ -28,7 +28,7 @@ module FamilytreeV2
     end
     
     # ===params
-    # <tt>id</tt> should be a string of the persons identifier. For the 'me' person, use :me or 'me'
+    # <tt>id_or_ids</tt> should be a string of the persons identifier. For the 'me' person, use :me or 'me'. Can also accept an array of ID strings.
     # <tt>options</tt> accepts a hash of parameters as documented by the API.
     # For full parameter documentation, see DevNet[https://devnet.familysearch.org/docs/api-manual-reference-system/familytree-v2/r_api_family_tree_person_read_v2.html]
     #
@@ -39,19 +39,29 @@ module FamilytreeV2
     #   
     #   p.version # => '90194378772'
     #   p.id # => 'KW3B-NNM'
-    def person(id, options = {})
-      id = id.to_s
-      if id == 'me'
-        url = Base + 'person'
+    def person(id_or_ids, options = {})
+      if id_or_ids.kind_of? Array
+        multiple_ids = true
+        url = Base + 'person/' + id_or_ids.join(',')
       else
-        url = Base + 'person/' + id
+        multiple_ids = false
+        id = id_or_ids.to_s
+        if id == 'me'
+          url = Base + 'person'
+        else
+          url = Base + 'person/' + id
+        end
       end
       url += "?"+FsUtils.querystring_from_hash(options) unless options.empty?
       response = @fs_communicator.get(url)
       familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.from_json JSON.parse(response.body)
-      person = familytree.persons.find{|p| p.requestedId == id }
-      person ||= familytree.persons.first if id == 'me'
-      person
+      if multiple_ids
+        return familytree.persons
+      else
+        person = familytree.persons.find{|p| p.requestedId == id }
+        person ||= familytree.persons.first if id == 'me'
+        return person
+      end
     end
     
     def save_person(person)
@@ -187,6 +197,24 @@ module FamilytreeV2
         person = familytree.persons.find{|p|p.id == base_id}
         return person
       end
+    end
+    
+    def combine(person_array)
+      url = Base + 'person'
+      version_persons = self.person person_array, :genders => 'none', :events => 'none', :names => 'none'
+      combine = Org::Familysearch::Ws::Familytree::V2::Schema::Person.new
+      combine.personas = Org::Familysearch::Ws::Familytree::V2::Schema::PersonPersonas.new
+      combine.personas.personas = version_persons.map do |person|
+        persona = Org::Familysearch::Ws::Familytree::V2::Schema::PersonPersona.new
+        persona.id = person.id
+        persona.version = person.version
+        persona
+      end
+      familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.new
+      familytree.persons = [combine]
+      res = @fs_communicator.post(url,familytree.to_json)
+      familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.from_json JSON.parse(res.body)
+      return familytree.persons[0]
     end
     
     private
