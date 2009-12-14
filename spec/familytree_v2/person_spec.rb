@@ -576,4 +576,29 @@ describe Org::Familysearch::Ws::Familytree::V2::Schema::Person do
     
   end
   
+  describe "create_combine" do
+    def new_combine_person(id,version)
+      person = new_person
+      person.id = id
+      person.version = version
+      person
+    end
+    
+    before(:each) do
+      @person = new_person
+      @persons = [new_combine_person('KWQS-BBR','1'),new_combine_person('KWQS-BBQ','2'),new_combine_person('KWQS-BBZ','3')]
+    end
+    
+    it "should accept an array of person objects" do
+      @person.create_combine(@persons)
+      @person.personas.personas[0].id.should == 'KWQS-BBR'
+      @person.personas.personas[0].version.should == '1'
+      @person.personas.personas[1].id.should == 'KWQS-BBQ'
+      @person.personas.personas[1].version.should == '2'
+      @person.personas.personas[2].id.should == 'KWQS-BBZ'
+      @person.personas.personas[2].version.should == '3'
+    end
+    
+  end
+  
 end

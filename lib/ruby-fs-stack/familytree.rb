@@ -199,19 +199,17 @@ module FamilytreeV2
       end
     end
     
+    # Combines person into a new person
+    #  
+    # ====Params
+    # * <tt>person_array</tt> - an array of person IDs.
     def combine(person_array)
       url = Base + 'person'
       version_persons = self.person person_array, :genders => 'none', :events => 'none', :names => 'none'
-      combine = Org::Familysearch::Ws::Familytree::V2::Schema::Person.new
-      combine.personas = Org::Familysearch::Ws::Familytree::V2::Schema::PersonPersonas.new
-      combine.personas.personas = version_persons.map do |person|
-        persona = Org::Familysearch::Ws::Familytree::V2::Schema::PersonPersona.new
-        persona.id = person.id
-        persona.version = person.version
-        persona
-      end
+      combine_person = Org::Familysearch::Ws::Familytree::V2::Schema::Person.new
+      combine_person.create_combine(version_persons)
       familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.new
-      familytree.persons = [combine]
+      familytree.persons = [combine_person]
       res = @fs_communicator.post(url,familytree.to_json)
       familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.from_json JSON.parse(res.body)
       return familytree.persons[0]
@@ -812,6 +810,20 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       raise ArgumentError, ":with option is required" if options[:with].nil?
       add_relationships!
       self.relationships.add_relationship(options)
+    end
+    
+    # This method should only be called from FamilytreeV2::Communicator#combine
+    # 
+    # ====Params
+    # * <tt>persons</tt> - an array of person objects. All persons must have an id and version
+    def create_combine(persons)
+      self.personas = Org::Familysearch::Ws::Familytree::V2::Schema::PersonPersonas.new
+      self.personas.personas = persons.map do |person|
+        persona = Org::Familysearch::Ws::Familytree::V2::Schema::PersonPersona.new
+        persona.id = person.id
+        persona.version = person.version
+        persona
+      end
     end
   
     private
