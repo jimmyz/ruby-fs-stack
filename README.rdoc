@@ -30,6 +30,7 @@ or for the pure Ruby implementation
 
 === Authenticating with FamilySearch
 
+  require 'rubygems'
   require 'ruby-fs-stack'
 
   communicator = FsCommunicator.new :domain => 'http://www.dev.usys.org', # or 'https://api.familysearch.org'
@@ -58,6 +59,10 @@ or for the pure Ruby implementation
   puts "First spouse's gender: " + person.families[0].parents[1].gender
   puts "First spouse's ID: " + person.families[0].parents[1].id
   
+  # read multiple persons in one request (up to 10)
+  people = ftcom.person ['KW3B-NNM','KWQS-BBQ','KWQS-BBR'], :parents => 'all', :children => 'all', :families => 'all'
+  people.size #=> 3
+  
 === Searching Records
 
   search = communicator.familytree_v2.search  :givenName => "John", 
@@ -78,7 +83,20 @@ or for the pure Ruby implementation
     puts result.mother.full_name #=> "Ruby Johnson"
     puts result.spouses.first.full_name #=> "Sarah Franklin"
   end
+  
+=== Combining Records
 
+  # reads the latest version numbers for the people requested and POSTs a combine request.
+  new_person = communicator.familytree_v2.combine ['KWQS-BBQ','KWRS-BBZ','KWQS-BNR']
+  new_person.id #=> 'KWQS-ZZZ'
+  new_person.version #=> '687799'
+
+== RDoc
+
+RDoc is hosted at rdoc.info:
+
+http://rdoc.info/projects/jimmyz/ruby-fs-stack
+  
 == Discussion
 
 A Google Group has been set up for questions and discussion
