@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 require 'ruby-fs-stack/familytree'
 
 describe Org::Familysearch::Ws::Familytree::V2::Schema::MatchResults, "parsing match results" do
-  FamilyTreeV2 = Org::Familysearch::Ws::Familytree::V2::Schema
+  FamilyTreeV2 = Org::Familysearch::Ws::Familytree::V2::Schema unless Object.const_defined?(:FamilyTreeV2)
   
   def read_file(filename)
     fname = File.join(File.dirname(__FILE__),'json',filename)
