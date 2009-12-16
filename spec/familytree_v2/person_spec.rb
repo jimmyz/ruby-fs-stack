@@ -535,13 +535,13 @@ describe Org::Familysearch::Ws::Familytree::V2::Schema::Person do
       @person.sealing_to_parents.first.value.parents.size.should == 2
       @person.sealing_to_parents.first.value.parents.find{|p|p.gender == 'Male'}.id.should == 'KWQS-BBQ'
       @person.sealing_to_parents.first.value.parents.find{|p|p.gender == 'Female'}.id.should == 'KWQS-BBR'
-      @person.sealing_to_parents.first.value.type.should == "Sealing_to_Parents"
+      @person.sealing_to_parents.first.value.type.should == "Sealing to Parents"
       
       #sealing_to_spouse
-      @person.create_relationship :type => 'spouse', :with => 'KWQS-BBR', :ordinance => {:date => date, :temple => temple, :place => place, :type => "Sealing_to_Spouse"}
+      @person.create_relationship :type => 'spouse', :with => 'KWQS-BBR', :ordinance => {:date => date, :temple => temple, :place => place, :type => "Sealing to Spouse"}
       @person.sealing_to_spouses('KWQS-BBR').size.should == 1
       sts = @person.sealing_to_spouses('KWQS-BBR')
-      sts.first.value.type.should == "Sealing_to_Spouse"
+      sts.first.value.type.should == "Sealing to Spouse"
       sts.first.value.date.original.should == date
       sts.first.value.temple.should == temple
       sts.first.value.place.original.should == place

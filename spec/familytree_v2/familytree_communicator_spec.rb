@@ -260,10 +260,7 @@ describe FamilytreeV2::Communicator do
     
     describe "for relationships that don't yet exist" do
       before(:each) do
-        @json = read_file('relationship_not_found.js') 
-        @res.stub!(:body).and_return(@json)
-        @res.stub!(:code).and_return('404')
-        @fs_com_mock.stub!(:get).and_return(@res)
+        @fs_com_mock.stub!(:get).and_raise(RubyFsStack::NotFound)
         
         @post_json = read_file('relationship_update.js')
         @post_res = mock("HTTP::Response")
