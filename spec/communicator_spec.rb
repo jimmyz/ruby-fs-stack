@@ -1,5 +1,6 @@
- require File.dirname(__FILE__) + '/spec_helper'
+require File.dirname(__FILE__) + '/spec_helper'
 require 'ruby-fs-stack/fs_communicator'
+require 'fakeweb'
 
 describe FsCommunicator do
   include HttpCommunicatorHelper
@@ -209,6 +210,129 @@ describe FsCommunicator do
       do_post(@url)
     end
     
+  end
+  
+  # 310 UserActionRequired
+  # 400 BadRequest
+  # 401 Unauthorized
+  # 403 Forbidden
+  # 404 NotFound
+  # 409 Conflict
+  # 410 Gone
+  # 415 InvalidContentType
+  # 430 BadVersion
+  # 431 InvalidDeveloperKey
+  # 500 ServerError
+  # 501 NotImplemented
+  # 503 ServiceUnavailable
+  describe "raising exceptions" do
+    def fake_web(path,status,message)
+      FakeWeb.register_uri(:get, "https://api.familysearch.org#{path}?sessionId=SESSID&dataFormat=application/json", :body => "",
+                          :status => [status, message])
+    end
+    
+    before(:each) do
+      options = {
+        :domain => 'https://api.familysearch.org', 
+        :key => '1111-1111', 
+        :user_agent => "FsCommunicator/0.1",
+        :session => 'SESSID'
+      }
+      @com = FsCommunicator.new options
+      @path = '/familytree/v2/person'
+      FakeWeb.allow_net_connect = false
+    end
+    
+    it "should raise a UserActionRequired on a 310" do
+      fake_web(@path,'310',"User Action Required")
+      lambda{
+        @com.get(@path)
+      }.should raise_error(RubyFsStack::UserActionRequired)
+    end
+    
+    it "should raise a BadRequest on a 400" do
+      fake_web(@path,'400',"Bad Request")
+      lambda{
+        @com.get(@path)
+      }.should raise_error(RubyFsStack::BadRequest)
+    end
+    
+    it "should raise a BadRequest on a 401" do
+      fake_web(@path,'401',"Unauthorized")
+      lambda{
+        @com.get(@path)
+      }.should raise_error(RubyFsStack::Unauthorized)
+    end
+    
+    it "should raise a Forbidden on 403" do
+      fake_web(@path,'403',"Forbidden")
+      lambda{
+        @com.get(@path)
+      }.should raise_error(RubyFsStack::Forbidden)
+    end
+    
+    it "should raise a 404 NotFound" do
+      fake_web(@path,'404',"NotFound")
+      lambda{
+        @com.get(@path)
+      }.should raise_error(RubyFsStack::NotFound)
+    end
+    
+    it "should raise a 409 Conflict" do
+      fake_web(@path,'409',"Conflict")
+      lambda{
+        @com.get(@path)
+      }.should raise_error(RubyFsStack::Conflict)
+    end
+    
+    it "should raise a 410 Gone" do
+      fake_web(@path,'410',"Gone")
+      lambda{
+        @com.get(@path)
+      }.should raise_error(RubyFsStack::Gone)
+    end
+    
+    it "should raise a 415 InvalidContentType" do
+      fake_web(@path,'415',"Invalid Content Type")
+      lambda{
+        @com.get(@path)
+      }.should raise_error(RubyFsStack::InvalidContentType)
+    end
+    
+    it "should raise a 430 BadVersion" do
+      fake_web(@path,'430',"Bad Version")
+      lambda{
+        @com.get(@path)
+      }.should raise_error(RubyFsStack::BadVersion)
+    end
+    
+    it "should raise a 431 InvalidDeveloperKey" do
+      fake_web(@path,'431',"Invalid Developer Key")
+      lambda{
+        @com.get(@path)
+      }.should raise_error(RubyFsStack::InvalidDeveloperKey)
+    end
+    
+    it "should raise a 500 ServerError" do
+      fake_web(@path,'500',"Server Error")
+      lambda{
+        @com.get(@path)
+      }.should raise_error(RubyFsStack::ServerError)
+    end
+    
+    it "should raise a 501 NotImplemented" do
+      fake_web(@path,'501',"Not Implemented")
+      lambda{
+        @com.get(@path)
+      }.should raise_error(RubyFsStack::NotImplemented)
+    end
+    
+    it "should raise a 503 ServiceUnavailable" do
+      fake_web(@path,'503',"Service Unavailable")
+      lambda{
+        @com.get(@path)
+      }.should raise_error(RubyFsStack::ServiceUnavailable)
+    end
   end
   
 end

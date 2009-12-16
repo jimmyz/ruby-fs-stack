@@ -1,9 +1,10 @@
+require 'ruby-fs-stack/errors'
 require 'net/https'
 require 'uri'
 
 class FsCommunicator
   attr_accessor :domain, :key, :user_agent, :session, :handle_throttling
-  
+  include RubyFsStack
   # ====Params
   # <tt>options</tt> - a hash with the following options
   # * :domain - Defaults to "http://www.dev.usys.org" (the Reference System)
@@ -75,11 +76,59 @@ class FsCommunicator
     if res.code == '503' && @handle_throttling
       sleep 15
       res = get(url,credentials)
+    elsif res.code != '200'
+      raise_exception(res)
     end
     return res
   end
   
   private
+  
+  # 310 UserActionRequired
+  # 400 BadRequest
+  # 401 Unauthorized
+  # 403 Forbidden
+  # 404 NotFound
+  # 409 Conflict
+  # 410 Gone
+  # 415 InvalidContentType
+  # 430 BadVersion
+  # 431 InvalidDeveloperKey
+  # 500 ServerError
+  # 501 NotImplemented
+  # 503 ServiceUnavailable
+  def raise_exception(res)
+    case res.code
+    when "310"
+      exception = UserActionRequired.new res.message, self
+    when "400"
+      exception = BadRequest.new res.message, self
+    when "401"
+      exception = Unauthorized.new res.message, self
+    when "403"
+      exception = Forbidden.new res.message, self
+    when "404"
+      exception = NotFound.new res.message, self
+    when "409"
+      exception = Conflict.new res.message, self
+    when "410"
+      exception = Gone.new res.message, self
+    when "415"
+      exception = InvalidContentType.new res.message, self
+    when "430"
+      exception = BadVersion.new res.message, self
+    when "431"
+      exception = InvalidDeveloperKey.new res.message, self
+    when "500"
+      exception = ServerError.new res.message, self
+    when "501"
+      exception = NotImplemented.new res.message, self
+    when "503"
+      exception = ServiceUnavailable.new res.message, self
+    end
+    raise exception
+  end
+  
   def set_extra_params(uri,credentials = {})
     if credentials[:username] && credentials[:password]
       sessionized_url = add_key(uri)
