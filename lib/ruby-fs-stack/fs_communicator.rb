@@ -52,6 +52,8 @@ class FsCommunicator
     if res.code == '503' && @handle_throttling
       sleep 15
       res = post(url,payload)
+    elsif res.code != '200'
+      raise_exception(res)
     end
     return res
   end
