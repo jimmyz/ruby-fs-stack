@@ -229,6 +229,8 @@ describe FsCommunicator do
     def fake_web(path,status,message)
       FakeWeb.register_uri(:get, "https://api.familysearch.org#{path}?sessionId=SESSID&dataFormat=application/json", :body => "",
                           :status => [status, message])
+      FakeWeb.register_uri(:post, "https://api.familysearch.org#{path}?sessionId=SESSID&dataFormat=application/json", :body => "",
+                          :status => [status, message])
     end
     
     before(:each) do
@@ -248,12 +250,18 @@ describe FsCommunicator do
       lambda{
         @com.get(@path)
       }.should raise_error(RubyFsStack::UserActionRequired)
+      lambda{
+        @com.post(@path,"")
+      }.should raise_error(RubyFsStack::UserActionRequired)
     end
     
     it "should raise a BadRequest on a 400" do
       fake_web(@path,'400',"Bad Request")
       lambda{
         @com.get(@path)
+      }.should raise_error(RubyFsStack::BadRequest)
+      lambda{
+        @com.post(@path,"")
       }.should raise_error(RubyFsStack::BadRequest)
     end
     
@@ -262,12 +270,18 @@ describe FsCommunicator do
       lambda{
         @com.get(@path)
       }.should raise_error(RubyFsStack::Unauthorized)
+      lambda{
+        @com.post(@path,"")
+      }.should raise_error(RubyFsStack::Unauthorized)
     end
     
     it "should raise a Forbidden on 403" do
       fake_web(@path,'403',"Forbidden")
       lambda{
         @com.get(@path)
+      }.should raise_error(RubyFsStack::Forbidden)
+      lambda{
+        @com.post(@path,"")
       }.should raise_error(RubyFsStack::Forbidden)
     end
     
@@ -276,12 +290,18 @@ describe FsCommunicator do
       lambda{
         @com.get(@path)
       }.should raise_error(RubyFsStack::NotFound)
+      lambda{
+        @com.post(@path,"")
+      }.should raise_error(RubyFsStack::NotFound)
     end
     
     it "should raise a 409 Conflict" do
       fake_web(@path,'409',"Conflict")
       lambda{
         @com.get(@path)
+      }.should raise_error(RubyFsStack::Conflict)
+      lambda{
+        @com.post(@path,"")
       }.should raise_error(RubyFsStack::Conflict)
     end
     
@@ -290,12 +310,18 @@ describe FsCommunicator do
       lambda{
         @com.get(@path)
       }.should raise_error(RubyFsStack::Gone)
+      lambda{
+        @com.post(@path,"")
+      }.should raise_error(RubyFsStack::Gone)
     end
     
     it "should raise a 415 InvalidContentType" do
       fake_web(@path,'415',"Invalid Content Type")
       lambda{
         @com.get(@path)
+      }.should raise_error(RubyFsStack::InvalidContentType)
+      lambda{
+        @com.post(@path,"")
       }.should raise_error(RubyFsStack::InvalidContentType)
     end
     
@@ -304,12 +330,18 @@ describe FsCommunicator do
       lambda{
         @com.get(@path)
       }.should raise_error(RubyFsStack::BadVersion)
+      lambda{
+        @com.post(@path,"")
+      }.should raise_error(RubyFsStack::BadVersion)
     end
     
     it "should raise a 431 InvalidDeveloperKey" do
       fake_web(@path,'431',"Invalid Developer Key")
       lambda{
         @com.get(@path)
+      }.should raise_error(RubyFsStack::InvalidDeveloperKey)
+      lambda{
+        @com.post(@path,"")
       }.should raise_error(RubyFsStack::InvalidDeveloperKey)
     end
     
@@ -318,6 +350,9 @@ describe FsCommunicator do
       lambda{
         @com.get(@path)
       }.should raise_error(RubyFsStack::ServerError)
+      lambda{
+        @com.post(@path,"")
+      }.should raise_error(RubyFsStack::ServerError)
     end
     
     it "should raise a 501 NotImplemented" do
@@ -325,12 +360,18 @@ describe FsCommunicator do
       lambda{
         @com.get(@path)
       }.should raise_error(RubyFsStack::NotImplemented)
+      lambda{
+        @com.post(@path,"")
+      }.should raise_error(RubyFsStack::NotImplemented)
     end
     
     it "should raise a 503 ServiceUnavailable" do
       fake_web(@path,'503',"Service Unavailable")
       lambda{
         @com.get(@path)
+      }.should raise_error(RubyFsStack::ServiceUnavailable)
+      lambda{
+        @com.post(@path,"")
       }.should raise_error(RubyFsStack::ServiceUnavailable)
     end
   end
