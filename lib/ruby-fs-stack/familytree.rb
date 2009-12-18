@@ -186,16 +186,16 @@ module FamilytreeV2
     #    communicator.familytree_v2.relationship 'KWQS-BBQ', :parent => 'KWQS-BBT'
     #    communicator.familytree_v2.relationship 'KWQS-BBQ', :parent => 'KWQS-BBT'
     def relationship(base_id,options)
-      r_type = get_relationship_type(options)
-      with_id = options[r_type.to_sym]
-      url = "#{Base}person/#{base_id}/#{r_type}/#{with_id}"
-      res = @fs_communicator.get(url)
-      if res.code == '404'
-        return nil
-      else
+      begin
+        r_type = get_relationship_type(options)
+        with_id = options[r_type.to_sym]
+        url = "#{Base}person/#{base_id}/#{r_type}/#{with_id}"
+        res = @fs_communicator.get(url)
         familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.from_json JSON.parse(res.body)
         person = familytree.persons.find{|p|p.id == base_id}
         return person
+      rescue RubyFsStack::NotFound
+        return nil
       end
     end
     
@@ -333,6 +333,22 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       value.place
     end
   end
+  
+  class OrdinanceType
+
+    #  Born in Covenant -> Possibly needs to be changed to no underscores 
+    # Born_in_Covenant = "Born_in_Covenant"
+    
+    # Override the incorrect constants in the enunciate library
+    with_warnings_suppressed do
+      #  Sealing to parents.
+      Sealing_to_Parents = "Sealing to Parents"
+
+      #  Sealing to spouse.
+      Sealing_to_Spouse = "Sealing to Spouse"
+    end
+  end
+  
   
   class OrdinanceValue
     
