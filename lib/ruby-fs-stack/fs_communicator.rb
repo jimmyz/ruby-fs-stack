@@ -3,7 +3,7 @@ require 'net/https'
 require 'uri'
 
 class FsCommunicator
-  attr_accessor :domain, :key, :user_agent, :session, :handle_throttling
+  attr_accessor :domain, :key, :user_agent, :session, :handle_throttling, :logger
   include RubyFsStack
   # ====Params
   # <tt>options</tt> - a hash with the following options
@@ -17,6 +17,10 @@ class FsCommunicator
   #   You will likely want this turned off when running this library from Rails or any other
   #   system that is single-threaded so as to not sleep the entire process until throttling 
   #   is successful.
+  # * :logger - (optional) if a logger is assigned to the communicator, all get requests and 
+  #   responses will be logged. The request and response ("GET /path" and "200 OK") will be
+  #   logged at the info level. Headers and request/response bodies will be logged at the debug
+  #   level.
   def initialize(options = {})
     # merge default options with options hash
     o = {
@@ -24,13 +28,15 @@ class FsCommunicator
       :key => '',
       :user_agent => 'FsCommunicator/0.1 (Ruby)', # should be overridden by options user_agent
       :session => nil,
-      :handle_throttling => false
+      :handle_throttling => false,
+      :logger => nil
     }.merge(options)
     @domain = o[:domain]
     @key = o[:key]
     @user_agent = o[:user_agent]
     @session = o[:session]
     @handle_throttling = o[:handle_throttling]
+    @logger = o[:logger]
   end
   
   def post(url,payload)
@@ -40,15 +46,16 @@ class FsCommunicator
     request.body = payload
     request['Content-Type'] = "application/json"
     request['User-Agent'] = self.user_agent
+    
     http = Net::HTTP.new(uri.host, uri.port)
-    if uri.scheme == 'https'
-      http.use_ssl = true 
-      http.ca_file = File.join File.dirname(__FILE__), 'assets','entrust-ca.crt'
-      http.verify_mode = OpenSSL::SSL::VERIFY_PEER
-    end
+    set_ssl(http) if uri.scheme == 'https'
+    
+    log_request('POST',full_url,request) if logger
     res = http.start do |ht|
       ht.request(request)
     end
+    log_response(res) if logger
+    
     if res.code == '503' && @handle_throttling
       sleep 15
       res = post(url,payload)
@@ -66,15 +73,16 @@ class FsCommunicator
     if credentials[:username] && credentials[:password]
       request.basic_auth credentials[:username], credentials[:password]
     end
+    
     http = Net::HTTP.new(uri.host, uri.port)
-    if uri.scheme == 'https'
-      http.use_ssl = true 
-      http.ca_file = File.join File.dirname(__FILE__), 'assets','entrust-ca.crt'
-      http.verify_mode = OpenSSL::SSL::VERIFY_PEER
-    end
+    set_ssl(http) if uri.scheme == 'https'
+    
+    log_request('GET',full_url,request) if logger
     res = http.start do |ht|
       ht.request(request)
     end
+    log_response(res) if logger
+    
     if res.code == '503' && @handle_throttling
       sleep 15
       res = get(url,credentials)
@@ -129,6 +137,28 @@ class FsCommunicator
       exception = ServiceUnavailable.new res.message, self
     end
     raise exception
+  end
+  
+  def log_request(method,url,request)
+    logger.info "#{method} #{url}"
+    request.each_header do |k,v|
+      logger.debug "#{k}: #{v}"
+    end
+    logger.debug request.body unless request.body.nil?
+  end
+  
+  def log_response(response)
+    logger.info "#{response.code} #{response.message}"
+    response.each_header do |k,v|
+      logger.debug "#{k}: #{v}"
+    end
+    logger.debug response.body
+  end
+  
+  def set_ssl(http)
+    http.use_ssl = true 
+    http.ca_file = File.join File.dirname(__FILE__), 'assets','entrust-ca.crt'
+    http.verify_mode = OpenSSL::SSL::VERIFY_PEER
   end
   
   def set_extra_params(uri,credentials = {})

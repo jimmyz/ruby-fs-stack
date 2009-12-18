@@ -1,0 +1,12 @@
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=utf-8
+Expires: Thu, 01 Jan 1970 00:00:00 GMT
+Cache-Control: no-store
+Cache-Control: no-cache
+X-PROCESSING-TIME: 152
+Date: Thu, 17 Dec 2009 23:58:48 GMT
+Content-Language: en-US
+APP_SVR_ID: 9.32
+Content-Length: 779
+
+{"persons":[{"id":"KW3B-N9X","version":"8590000133","assertions":{"events":[{"value":{"type":"Birth","date":{"selected":false,"normalized":"11 March 1950","original":"11 Mar 1950","astro":{"earliest":"2433352","latest":"2433352"}},"place":{"selected":false,"normalized":{"value":"Utah, United States","id":"27","version":"3.5.0"},"original":"Utah"}}}],"names":[{"value":{"type":"Name","forms":[{"selected":false,"pieces":[{"value":"API","type":"Given","predelimiters":"","postdelimiters":" "},{"value":"User","type":"Given","predelimiters":"","postdelimiters":" "},{"value":"1241","type":"Family","predelimiters":"","postdelimiters":""}],"fullText":"API User 1241"}]}}],"genders":[{"value":{"type":"Male"}}]}}],"version":"2.0.20091103.5176","statusCode":200,"statusMessage":"OK"}

@@ -32,10 +32,17 @@ or for the pure Ruby implementation
 
   require 'rubygems'
   require 'ruby-fs-stack'
-
+  
+  # Optionally, you can pass a logger to the communicator
+  # the logger can be the standard Ruby Logger or any logger 
+  # that responds to :info or :debug like the Rails logger
+  require 'logger'
+  logger = Logger.new('fs_stack.log')
+  
   communicator = FsCommunicator.new :domain => 'http://www.dev.usys.org', # or 'https://api.familysearch.org'
                                     :key => 'DEVELOPER-KEY',
-                                    :user_agent => 'Ruby-Fs-Stack/v.1 (JimmyZimmerman) FsCommunicator/0.1 (Ruby)'
+                                    :user_agent => 'Ruby-Fs-Stack/v.1 (JimmyZimmerman) FsCommunicator/0.1 (Ruby)',
+                                    :logger => logger
 
   communicator.identity_v1.authenticate :username => 'USERNAME', :password => 'PASSWORD' #=> true
   communicator.session #=> "USYSE4EF197..."

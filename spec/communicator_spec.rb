@@ -1,9 +1,18 @@
 require File.dirname(__FILE__) + '/spec_helper'
 require 'ruby-fs-stack/fs_communicator'
 require 'fakeweb'
+require 'logger'
 
 describe FsCommunicator do
   include HttpCommunicatorHelper
+  
+  def fake_web(path,status,message,body = '')
+    FakeWeb.register_uri(:get, "https://api.familysearch.org#{path}?sessionId=SESSID&dataFormat=application/json", :body => body,
+                        :status => [status, message])
+    FakeWeb.register_uri(:post, "https://api.familysearch.org#{path}?sessionId=SESSID&dataFormat=application/json", :body => body,
+                        :status => [status, message])
+  end
+  
   describe "initializing" do
     it "should accept a hash of options" do
       lambda {
@@ -226,12 +235,6 @@ describe FsCommunicator do
   # 501 NotImplemented
   # 503 ServiceUnavailable
   describe "raising exceptions" do
-    def fake_web(path,status,message)
-      FakeWeb.register_uri(:get, "https://api.familysearch.org#{path}?sessionId=SESSID&dataFormat=application/json", :body => "",
-                          :status => [status, message])
-      FakeWeb.register_uri(:post, "https://api.familysearch.org#{path}?sessionId=SESSID&dataFormat=application/json", :body => "",
-                          :status => [status, message])
-    end
     
     before(:each) do
       options = {
@@ -374,6 +377,73 @@ describe FsCommunicator do
         @com.post(@path,"")
       }.should raise_error(RubyFsStack::ServiceUnavailable)
     end
+  end
+  
+  describe "logging" do
+    
+    before(:each) do
+      @logger = Logger.new(STDOUT)
+      options = {
+        :domain => 'https://api.familysearch.org', 
+        :key => '1111-1111', 
+        :user_agent => "FsCommunicator/0.1",
+        :session => 'SESSID',
+        :logger => @logger
+      }
+      @com = FsCommunicator.new options
+    end
+    
+    it "should accept an optional logger object when initializing" do
+      @com.logger.should == @logger
+    end
+    
+    it "should be able to assign a logger after initialization" do
+      @com.logger = @logger
+      @com.logger.should == @logger
+    end
+    
+    it "should log each GET request URL and headers" do
+      response = File.join(File.dirname(__FILE__),'fixtures','fakeweb_response.txt')
+      FakeWeb.register_uri(:get, "https://api.familysearch.org/familytree/v2/person/KWQS-BBQ?sessionId=SESSID&dataFormat=application/json", 
+                          :response => response)
+      @com.logger.should_receive(:info).with(/GET \/familytree\/v2\/person/)
+      @com.logger.should_receive(:debug).with("accept: */*")
+      @com.logger.should_receive(:debug).with("user-agent: FsCommunicator/0.1")
+      @com.logger.should_receive(:info).with("200 OK")
+      @com.logger.should_receive(:debug).with("app_svr_id: 9.32")
+      @com.logger.should_receive(:debug).with("expires: Thu, 01 Jan 1970 00:00:00 GMT")
+      @com.logger.should_receive(:debug).with("content-language: en-US")
+      @com.logger.should_receive(:debug).with("date: Thu, 17 Dec 2009 23:58:48 GMT")
+      @com.logger.should_receive(:debug).with("content-length: 779")
+      @com.logger.should_receive(:debug).with("x-processing-time: 152")
+      @com.logger.should_receive(:debug).with("cache-control: no-store, no-cache")      
+      @com.logger.should_receive(:debug).with("content-type: application/json;charset=utf-8")
+      @com.logger.should_receive(:debug).with(/\{"persons":/)
+      @com.get('/familytree/v2/person/KWQS-BBQ')
+    end
+    
+    it "should log each POST request URL and headers" do
+      response = File.join(File.dirname(__FILE__),'fixtures','fakeweb_response.txt')
+      FakeWeb.register_uri(:post, "https://api.familysearch.org/familytree/v2/person/KWQS-BBQ?sessionId=SESSID&dataFormat=application/json", 
+                          :response => response)
+      @com.logger.should_receive(:info).with(/POST \/familytree\/v2\/person/)
+      @com.logger.should_receive(:debug).with("accept: */*")
+      @com.logger.should_receive(:debug).with("user-agent: FsCommunicator/0.1")
+      @com.logger.should_receive(:debug).with("content-type: application/json")
+      @com.logger.should_receive(:debug).with("CONTENT")
+      @com.logger.should_receive(:info).with("200 OK")
+      @com.logger.should_receive(:debug).with("app_svr_id: 9.32")
+      @com.logger.should_receive(:debug).with("expires: Thu, 01 Jan 1970 00:00:00 GMT")
+      @com.logger.should_receive(:debug).with("content-language: en-US")
+      @com.logger.should_receive(:debug).with("date: Thu, 17 Dec 2009 23:58:48 GMT")
+      @com.logger.should_receive(:debug).with("content-length: 779")
+      @com.logger.should_receive(:debug).with("x-processing-time: 152")
+      @com.logger.should_receive(:debug).with("cache-control: no-store, no-cache")      
+      @com.logger.should_receive(:debug).with("content-type: application/json;charset=utf-8")
+      @com.logger.should_receive(:debug).with(/\{"persons":/)
+      @com.post('/familytree/v2/person/KWQS-BBQ','CONTENT')
+    end
+    
   end
   
 end
