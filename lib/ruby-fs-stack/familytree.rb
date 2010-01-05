@@ -52,7 +52,7 @@ module FamilytreeV2
           url = Base + 'person/' + id
         end
       end
-      url += "?"+FsUtils.querystring_from_hash(options) unless options.empty?
+      url += add_querystring(options)
       response = @fs_communicator.get(url)
       familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.from_json JSON.parse(response.body)
       if multiple_ids
@@ -82,7 +82,7 @@ module FamilytreeV2
     # <tt>search_params</tt> - A hash of search parameters matching API doc
     def search(search_params)
       url = Base + 'search'
-      url += "?" + FsUtils.querystring_from_hash(search_params) unless search_params.empty?
+      url += add_querystring(search_params)
       response = @fs_communicator.get(url)
       familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.from_json JSON.parse(response.body)
       # require 'pp'
@@ -106,7 +106,7 @@ module FamilytreeV2
       else
         raise ArgumentError, "first parameter must be a kind of String or Hash"
       end
-      url += "?" + FsUtils.querystring_from_hash(params_hash) unless params_hash.empty?
+      url += add_querystring(params_hash) #"?" + FsUtils.querystring_from_hash(params_hash) unless params_hash.empty?
       response = @fs_communicator.get(url)
       familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.from_json JSON.parse(response.body)
       # require 'pp'
@@ -152,7 +152,7 @@ module FamilytreeV2
       url = "#{Base}person/#{base_id}/#{relationship_type}/#{with_id}"
 
       # Get the existing person/relationship or create a new person
-      unless person = relationship(base_id,options)
+      unless person = relationship(base_id,options.merge({:events => 'none'}))
         person = Org::Familysearch::Ws::Familytree::V2::Schema::Person.new
         person.id = base_id
       end
@@ -177,7 +177,9 @@ module FamilytreeV2
     
     # ====Params
     # * <tt>base_id</tt> - The root person for creating the relationship
-    # * <tt>options</tt> - Should include either :parent, :spouse, or :child. :lineage and :event is optional
+    # * <tt>options</tt> - Should include either :parent, :spouse, or :child. :lineage and :event is optional.
+    #   Other Relationship Read parameters may be included in options such as :events => 'all', 
+    #   :characteristics => 'all', etc.
     #
     # If the :lineage is set, the parent-child relationships will be written via a characteristic.
     # Otherwise, an exists assertion will be created to just establish the relationship.
@@ -190,6 +192,7 @@ module FamilytreeV2
         r_type = get_relationship_type(options)
         with_id = options[r_type.to_sym]
         url = "#{Base}person/#{base_id}/#{r_type}/#{with_id}"
+        url += add_querystring(options)
         res = @fs_communicator.get(url)
         familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.from_json JSON.parse(res.body)
         person = familytree.persons.find{|p|p.id == base_id}
@@ -221,6 +224,11 @@ module FamilytreeV2
       keys = options.keys.collect{|k|k.to_s}
       key = keys.find{|k| ['parent','child','spouse'].include? k} 
       key
+    end
+    
+    def add_querystring(options)
+      params = options.reject{|k,v| ['parent','child','spouse','lineage','event'].include? k.to_s }
+      (params.empty?) ? '' : "?" + FsUtils.querystring_from_hash(params)
     end
   end
   

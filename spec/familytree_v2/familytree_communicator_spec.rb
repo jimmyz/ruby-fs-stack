@@ -274,7 +274,7 @@ describe FamilytreeV2::Communicator do
       end
       
       it "should first try to read the relationship" do
-        @fs_com_mock.should_receive(:get).with('/familytree/v2/person/KWQS-BBQ/parent/KWQS-BBR').and_return(@res)
+        @fs_com_mock.should_receive(:get).with('/familytree/v2/person/KWQS-BBQ/parent/KWQS-BBR?events=none').and_return(@res)
         @ft_v2_com.write_relationship 'KWQS-BBQ', :parent => 'KWQS-BBR', :lineage => 'Biological'
       end
       
@@ -339,7 +339,7 @@ describe FamilytreeV2::Communicator do
       end
       
       it "should first try to read the relationship" do
-        @fs_com_mock.should_receive(:get).with('/familytree/v2/person/KWQS-BBQ/parent/KWQS-BBR').and_return(@res)
+        @fs_com_mock.should_receive(:get).with('/familytree/v2/person/KWQS-BBQ/parent/KWQS-BBR?events=none').and_return(@res)
         @ft_v2_com.write_relationship 'KWQS-BBQ', :parent => 'KWQS-BBR', :lineage => 'Biological'
       end
       
