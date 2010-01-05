@@ -19,8 +19,10 @@ describe FsUtils do
     end
     
     it "should url_encode all of the hash values" do
-      qstring = FsUtils.querystring_from_hash :name => "Parker Felch"
+      hash = {:name => "Parker Felch"}
+      qstring = FsUtils.querystring_from_hash hash
       qstring.should == 'name=Parker%20Felch'
+      hash[:name].should_not == 'Parker%20Felch'
     end
     
     it "should convert sub-hashes into key.subkey=value" do
