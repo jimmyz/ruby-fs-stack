@@ -98,6 +98,19 @@ or for the pure Ruby implementation
   new_person.id #=> 'KWQS-ZZZ'
   new_person.version #=> '687799'
 
+=== Selecting the Summary View
+  
+  # assuming you know the value IDs that you want to set as summary
+  # grab a person with the ID and version set
+  person = communicator.familytree_v2.person 'KWQS-BBQ', :names => 'none', :events => 'none', :genders => 'none'
+  person.select_name_summary "100078"
+  person.select_birth_summary "1089498"
+  person.select_death_summary "7834987"
+  # you must set both the mother and the father summary unless you want a single parent as the summary parents.
+  person.select_mother_summary "KWQS-MOM"
+  person.select_father_summary "KWQS-DAD"
+  communicator.save_person person
+
 == RDoc
 
 RDoc is hosted at rdoc.info:

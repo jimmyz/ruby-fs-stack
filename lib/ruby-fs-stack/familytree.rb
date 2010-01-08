@@ -300,6 +300,12 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       self.value = NameValue.new
       self.value.add_form(value)
     end
+    
+    def select(value_id)
+      self.action = 'Select'
+      self.value = AssertionValue.new
+      self.value.id = value_id
+    end
   end
   
   class EventValue
@@ -327,6 +333,13 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       self.value.type = options[:type]
       self.value.add_date(options[:date]) if options[:date]
       self.value.add_place(options[:place]) if options[:place]
+    end
+    
+    def select(type,value_id)
+      self.value = EventValue.new
+      self.value.id = value_id
+      self.value.type = type
+      self.action = 'Select'
     end
     
     # To make porting code from v1 to v2 easier, date will reference
@@ -424,11 +437,25 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       n.add_value(value)
       self.names << n
     end
+    
+    def select_name(value_id)
+      self.names ||= []
+      n = NameAssertion.new
+      n.select(value_id)
+      self.names << n
+    end
         
     def add_event(options)
       self.events ||= []
       e = EventAssertion.new
       e.add_value(options)
+      self.events << e
+    end
+    
+    def select_event_summary(type,value_id)
+      self.events ||= []
+      e = EventAssertion.new
+      e.select(type,value_id)
       self.events << e
     end
     
@@ -438,6 +465,7 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       o.add_value(options)
       self.ordinances << o
     end
+    
   end
   
   class CharacteristicAssertion
@@ -534,6 +562,22 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
     private
     def add_assertions!
       self.assertions ||= RelationshipAssertions.new
+    end
+  end
+  
+  class ParentsReference
+    def select_parent(parent_id, gender)
+      add_parents!
+      self.action = 'Select'
+      parent = PersonReference.new
+      parent.gender = gender
+      parent.id = parent_id
+      self.parents << parent
+    end
+    
+    private
+    def add_parents!
+      self.parents ||= []
     end
   end
   
@@ -673,6 +717,23 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       assertions.add_name(value)
     end
     
+    # Select the name for the summary view. This should be called on a Person record that
+    # contains a person id and version.
+    # 
+    # ====Params
+    # <tt>value_id</tt> - the value id of a name assertion that you would like to set as the summary
+    # 
+    # ===Example
+    #   person = com.familytree_v2.person 'KWQS-BBR', :names => 'none', :genders => 'none', :events => 'none'
+    #   person.select_name_summary('1000134')
+    #   com.familytree_v2.save_person person
+    # 
+    # This is the recommended approach, to start with a "Version" person (no names, genders, or events)
+    def select_name_summary(value_id)
+      add_assertions!
+      assertions.select_name(value_id)
+    end
+    
     def births
       select_events('Birth')
     end
@@ -710,6 +771,23 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       options[:type] = 'Birth'
       assertions.add_event(options)
     end
+    
+    # Select the birth for the summary view. This should be called on a Person record that
+    # contains a person id and version.
+    # 
+    # ====Params
+    # <tt>value_id</tt> - the value id of a birth assertion that you would like to set as the summary
+    # 
+    # ===Example
+    #   person = com.familytree_v2.person 'KWQS-BBR', :names => 'none', :genders => 'none', :events => 'none'
+    #   person.select_birth_summary('1000134')
+    #   com.familytree_v2.save_person person
+    # 
+    # This is the recommended approach, to start with a "Version" person (no names, genders, or events)
+    def select_birth_summary(value_id)
+      add_assertions!
+      assertions.select_event_summary('Birth',value_id)
+    end
         
     # Add an event with type of Birth
     #
@@ -723,6 +801,69 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       add_assertions!
       options[:type] = 'Death'
       assertions.add_event(options)
+    end
+    
+    # Select the death for the summary view. This should be called on a Person record that
+    # contains a person id and version.
+    # 
+    # ====Params
+    # <tt>value_id</tt> - the value id of a death assertion that you would like to set as the summary
+    # 
+    # ===Example
+    #   person = com.familytree_v2.person 'KWQS-BBR', :names => 'none', :genders => 'none', :events => 'none'
+    #   person.select_death_summary('1000134')
+    #   com.familytree_v2.save_person person
+    # 
+    # This is the recommended approach, to start with a "Version" person (no names, genders, or events)
+    def select_death_summary(value_id)
+      add_assertions!
+      assertions.select_event_summary('Death',value_id)
+    end
+    
+    # Select the mother for the summary view. This should be called on a Person record that
+    # contains a person id and version. 
+    # 
+    # Make sure you set both the mother and father before saving the person. Otherwise you will 
+    # set a single parent as the summary.
+    # 
+    # ====Params
+    # <tt>person_id</tt> - the person id of the mother that you would like to set as the summary
+    # 
+    # ===Example
+    #   person = com.familytree_v2.person 'KWQS-BBR', :names => 'none', :genders => 'none', :events => 'none'
+    #   person.select_mother_summary('KWQS-BBQ')
+    #   person.select_father_summary('KWQS-BBT')
+    #   com.familytree_v2.save_person person
+    # 
+    # This is the recommended approach, to start with a "Version" person (no names, genders, or events)
+    def select_mother_summary(person_id)
+      add_parents!
+      couple = parents[0] || ParentsReference.new
+      couple.select_parent(person_id,'Female')
+      parents << couple 
+    end
+    
+    # Select the father for the summary view. This should be called on a Person record that
+    # contains a person id and version. 
+    # 
+    # Make sure you set both the mother and father before saving the person. Otherwise you will 
+    # set a single parent as the summary.
+    # 
+    # ====Params
+    # <tt>person_id</tt> - the person id of the father that you would like to set as the summary
+    # 
+    # ===Example
+    #   person = com.familytree_v2.person 'KWQS-BBR', :names => 'none', :genders => 'none', :events => 'none'
+    #   person.select_father_summary('KWQS-BBQ')
+    #   person.select_mother_summary('KWQS-BBT')
+    #   com.familytree_v2.save_person person
+    # 
+    # This is the recommended approach, to start with a "Version" person (no names, genders, or events)
+    def select_father_summary(person_id)
+      add_parents!
+      couple = parents[0] || ParentsReference.new
+      couple.select_parent(person_id,'Male')
+      parents << couple 
     end
     
     def baptisms
@@ -851,6 +992,10 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
     end
   
     private
+    
+    def add_parents!
+      self.parents ||= []
+    end
     
     def add_relationships!
       self.relationships ||= PersonRelationships.new

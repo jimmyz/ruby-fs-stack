@@ -274,6 +274,104 @@ describe Org::Familysearch::Ws::Familytree::V2::Schema::Person do
       end
     end
     
+    describe "selecting summaries" do
+      before(:each) do
+        @person = parse_person('KJ86-3VD_version.js')
+      end
+      
+      describe "select_name_summary" do
+        
+        it "should accept a value ID" do
+          @person.select_name_summary('10001')
+        end
+        
+        it "should add a name assertion with action, value, and id" do
+          @person.select_name_summary('10001')
+          @person.assertions.names[0].value.id.should == '10001'
+          @person.assertions.names[0].action.should == 'Select'
+        end
+        
+      end
+      
+      describe "select_birth_summary" do
+        
+        it "should accept a value ID" do
+          @person.select_birth_summary('10001')
+        end
+        
+        it "should add a name assertion with action, value, and id" do
+          @person.select_birth_summary('10001')
+          @person.births[0].value.id.should == '10001'
+          @person.births[0].action.should == 'Select'
+        end
+        
+      end
+      
+      describe "select_death_summary" do
+        
+        it "should accept a value ID" do
+          @person.select_death_summary('10001')
+        end
+        
+        it "should add a name assertion with action, value, and id" do
+          @person.select_death_summary('10002')
+          @person.deaths[0].value.id.should == '10002'
+          @person.deaths[0].action.should == 'Select'
+        end
+        
+      end
+      
+      describe "select_mother_summary" do
+        
+        it "should accept a parent ID" do
+          @person.select_mother_summary('KWQS-BBR')
+        end
+        
+        it "should set the parents with given mother as a selected parent" do
+          @person.select_mother_summary('KWQS-BBR')
+          @person.parents[0].parents[0].id.should == 'KWQS-BBR'
+          @person.parents[0].parents[0].gender.should == 'Female'
+          @person.parents[0].action.should == 'Select'
+        end
+        
+      end
+      
+      describe "select_father_summary" do
+        
+        it "should accept a parent ID" do
+          @person.select_father_summary('KWQS-BBQ')
+        end
+        
+        it "should set the parents with given mother as a selected parent" do
+          @person.select_father_summary('KWQS-BBQ')
+          @person.parents[0].parents[0].id.should == 'KWQS-BBQ'
+          @person.parents[0].parents[0].gender.should == 'Male'
+          @person.parents[0].action.should == 'Select'
+        end
+        
+      end
+      
+      describe "select_father_summary and select_mother_summary" do
+        
+        it "should accept a parent ID" do
+          @person.select_mother_summary('KWQS-BBR')
+          @person.select_father_summary('KWQS-BBQ')
+        end
+        
+        it "should set the parents with given mother as a selected parent" do
+          @person.select_mother_summary('KWQS-BBR')
+          @person.select_father_summary('KWQS-BBQ')
+          @person.parents[0].parents[0].id.should == 'KWQS-BBR'
+          @person.parents[0].parents[1].id.should == 'KWQS-BBQ'
+          @person.parents[0].parents[0].gender.should == 'Female'
+          @person.parents[0].parents[1].gender.should == 'Male'
+          @person.parents[0].action.should == 'Select'
+        end
+        
+      end
+      
+    end
+    
     describe "baptisms" do
       describe "for persons with at least one baptism" do
         before(:each) do
