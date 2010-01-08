@@ -194,8 +194,7 @@ describe Org::Familysearch::Ws::Familytree::V2::Schema::Person do
       end
       
       it "should return the 'selected' birth if an assertion is selected" do
-        pending
-        @person.births[1].selected = true
+        @person.births[1].selected = Org::Familysearch::Ws::Familytree::V2::Schema::ValueSelection.new
         @person.birth.should == @person.births[1]
       end
       
@@ -259,8 +258,7 @@ describe Org::Familysearch::Ws::Familytree::V2::Schema::Person do
       end
       
       it "should return the 'selected' death if an assertion is selected" do
-        pending
-        @person.deaths[1].selected = true
+        @person.deaths[1].selected = Org::Familysearch::Ws::Familytree::V2::Schema::ValueSelection.new
         @person.death.should == @person.deaths[1]
       end
       
@@ -366,6 +364,20 @@ describe Org::Familysearch::Ws::Familytree::V2::Schema::Person do
           @person.parents[0].parents[0].gender.should == 'Female'
           @person.parents[0].parents[1].gender.should == 'Male'
           @person.parents[0].action.should == 'Select'
+        end
+        
+      end
+      
+      describe "select_spouse_summary" do
+        
+        it "should accept a spouse's ID" do
+          @person.select_spouse_summary('KWQS-BBB')
+        end
+        
+        it "should set the families with given spouse as a selected parent" do
+          @person.select_spouse_summary('KWQS-BBB')
+          @person.families[0].parents[0].id.should == 'KWQS-BBB'
+          @person.families[0].action.should == 'Select'
         end
         
       end

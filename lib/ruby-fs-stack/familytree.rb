@@ -565,6 +565,21 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
     end
   end
   
+  class FamilyReference
+    def select_spouse(spouse_id)
+      add_parents!
+      self.action = 'Select'
+      parent = PersonReference.new
+      parent.id = spouse_id
+      self.parents << parent
+    end
+    
+    private
+    def add_parents!
+      self.parents ||= []
+    end
+  end
+  
   class ParentsReference
     def select_parent(parent_id, gender)
       add_parents!
@@ -866,6 +881,25 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       parents << couple 
     end
     
+    # Select the spouse for the summary view. This should be called on a Person record that
+    # contains a person id and version. 
+    # 
+    # ====Params
+    # <tt>person_id</tt> - the person id of the spouse that you would like to set as the summary
+    # 
+    # ===Example
+    #   person = com.familytree_v2.person 'KWQS-BBR', :names => 'none', :genders => 'none', :events => 'none'
+    #   person.select_spouse_summary('KWQS-BBQ')
+    #   com.familytree_v2.save_person person
+    # 
+    # This is the recommended approach, to start with a "Version" person (no names, genders, or events)
+    def select_spouse_summary(person_id)
+      add_families!
+      family = FamilyReference.new
+      family.select_spouse(person_id)
+      families << family 
+    end
+    
     def baptisms
       select_ordinances('Baptism')
     end
@@ -995,6 +1029,10 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
     
     def add_parents!
       self.parents ||= []
+    end
+    
+    def add_families!
+      self.families ||= []
     end
     
     def add_relationships!

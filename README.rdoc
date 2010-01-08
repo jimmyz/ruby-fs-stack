@@ -106,6 +106,7 @@ or for the pure Ruby implementation
   person.select_name_summary "100078"
   person.select_birth_summary "1089498"
   person.select_death_summary "7834987"
+  person.select_spouse_summary "KWQS-BBB"
   # you must set both the mother and the father summary unless you want a single parent as the summary parents.
   person.select_mother_summary "KWQS-MOM"
   person.select_father_summary "KWQS-DAD"
