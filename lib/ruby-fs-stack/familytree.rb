@@ -1000,10 +1000,10 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
     # 
     # ====Params
     # * <tt>options</tt> - requires the following: 
-    # ** :type - 'parent', 'child', 'spouse'
-    # ** :with - ID of the person with whom you are making the relationship
-    # ** :lineage (optional) - 'Biological', 'Adoptive', etc.
-    # ** :event - a hash with values {:type => 'Marriage', :date => '15 Nov 2007', :place => 'Utah, United States'}
+    #   * :type - 'parent', 'child', 'spouse'
+    #   * :with - ID of the person with whom you are making the relationship
+    #   * :lineage (optional) - 'Biological', 'Adoptive', etc.
+    #   * :event - a hash with values {:type => 'Marriage', :date => '15 Nov 2007', :place => 'Utah, United States'}
     def create_relationship(options)
       raise ArgumentError, ":type option is required" if options[:type].nil?
       raise ArgumentError, ":with option is required" if options[:with].nil?
