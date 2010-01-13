@@ -58,7 +58,7 @@ or for the pure Ruby implementation
   puts "Person's version: " + vperson.person
   
   # read the person and the parent, family, and child information
-  person = ftcom.person 'KW3B-NNM', :parents => 'summary', :families => 'all', :children => 'all'
+  person = communicator.familytree_v2.person 'KW3B-NNM', :parents => 'summary', :families => 'all', :children => 'all'
   
   puts "Gender: " + person.gender
   puts "First parent ID: " + person.parents[0].parents[0].id
@@ -67,7 +67,7 @@ or for the pure Ruby implementation
   puts "First spouse's ID: " + person.families[0].parents[1].id
   
   # read multiple persons in one request (up to 10)
-  people = ftcom.person ['KW3B-NNM','KWQS-BBQ','KWQS-BBR'], :parents => 'all', :children => 'all', :families => 'all'
+  people = communicator.familytree_v2.person ['KW3B-NNM','KWQS-BBQ','KWQS-BBR'], :parents => 'all', :children => 'all', :families => 'all'
   people.size #=> 3
   
 === Searching Records
