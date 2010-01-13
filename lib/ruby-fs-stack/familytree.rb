@@ -192,6 +192,7 @@ module FamilytreeV2
         r_type = get_relationship_type(options)
         with_id = options[r_type.to_sym]
         url = "#{Base}person/#{base_id}/#{r_type}/#{with_id}"
+        options.reject!{|k,v| k.to_s == 'spouse'}
         url += add_querystring(options)
         res = @fs_communicator.get(url)
         familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.from_json JSON.parse(res.body)
@@ -227,7 +228,7 @@ module FamilytreeV2
     end
     
     def add_querystring(options)
-      params = options.reject{|k,v| ['parent','child','spouse','lineage','event'].include? k.to_s }
+      params = options.reject{|k,v| ['parent','child','lineage','event'].include? k.to_s }
       (params.empty?) ? '' : "?" + FsUtils.querystring_from_hash(params)
     end
   end
