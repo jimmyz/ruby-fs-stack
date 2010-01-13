@@ -856,7 +856,7 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       add_parents!
       couple = parents[0] || ParentsReference.new
       couple.select_parent(person_id,'Female')
-      parents << couple 
+      parents[0] = couple 
     end
     
     # Select the father for the summary view. This should be called on a Person record that
@@ -879,7 +879,7 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       add_parents!
       couple = parents[0] || ParentsReference.new
       couple.select_parent(person_id,'Male')
-      parents << couple 
+      parents[0] = couple 
     end
     
     # Select the spouse for the summary view. This should be called on a Person record that

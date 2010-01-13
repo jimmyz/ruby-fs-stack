@@ -364,6 +364,7 @@ describe Org::Familysearch::Ws::Familytree::V2::Schema::Person do
           @person.parents[0].parents[0].gender.should == 'Female'
           @person.parents[0].parents[1].gender.should == 'Male'
           @person.parents[0].action.should == 'Select'
+          @person.parents.size.should == 1
         end
         
       end
