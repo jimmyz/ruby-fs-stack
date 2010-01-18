@@ -196,7 +196,7 @@ module FamilytreeV2
         url += add_querystring(options)
         res = @fs_communicator.get(url)
         familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.from_json JSON.parse(res.body)
-        person = familytree.persons.find{|p|p.id == base_id}
+        person = familytree.persons.find{|p|p.requestedId == base_id}
         return person
       rescue RubyFsStack::NotFound
         return nil
