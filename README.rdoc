@@ -112,6 +112,21 @@ or for the pure Ruby implementation
   person.select_father_summary "KWQS-DAD"
   communicator.familytree_v2.save_person person
 
+=== Adding notes to an assertion
+
+  # assuming you know the assertion value ID that you want to create a note on
+  note = communicator.familytree_v2.write_note :personId => 'KWQS-BBQ', :assertionId => '60000021', :text => "This is my note text."
+  note.id #=> 'ZnMtZnQucC5LVzNCLU5NRzpwLjE0MDAwMDAwNDIyOjQwMDAwM29nMlpWOTgxOVpCWWs4RjAwMA=='
+  
+  # As soon as this bug is fixed, https://issues.devnet.familysearch.org/issues/show/149, it you can write
+  # notes on relationship assertions
+  marriage_note = communicator.familytree_v2.write_note :spouseIds => ['KWQS-BBQ','KWQS-BBR'], :assertionId => '700000001', :text => "This is my note."
+  
+  lineage_note = communicator.familytree_v2.write_note :parentIds => ['KWQS-BBQ'], :childId => 'KWQS-BBZ', :assertionId => '700000001', :text => "This is my note."
+  
+  # To add a "Person Note" as seen in the new FamilySearch web application, attach the note to an exists assertion
+  # You find these by doing a person read with the :exists => 'all' option.
+
 == RDoc
 
 RDoc is hosted at rdoc.info:

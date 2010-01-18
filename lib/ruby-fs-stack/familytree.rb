@@ -203,24 +203,6 @@ module FamilytreeV2
       end
     end
     
-    # # Writes a note attached to the value ID for a specific person.
-    # # This method should not be used with relationship assertion notes.
-    # # 
-    # # ====Params
-    # # * <tt>person_id</tt> - The ID of the person you are attaching the note to.
-    # # * <tt>value_id</tt> - The ID of the value for which you are attaching the note.
-    # # * <tt>text</tt> - The note you are attaching. Max length is 225000 characters (see /familytree/v2/properties)
-    # def write_note(person_id,value_id,text)
-    #   url = "#{Base}note"
-    #   note = Org::Familysearch::Ws::Familytree::V2::Schema::Note.new
-    #   note.build :personId => person_id, :assertionId => value_id, :text => text
-    #   familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.new
-    #   familytree.notes = [note]
-    #   res = @fs_communicator.post(url,familytree.to_json)
-    #   familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.from_json JSON.parse(res.body)
-    #   return familytree.notes.first
-    # end
-    
     # Writes a note attached to the value ID of the specific person or relationship.
     # 
     # ====Params
@@ -230,7 +212,7 @@ module FamilytreeV2
     #     relationship assertion.
     #   * <tt>:parentIds</tt> - an Array of parent IDs if creating a note attached to a parent 
     #     relationship assertion. If creating a note for a child-parent or parent-child 
-    # relationship, you will need only one parent ID in the array along with a :childId option.
+    #     relationship, you will need only one parent ID in the array along with a :childId option.
     #   * <tt>:childId</tt> - a child ID.
     #   * <tt>:text</tt> - the text of the note (required).
     #   * <tt>:assertionId</tt> - the valueId of the assertion you are attaching this note to.
@@ -1169,7 +1151,7 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
     #     relationship assertion.
     #   * <tt>:parentIds</tt> - an Array of parent IDs if creating a note attached to a parent 
     #     relationship assertion. If creating a note for a child-parent or parent-child 
-    # relationship, you will need only one parent ID in the array along with a :childId option.
+    #     relationship, you will need only one parent ID in the array along with a :childId option.
     #   * <tt>:childId</tt> - a child ID.
     #   * <tt>:text</tt> - the text of the note (required).
     #   * <tt>:assertionId</tt> - the valueId of the assertion you are attaching this note to.
