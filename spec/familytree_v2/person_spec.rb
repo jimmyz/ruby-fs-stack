@@ -272,6 +272,44 @@ describe Org::Familysearch::Ws::Familytree::V2::Schema::Person do
       end
     end
     
+    describe "marriages" do
+      before(:each) do
+        @person = parse_person('spouse_read.js')
+      end
+      
+      it "should accept a spouse id." do
+        @person.marriages('KW3B-VVY')
+      end
+      
+      it "should return an array of marriage elements" do
+        marriages = @person.marriages('KW3B-VVY')
+        marriages.should be_instance_of(Array)
+      end
+      
+      it "should return all marriages" do
+        marriages = @person.marriages('KW3B-VVY')
+        marriages[0].date.normalized.should == '1853'
+        marriages[1].date.normalized.should == 'Aug 1853'
+      end
+      
+      describe "checking for cases where there are no assertsions, events, or marriages" do
+        before(:each) do
+          @spouse = @person.relationships.spouses.find{|s|s.requestedId=='KW3B-VVY'}
+        end
+        
+        it "should return [] if no assertions" do
+          @spouse.assertions = nil
+          @person.marriages('KW3B-VVY').should == []
+        end
+        
+        it "should return [] if no events" do
+          @spouse.assertions.events = nil
+          @person.marriages('KW3B-VVY').should == []
+        end
+        
+      end
+    end
+    
     describe "selecting summaries" do
       before(:each) do
         @person = parse_person('KJ86-3VD_version.js')

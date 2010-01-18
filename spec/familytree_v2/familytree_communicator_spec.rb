@@ -368,6 +368,95 @@ describe FamilytreeV2::Communicator do
     end
   end
   
+  describe "writing new notes" do
+    before(:each) do
+      @fs_com_mock = mock("FsCommunicator")
+      @res = mock("HTTP::Response")
+      @ft_v2_com = FamilytreeV2::Communicator.new @fs_com_mock
+      
+      @response_json = read_file("../note_create_response.js")
+      @res.stub!(:body).and_return(@response_json)
+      
+      @fs_com_mock.stub!(:post).and_return(@res)
+      
+      @note = Org::Familysearch::Ws::Familytree::V2::Schema::Note.new
+    end
+    
+    describe "write_note for person assertions" do
+      before(:each) do
+        @options = {:personId => 'KWQS-BBQ',:assertionId => '10002', :text => 'MYNOTE.'}
+      end
+      
+      it "should take a person ID, assertion ID, and text" do
+        @ft_v2_com.write_note(@options)
+      end
+      
+      it "should create a new Note" do
+        note = Org::Familysearch::Ws::Familytree::V2::Schema::Note.new
+        Org::Familysearch::Ws::Familytree::V2::Schema::Note.should_receive(:new).at_least(:once).and_return(note)
+        @ft_v2_com.write_note(@options)
+      end
+      
+      it "should build the note with the passed options" do
+        Org::Familysearch::Ws::Familytree::V2::Schema::Note.stub!(:new).and_return(@note)
+        @note.should_receive(:build).with(@options)
+        @ft_v2_com.write_note(@options)
+      end
+      
+      it "should POST the note to /familytree/v2/note" do
+        @note.build @options
+        familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.new
+        familytree.notes = [@note]
+        @fs_com_mock.should_receive(:post).with('/familytree/v2/note',familytree.to_json).and_return(@res)
+        @ft_v2_com.write_note(@options)
+      end
+      
+      it "should return the created note (containing the ID)" do
+        result = @ft_v2_com.write_note(@options)
+        result.id.should == 'ZnMtZnQucC5LVzNCLU5NRzpwLjE0MDAwMDAwNDIyOjQwMDAwM29nMlpWOTgxOVpCWWs4RjAwMA=='
+      end
+      
+    end
+    
+    describe "write_note for relationships" do
+      
+      before(:each) do
+        @options = {:spouseIds => ['KWQS-BBQ','KWQS-BBR'],:assertionId => '10002', :text => 'MYNOTE.'}
+      end
+      
+      it "should take hash of options including the assertion ID, and text" do
+        @ft_v2_com.write_note(@options)
+      end
+      
+      it "should create a new Note" do
+        note = Org::Familysearch::Ws::Familytree::V2::Schema::Note.new
+        Org::Familysearch::Ws::Familytree::V2::Schema::Note.should_receive(:new).at_least(:once).and_return(note)
+        @ft_v2_com.write_note(@options)
+      end
+      
+      it "should build the note with the passed options" do
+        Org::Familysearch::Ws::Familytree::V2::Schema::Note.stub!(:new).and_return(@note)
+        @note.should_receive(:build).with(@options)
+        @ft_v2_com.write_note(@options)
+      end
+      
+      it "should POST the note to /familytree/v2/note" do
+        @note.build @options.clone
+        familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.new
+        familytree.notes = [@note]
+        @fs_com_mock.should_receive(:post).with('/familytree/v2/note',familytree.to_json).and_return(@res)
+        @ft_v2_com.write_note(@options)
+      end
+      
+      it "should return the created note (containing the ID)" do
+        result = @ft_v2_com.write_note(@options)
+        result.id.should == 'ZnMtZnQucC5LVzNCLU5NRzpwLjE0MDAwMDAwNDIyOjQwMDAwM29nMlpWOTgxOVpCWWs4RjAwMA=='
+      end
+      
+    end
+    
+  end
+  
   describe "combining persons" do
     def new_person(id,version)
       p = FamilyTreeV2::Person.new
