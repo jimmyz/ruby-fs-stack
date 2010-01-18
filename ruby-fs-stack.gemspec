@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{ruby-fs-stack}
-  s.version = "0.4.1"
+  s.version = "0.4.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jimmy Zimmerman"]
-  s.date = %q{2010-01-13}
+  s.date = %q{2010-01-18}
   s.description = %q{A library that enables you to read and update information with the new.familysearch.org API.}
   s.email = %q{jimmy.zimmerman@gmail.com}
   s.extra_rdoc_files = [
@@ -43,6 +43,7 @@ Gem::Specification.new do |s|
      "spec/familytree_v2/json/combine_request.js",
      "spec/familytree_v2/json/combine_response.js",
      "spec/familytree_v2/json/match_KW3B-NNM.js",
+     "spec/familytree_v2/json/note_create_response.js",
      "spec/familytree_v2/json/person/KJ86-3VD_all.js",
      "spec/familytree_v2/json/person/KJ86-3VD_version.js",
      "spec/familytree_v2/json/person/multiple_version_read.js",
@@ -50,8 +51,10 @@ Gem::Specification.new do |s|
      "spec/familytree_v2/json/person/relationship_not_found.js",
      "spec/familytree_v2/json/person/relationship_read.js",
      "spec/familytree_v2/json/person/relationship_update.js",
+     "spec/familytree_v2/json/person/spouse_read.js",
      "spec/familytree_v2/json/search.js",
      "spec/familytree_v2/match_results_spec.rb",
+     "spec/familytree_v2/note_spec.rb",
      "spec/familytree_v2/person_spec.rb",
      "spec/familytree_v2/search_results_spec.rb",
      "spec/fixtures/fakeweb_response.txt",
@@ -71,6 +74,7 @@ Gem::Specification.new do |s|
     "spec/communicator_spec.rb",
      "spec/familytree_v2/familytree_communicator_spec.rb",
      "spec/familytree_v2/match_results_spec.rb",
+     "spec/familytree_v2/note_spec.rb",
      "spec/familytree_v2/person_spec.rb",
      "spec/familytree_v2/search_results_spec.rb",
      "spec/fs_utils_spec.rb",
