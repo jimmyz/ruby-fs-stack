@@ -804,6 +804,11 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       select_spouse_events('Marriage',for_person)
     end
     
+    # This should only be called on a person containing relationships
+    def divorces(for_person)
+      select_spouse_events('Divorce',for_person)
+    end
+    
     # Add an event with type of Birth
     #
     # ====Params
