@@ -446,4 +446,39 @@ describe FsCommunicator do
     
   end
   
+  describe "timeout" do
+    before(:each) do
+      options = {
+        :domain => 'https://api.familysearch.org', 
+        :key => '1111-1111', 
+        :user_agent => "FsCommunicator/0.1",
+        :session => 'SESSID',
+        :timeout => 300
+      }
+      @com = FsCommunicator.new options
+      
+      stub_net_objects #found in the spec helper
+      @url = '/familytree/v1/person/KWQS-BBQ'
+      @session_url = @url + "?sessionId=#{@com.session}&dataFormat=application/json"
+      @res = mock('HTTP::Response')
+      @res.stub!(:code).and_return('200')
+      @http.stub!(:start).and_return(@res)
+    end
+    
+    it "should set timeout attr" do
+      @com.domain.should == 'https://api.familysearch.org'
+      @com.timeout.should == 300
+    end
+    
+    it "should set the http's read_timeout inside of the get method" do
+      @http.should_receive(:read_timeout=).with(300)
+      @com.get(@url)
+    end
+    
+    it "should set the http's read_timeout inside of the post method" do
+      @http.should_receive(:read_timeout=).with(300)
+      @com.post(@url,'payload')
+    end
+  end
+  
 end

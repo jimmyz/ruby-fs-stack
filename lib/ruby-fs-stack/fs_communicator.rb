@@ -3,7 +3,7 @@ require 'net/https'
 require 'uri'
 
 class FsCommunicator
-  attr_accessor :domain, :key, :user_agent, :session, :handle_throttling, :logger
+  attr_accessor :domain, :key, :user_agent, :session, :handle_throttling, :logger, :timeout
   include RubyFsStack
   # ====Params
   # <tt>options</tt> - a hash with the following options
@@ -29,7 +29,8 @@ class FsCommunicator
       :user_agent => 'FsCommunicator/0.1 (Ruby)', # should be overridden by options user_agent
       :session => nil,
       :handle_throttling => false,
-      :logger => nil
+      :logger => nil,
+      :timeout => nil
     }.merge(options)
     @domain = o[:domain]
     @key = o[:key]
@@ -37,6 +38,7 @@ class FsCommunicator
     @session = o[:session]
     @handle_throttling = o[:handle_throttling]
     @logger = o[:logger]
+    @timeout = o[:timeout]
   end
   
   def post(url,payload)
@@ -49,6 +51,7 @@ class FsCommunicator
     
     http = Net::HTTP.new(uri.host, uri.port)
     set_ssl(http) if uri.scheme == 'https'
+    http.read_timeout = @timeout unless @timeout.nil?
     
     log_request('POST',full_url,request) if logger
     res = http.start do |ht|
@@ -76,6 +79,7 @@ class FsCommunicator
     
     http = Net::HTTP.new(uri.host, uri.port)
     set_ssl(http) if uri.scheme == 'https'
+    http.read_timeout = @timeout unless @timeout.nil?
     
     log_request('GET',full_url,request) if logger
     res = http.start do |ht|
