@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{ruby-fs-stack}
-  s.version = "0.4.4"
+  s.version = "0.4.5"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jimmy Zimmerman"]
-  s.date = %q{2010-02-19}
+  s.date = %q{2010-02-24}
   s.description = %q{A library that enables you to read and update information with the new.familysearch.org API.}
   s.email = %q{jimmy.zimmerman@gmail.com}
   s.extra_rdoc_files = [
@@ -45,6 +45,7 @@ Gem::Specification.new do |s|
      "spec/familytree_v2/json/match_KW3B-NNM.js",
      "spec/familytree_v2/json/note_create_response.js",
      "spec/familytree_v2/json/person/KJ86-3VD_all.js",
+     "spec/familytree_v2/json/person/KJ86-3VD_parents_families.js",
      "spec/familytree_v2/json/person/KJ86-3VD_version.js",
      "spec/familytree_v2/json/person/multiple_version_read.js",
      "spec/familytree_v2/json/person/post_response.js",
