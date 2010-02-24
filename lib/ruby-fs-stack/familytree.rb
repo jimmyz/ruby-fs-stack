@@ -1060,8 +1060,30 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
         persona
       end
     end
+    
+    def father_id
+      parent_id('Male')
+    end
+    
+    def mother_id
+      parent_id('Female')
+    end
+    
+    def spouse_id
+      if families && families[0] && families[0].parents
+        spouse_ref = families[0].parents.find{|p|p.id != self.id}
+        spouse_ref.id if spouse_ref
+      end
+    end
   
     private
+    
+    def parent_id(gender)
+      if parents && parents[0]
+        parent_ref = parents[0].parents.find{|p|p.gender == gender}
+        parent_ref.id if parent_ref
+      end
+    end
     
     def add_parents!
       self.parents ||= []

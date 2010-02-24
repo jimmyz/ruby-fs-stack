@@ -144,6 +144,63 @@ describe Org::Familysearch::Ws::Familytree::V2::Schema::Person do
       
     end
     
+    describe "father_id" do
+      before(:each) do
+        @person = parse_person('KJ86-3VD_parents_families.js')
+      end
+      
+      it "should give me the father's ID" do
+        @person.father_id.should == 'KJ86-3VW'
+      end
+      
+      it "should give me nil if any of the parent elements are missing" do
+        @person.parents[0].parents = []
+        @person.father_id.should == nil
+        @person.parents = []
+        @person.father_id.should == nil
+        @person.parents = nil
+        @person.father_id.should == nil
+      end
+    end
+    
+    describe "mother_id" do
+      before(:each) do
+        @person = parse_person('KJ86-3VD_parents_families.js')
+      end
+      
+      it "should give me the mother's ID" do
+        @person.mother_id.should == 'KFY6-FC8'
+      end
+      
+      it "should give me nil if any of the parent elements are missing" do
+        @person.parents[0].parents = []
+        @person.mother_id.should == nil
+        @person.parents = []
+        @person.mother_id.should == nil
+        @person.parents = nil
+        @person.mother_id.should == nil
+      end
+    end
+    
+    describe "spouse_id" do
+      before(:each) do
+        @person = parse_person('KJ86-3VD_parents_families.js')
+      end
+      
+      it "should give me the spouse's ID" do
+        @person.spouse_id.should == '279W-XKJ'
+      end
+      
+      it "should give me nil if any of the parent elements are missing" do
+        @person.families[0].parents = []
+        @person.spouse_id.should == nil
+        @person.families = []
+        @person.spouse_id.should == nil
+        @person.families = nil
+        @person.spouse_id.should == nil
+      end
+    end
+    
     describe "births" do
       describe "for persons with at least one birth event" do
         before(:each) do
