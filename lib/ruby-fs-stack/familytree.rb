@@ -1196,6 +1196,19 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
   class PedigreePerson < Person
     attr_accessor :pedigree
     
+    def initialize(pedigree = nil, person = nil)
+      if person
+        @id = person.id
+        # @version = person.version if person.version
+        @assertions = person.assertions if person.assertions
+        @families = person.families if person.families
+        @parents = person.parents if person.parents
+      end
+      if pedigree
+        @pedigree = pedigree
+      end
+    end
+    
     def father
       pedigree.get_person(father_id)
     end
@@ -1203,26 +1216,7 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
     def mother
       pedigree.get_person(mother_id)
     end
-    
-    def father_id
-      parent_id('Male')
-    end
-    
-    def mother_id
-      parent_id('Female')
-    end
-    
-    private
-    def parent_id(gender)
-      id = nil
-      if self.parents && self.parents[0]
-        parent = self.parents[0].parents.find do |p|
-          p.gender == gender
-        end
-        id = (parent.nil?) ? nil : parent.id
-      end
-      return id
-    end
+        
   end
   
   class Pedigree
@@ -1238,7 +1232,13 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       graft_persons_to_self(pedigree.persons)
       @persons = @persons + pedigree.persons
     end
-        
+    
+    def <<(person)
+      p = PedigreePerson.new(self, person)
+      @persons << p
+      @person_hash[p.id] = p
+    end
+    
     def continue_nodes
       @persons.select do |person| 
         (!person.mother_id.nil? && person.mother.nil?) || (!person.father_id.nil? && person.father.nil?)

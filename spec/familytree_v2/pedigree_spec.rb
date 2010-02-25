@@ -112,5 +112,49 @@ describe Org::Familysearch::Ws::Familytree::V2::Schema::Pedigree do
     end
   end
   
+  describe "adding one person at a time via << " do 
+    
+    def parse_person(filename = 'KJ86-3VD_parents_families.js')
+      fname = File.join(File.dirname(__FILE__),'json','person',filename)
+      json_hash = JSON.parse(File.read(fname))
+      familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.from_json(json_hash)
+      familytree.persons[0]
+    end
+    
+    before(:each) do
+      @person1 = parse_person
+      @person2 = Org::Familysearch::Ws::Familytree::V2::Schema::Person.new
+      @person2.id = 'KJ86-3VW'
+      @master_pedigree = Org::Familysearch::Ws::Familytree::V2::Schema::Pedigree.new
+    end
+    
+    it "should add the person to the root if it is the first one" do
+      @master_pedigree << @person1
+      @master_pedigree.root.id.should == @person1.id
+    end
+    
+    it "should convert the Person into a PedigreePerson" do
+      @master_pedigree << @person1
+      @master_pedigree.root.should be_instance_of(Org::Familysearch::Ws::Familytree::V2::Schema::PedigreePerson)
+    end
+    
+    it "should have the assertions, families, and parents of the original person" do
+      @master_pedigree << @person1
+      @master_pedigree.root.assertions.should == @person1.assertions
+      @master_pedigree.root.families.should == @person1.families
+      @master_pedigree.root.parents.should == @person1.parents
+    end
+    
+    it "should set the PedigreePerson's :pedigree to the containing pedigree" do
+      @master_pedigree << @person1
+      @master_pedigree.root.pedigree.should == @master_pedigree
+    end
+    
+    it "should be able to get the person" do
+      @master_pedigree << @person1
+      @master_pedigree.get_person(@person1.id).id.should == @person1.id
+    end
+  end
+  
     
 end
