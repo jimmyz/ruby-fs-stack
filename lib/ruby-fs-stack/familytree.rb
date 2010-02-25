@@ -244,6 +244,31 @@ module FamilytreeV2
       return familytree.persons[0]
     end
     
+    def pedigree(id_or_ids)
+      if id_or_ids.kind_of? Array
+        multiple_ids = true
+        url = Base + 'pedigree/' + id_or_ids.join(',')
+      else
+        multiple_ids = false
+        id = id_or_ids.to_s
+        if id == 'me'
+          url = Base + 'pedigree'
+        else
+          url = Base + 'pedigree/' + id
+        end
+      end
+      # url += add_querystring(options)
+      response = @fs_communicator.get(url)
+      familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.from_json JSON.parse(response.body)
+      if multiple_ids
+        return familytree.pedigrees
+      else
+        pedigree = familytree.pedigrees.find{|p| p.requestedId == id }
+        pedigree ||= familytree.pedigrees.first if id == 'me'
+        return pedigree
+      end
+    end
+    
     private
     #options will either have a :parent, :child, or :spouse key. We need to find which one
     def get_relationship_type(options)
@@ -1144,6 +1169,105 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
     def mother
       parents.find{|p|p.gender == 'Female'}
     end
+  end
+  
+  class PedigreePerson < Person
+    attr_accessor :pedigree
+    
+    def father
+      pedigree.get_person(father_id)
+    end
+    
+    def mother
+      pedigree.get_person(mother_id)
+    end
+    
+    def father_id
+      parent_id('Male')
+    end
+    
+    def mother_id
+      parent_id('Female')
+    end
+    
+    private
+    def parent_id(gender)
+      id = nil
+      if self.parents && self.parents[0]
+        parent = self.parents[0].parents.find do |p|
+          p.gender == gender
+        end
+        id = (parent.nil?) ? nil : parent.id
+      end
+      return id
+    end
+  end
+  
+  class Pedigree
+    attr_accessor :person_hash
+    
+    def initialize
+      @person_hash = {}
+      @persons = []
+    end
+    
+    def injest(pedigree)
+      @person_hash.merge!(pedigree.person_hash)
+      graft_persons_to_self(pedigree.persons)
+      @persons = @persons + pedigree.persons
+    end
+        
+    def continue_nodes
+      @persons.select do |person| 
+        (!person.mother_id.nil? && person.mother.nil?) || (!person.father_id.nil? && person.father.nil?)
+      end
+    end
+        
+    def continue_node_ids
+      continue_nodes.collect{|n|n.id}
+    end
+    
+    def continue_ids
+      cns = continue_nodes
+      father_ids = cns.select{|n|!n.father_id.nil?}.collect{|n|n.father_id}
+      mother_ids = cns.select{|n|!n.mother_id.nil?}.collect{|n|n.mother_id}
+      father_ids + mother_ids
+    end
+        
+    def get_person(id)
+      @person_hash[id]
+    end
+    
+    def person_ids
+      @persons.collect{|p|p.id}
+    end
+    
+    def init_jaxb_json_hash(_o)
+      @id = String.from_json(_o['id']) unless _o['id'].nil?
+      @requestedId = String.from_json(_o['requestedId']) unless _o['requestedId'].nil?
+      if !_o['persons'].nil?
+        @persons = Array.new
+        _oa = _o['persons']
+        _oa.each do | _item | 
+          pedigree_person = Org::Familysearch::Ws::Familytree::V2::Schema::PedigreePerson.from_json(_item)
+          pedigree_person.pedigree = self
+          @persons.push pedigree_person
+          @person_hash[pedigree_person.id] = pedigree_person
+        end
+      end
+    end
+    
+    def root
+      persons.first
+    end
+    
+    private
+    def graft_persons_to_self(persons_to_graft)
+      persons_to_graft.each do |person|
+        person.pedigree = self
+      end
+    end
+    
   end
   
   class Note

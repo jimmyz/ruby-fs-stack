@@ -502,4 +502,30 @@ describe FamilytreeV2::Communicator do
     end
   end
   
+  describe "pedigree read" do
+    before(:each) do
+      options = {
+        :domain => 'https://fakeweb.familysearch.org', 
+        :key => '1111-1111', 
+        :user_agent => "FsCommunicator/0.1",
+        :session => 'SESSID',
+      }
+      @com = FsCommunicator.new options
+      response = File.join(File.dirname(__FILE__),'json','fakeweb_pedigree.txt')
+      FakeWeb.register_uri(:get, "https://fakeweb.familysearch.org/familytree/v2/pedigree/KWZF-CFW?sessionId=SESSID&dataFormat=application/json", 
+                          :response => response)
+    end
+    
+    it "should read the pedigree" do
+      pedigree = @com.familytree_v2.pedigree 'KWZF-CFW'
+      pedigree.id.should == 'KWZF-CFW'
+    end
+    
+    it "should have persons, the first one being the requested ID" do
+      pedigree = @com.familytree_v2.pedigree 'KWZF-CFW'
+      pedigree.persons.first.id.should == 'KWZF-CFW'
+    end
+    
+  end
+  
 end
