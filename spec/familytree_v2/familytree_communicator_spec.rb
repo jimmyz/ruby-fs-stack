@@ -84,12 +84,46 @@ describe FamilytreeV2::Communicator do
       @res.stub!(:body).and_return(@json)
       @fs_com_mock.stub!(:get).and_return(@res)
       @ft_v2_com = FamilytreeV2::Communicator.new @fs_com_mock
+      @props = {'person.max.ids' => 10}
+      @ft_v2_com.stub!(:properties).and_return(@props)
     end
     
     it "should accept an array of person IDs" do
       @fs_com_mock.should_receive(:get).with('/familytree/v2/person/KW3B-VCY,KW3B-VCB,KW3B-VC1?names=none').and_return(@res)
       results = @ft_v2_com.person ["KW3B-VCY", "KW3B-VCB", "KW3B-VC1"], :names => 'none'
       results.should be_a_kind_of(Array)
+    end
+  end
+  
+  describe "person read w/ requesting more than the max IDs" do
+    before(:each) do
+      options = {
+        :domain => 'https://fakeweb.familysearch.org', 
+        :key => '1111-1111', 
+        :user_agent => "FsCommunicator/0.1",
+        :session => 'SESSID',
+      }
+      @com = FsCommunicator.new options
+      response = File.join(File.dirname(__FILE__),'json','fakeweb_properties.txt')
+      first_batch = File.join(File.dirname(__FILE__),'json','person','fakeweb_10_batch.txt')
+      second_batch = File.join(File.dirname(__FILE__),'json','person','fakeweb_6_batch.txt')
+      FakeWeb.register_uri(:get, "https://fakeweb.familysearch.org/familytree/v2/properties?sessionId=SESSID&dataFormat=application/json", 
+                          :response => response)
+      FakeWeb.register_uri(:get, "https://fakeweb.familysearch.org/familytree/v2/person/KWCZ-1WL,KWCH-DGY,KWZR-RPD,KWCH-DPM,KWCH-DP9,KN1H-HBK,KLYL-KPZ,2794-46L,279W-NDV,KWJJ-5Y3?sessionId=SESSID&dataFormat=application/json", 
+                          :response => first_batch)
+      FakeWeb.register_uri(:get, "https://fakeweb.familysearch.org/familytree/v2/person/26KN-QTT,KWCV-7F7,2NQ9-FGV,K2WM-SHZ,KCR4-MBW,KWZR-RPX?sessionId=SESSID&dataFormat=application/json", 
+                          :response => second_batch)
+      @properties = @com.familytree_v2.properties
+    end
+    
+    it "should check the properties to batch the reads by the max" do
+      @com.familytree_v2.should_receive(:properties).and_return(@properties)
+      @com.familytree_v2.person ['KWCZ-1WL','KWCH-DGY','KWZR-RPD','KWCH-DPM','KWCH-DP9','KN1H-HBK','KLYL-KPZ','2794-46L','279W-NDV','KWJJ-5Y3']
+    end
+    
+    it "should return an array of persons even if it exceeds the maximum" do
+      results = @com.familytree_v2.person ['KWCZ-1WL','KWCH-DGY','KWZR-RPD','KWCH-DPM','KWCH-DP9','KN1H-HBK','KLYL-KPZ','2794-46L','279W-NDV','KWJJ-5Y3','26KN-QTT','KWCV-7F7','2NQ9-FGV','K2WM-SHZ','KCR4-MBW','KWZR-RPX']
+      results.should have(16).things
     end
   end
   
@@ -550,6 +584,12 @@ describe FamilytreeV2::Communicator do
     it "should have the properties mapped to the hash appropriately" do
       properties = @com.familytree_v2.properties
       properties['assertion.max.notes'].should == 10
+    end
+    
+    it "should set the properties hash to an instance attr so that it doesn't make the web call each time" do
+      #don't really know how best to test this one, but it seems to be working
+      properties = @com.familytree_v2.properties
+      properties = @com.familytree_v2.properties
     end
         
   end

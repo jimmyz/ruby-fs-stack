@@ -43,6 +43,14 @@ module FamilytreeV2
       if id_or_ids.kind_of? Array
         multiple_ids = true
         url = Base + 'person/' + id_or_ids.join(',')
+        props = properties()
+        if id_or_ids.size > props['person.max.ids'] 
+          persons = []
+          id_or_ids.each_slice(props['person.max.ids']) do |ids_slice|
+            persons = persons + person(ids_slice,options)
+          end
+          return persons
+        end
       else
         multiple_ids = false
         id = id_or_ids.to_s
@@ -270,14 +278,18 @@ module FamilytreeV2
     end
     
     def properties
-      url = Base + 'properties'
-      response = @fs_communicator.get(url)
-      familytree = parse_response(response)
-      properties_hash = {}
-      familytree.properties.each do |prop|
-        properties_hash[prop.name] = prop.value.to_i
+      if @properties_hash
+        return @properties_hash
+      else
+        url = Base + 'properties'
+        response = @fs_communicator.get(url)
+        familytree = parse_response(response)
+        @properties_hash = {}
+        familytree.properties.each do |prop|
+          @properties_hash[prop.name] = prop.value.to_i
+        end
+        return @properties_hash
       end
-      properties_hash
     end
     
     private
