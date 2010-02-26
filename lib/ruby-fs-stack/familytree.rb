@@ -259,7 +259,7 @@ module FamilytreeV2
       end
       # url += add_querystring(options)
       response = @fs_communicator.get(url)
-      familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.from_json JSON.parse(response.body)
+      familytree = parse_response(response)
       if multiple_ids
         return familytree.pedigrees
       else
@@ -269,7 +269,22 @@ module FamilytreeV2
       end
     end
     
+    def properties
+      url = Base + 'properties'
+      response = @fs_communicator.get(url)
+      familytree = parse_response(response)
+      properties_hash = {}
+      familytree.properties.each do |prop|
+        properties_hash[prop.name] = prop.value.to_i
+      end
+      properties_hash
+    end
+    
     private
+    
+    def parse_response(response)
+      Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.from_json JSON.parse(response.body)
+    end
     #options will either have a :parent, :child, or :spouse key. We need to find which one
     def get_relationship_type(options)
       keys = options.keys.collect{|k|k.to_s}

@@ -528,4 +528,30 @@ describe FamilytreeV2::Communicator do
     
   end
   
+  describe "properties read" do
+    before(:each) do
+      options = {
+        :domain => 'https://fakeweb.familysearch.org', 
+        :key => '1111-1111', 
+        :user_agent => "FsCommunicator/0.1",
+        :session => 'SESSID',
+      }
+      @com = FsCommunicator.new options
+      response = File.join(File.dirname(__FILE__),'json','fakeweb_properties.txt')
+      FakeWeb.register_uri(:get, "https://fakeweb.familysearch.org/familytree/v2/properties?sessionId=SESSID&dataFormat=application/json", 
+                          :response => response)
+    end
+    
+    it "should return a hash of the properties" do
+      properties = @com.familytree_v2.properties
+      properties.class.should == Hash
+    end
+    
+    it "should have the properties mapped to the hash appropriately" do
+      properties = @com.familytree_v2.properties
+      properties['assertion.max.notes'].should == 10
+    end
+        
+  end
+  
 end

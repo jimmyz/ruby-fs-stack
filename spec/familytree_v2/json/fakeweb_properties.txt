@@ -1,0 +1,12 @@
+HTTP/1.1 200 OK
+Date: Fri, 26 Feb 2010 13:28:05 GMT
+Expires: Thu, 01 Jan 1970 00:00:00 GMT
+Cache-Control: no-cache
+Cache-Control: no-store
+Content-Type: application/json;charset=utf-8
+Content-Language: en-US
+Content-Length: 1548
+X-Pad: avoid browser bug
+Via: 1.1 rl1-pi (Juniper Networks Application Acceleration Platform - DX 5.1.8 0)
+
+{"properties":[{"name":"assertion.max.notes","value":"10"},{"name":"assertion.max.citations","value":"10"},{"name":"assertion.title.max.length","value":"64"},{"name":"assertion.value.max.length","value":"256"},{"name":"citation.max.notes","value":"10"},{"name":"contributor.max.ids","value":"20"},{"name":"date.max.length","value":"128"},{"name":"match.max.ids","value":"1"},{"name":"match.max.results","value":"100"},{"name":"note.max.ids","value":"10"},{"name":"note.max.length","value":"225000"},{"name":"note.max.updates","value":"1"},{"name":"citation.max.ids","value":"10"},{"name":"citation.max.field.length","value":"5120"},{"name":"citation.max.text.length","value":"2048"},{"name":"citation.max.updates","value":"1"},{"name":"pedigree.max.ancestors","value":"4"},{"name":"pedigree.max.descendants","value":"0"},{"name":"pedigree.max.ids","value":"2"},{"name":"person.max.ids","value":"10"},{"name":"person.max.updates","value":"1"},{"name":"persona.max.ids","value":"5"},{"name":"person.max.gedcom.ids","value":"20"},{"name":"place.max.length","value":"256"},{"name":"relationship.max.ids","value":"5"},{"name":"relationship.max.updates","value":"1"},{"name":"search.max.page.results","value":"40"},{"name":"search.max.query.results","value":"500"},{"name":"source.max.field.length","value":"5120"},{"name":"source.max.text.length","value":"2048"},{"name":"user.max.ids","value":"0"},{"name":"user.max.updates","value":"1"},{"name":"person.max.personas","value":"250"}],"version":"2.0.20091103.5215","statusCode":200,"statusMessage":"OK"}
