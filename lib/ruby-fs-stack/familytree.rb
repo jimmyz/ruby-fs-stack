@@ -354,6 +354,15 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       end
     end
     
+    def surname
+      if self.pieces.nil?
+        (self.fullText.nil?) ? nil : self.fullText.split(' ').last
+      else
+        piece = self.pieces.find{|piece|piece.type == 'Family'}
+        (piece.nil?) ? nil : piece.value
+      end
+    end
+    
     def buildFullText
       if self.pieces.nil?
         return ''
@@ -776,6 +785,21 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
     
     def full_name
       self.full_names.first
+    end
+    
+    def surnames
+      if assertions && assertions.names
+        names =  assertions.names.collect do |name|
+          name.value.forms[0].surname
+        end
+        return names.reject{|n|n.nil?}
+      else
+        []
+      end
+    end
+    
+    def surname
+      surnames.first
     end
     
     def gender

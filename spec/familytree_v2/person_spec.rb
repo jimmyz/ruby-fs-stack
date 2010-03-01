@@ -144,6 +144,108 @@ describe Org::Familysearch::Ws::Familytree::V2::Schema::Person do
       
     end
     
+    describe "surnames" do
+      describe "for persons with at least one name" do
+        before(:each) do
+          @person = parse_person
+        end
+        
+        it "should return an array of strings" do
+          names = @person.surnames
+          names.should be_a_kind_of(Array)
+          names[0].should be_a_kind_of(String)
+        end
+        
+        it "should return an array of names" do
+          names = @person.surnames
+          names.first.should == "Felch"
+        end
+        
+        it "should return a name pieced together from pieces" do
+          @person.add_name("Parker James /Fileh/")
+          names = @person.surnames
+          names[3].should == "Fileh"
+        end
+        
+        describe "surname" do
+
+          it "should return the first surname" do
+            @person.surname.should == "Felch"
+          end
+          
+        end
+      end
+      
+      describe "for persons without names" do
+        
+        def add_names_array
+          @person.assertions.names = []
+        end
+        
+        def add_blank_form
+          nameAssertion = FamTreeV2::NameAssertion.new
+          nameAssertion.value = FamTreeV2::NameValue.new
+          nameAssertion.value.forms = [FamTreeV2::NameForm.new]
+          @person.assertions.names[0] = nameAssertion
+        end
+        
+        def add_given_name_pieces
+          p1 = FamTreeV2::NamePiece.new
+          p1.type = 'Given'
+          p1.postdelimiters = ' '
+          p1.value = 'John'
+          p2 = FamTreeV2::NamePiece.new
+          p2.type = 'Given'
+          p2.postdelimiters = ' '
+          p2.value = 'Jacob'
+          @person.assertions.names[0].value.forms[0].pieces = [p1,p2]
+        end
+        
+        before(:each) do
+          @person = parse_person('KJ86-3VD_version.js')
+        end
+        
+        it "should return [] if no assertions" do
+          @person.surnames.should == []
+        end
+        
+        it "should return [] if no names" do
+          add_assertions
+          @person.surnames.should == []
+        end
+        
+        it "should return [] if names is empty" do
+          add_assertions
+          add_names_array
+          @person.surnames.should == []
+        end
+        
+        it "should return [] if a only a blank nameform" do
+          add_assertions
+          add_names_array
+          add_blank_form
+          @person.surnames.should == []
+        end
+        
+        it "should return [] and nil if no Family name piece is present" do
+          add_assertions
+          add_names_array
+          add_blank_form
+          add_given_name_pieces
+          @person.surnames.should == []
+          @person.surname.should == nil
+        end
+        
+        it "should return the last piece of the fullText string if pieces are missing" do
+          @person.add_name "Parker Felch"
+          @person.surnames.should == ['Felch']
+          @person.surname.should == 'Felch'
+        end
+        
+      end
+      
+    end
+    
     describe "father_id" do
       before(:each) do
         @person = parse_person('KJ86-3VD_parents_families.js')
