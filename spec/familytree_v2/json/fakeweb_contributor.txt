@@ -1,0 +1,14 @@
+HTTP/1.1 200 OK
+Date: Thu, 04 Mar 2010 21:25:10 GMT
+APP_SVR_ID: 9.31
+Expires: Thu, 01 Jan 1970 00:00:00 GMT
+Cache-Control: no-cache
+Cache-Control: no-store
+X-PROCESSING-TIME: 147
+Content-Type: application/json;charset=utf-8
+Content-Language: en-US
+Content-Length: 134
+Set-Cookie: ftSessionId=USYS47776926A788A2044E0BEE0AC339E945.ptap009-035; Path=/
+Connection: close
+
+{"contributors":[{"id":"MMDZ-8JD","contactName":"API User 1241"}],"version":"2.1.20100119.5407","statusCode":200,"statusMessage":"OK"}

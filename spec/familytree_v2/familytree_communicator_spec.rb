@@ -594,4 +594,31 @@ describe FamilytreeV2::Communicator do
         
   end
   
+  describe "contributor read" do
+    before(:each) do
+      options = {
+        :domain => 'https://fakeweb.familysearch.org', 
+        :key => '1111-1111', 
+        :user_agent => "FsCommunicator/0.1",
+        :session => 'SESSID',
+      }
+      @com = FsCommunicator.new options
+      response = File.join(File.dirname(__FILE__),'json','fakeweb_contributor.txt')
+      FakeWeb.register_uri(:get, "https://fakeweb.familysearch.org/familytree/v2/contributor?sessionId=SESSID&dataFormat=application/json", 
+                          :response => response)
+    end
+    
+    it "should return a contributor record" do
+      contributor = @com.familytree_v2.contributor :me
+      contributor.class.should == FamilyTreeV2::Contributor
+    end
+    
+    it "should have an ID and contact name" do
+      contributor = @com.familytree_v2.contributor :me
+      contributor.id.should == 'MMDZ-8JD'
+      contributor.contactName.should == 'API User 1241'
+    end
+            
+  end
+  
 end

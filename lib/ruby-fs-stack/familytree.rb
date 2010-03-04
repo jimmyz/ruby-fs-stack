@@ -277,6 +277,48 @@ module FamilytreeV2
       end
     end
     
+    # ===params
+    # <tt>id_or_ids</tt> should be a string of the persons identifier. For the 'me' person, use :me or 'me'. Can also accept an array of ID strings.
+    # <tt>options</tt> accepts a hash of parameters as documented by the API.
+    # For full parameter documentation, see DevNet[https://devnet.familysearch.org/docs/api-manual-reference-system/familytree-v2/r_api_family_tree_person_read_v2.html]
+    #
+    # ===Example
+    #   # communicator is an authenticated FsCommunicator object
+    #   # Request a person with no assertions, only the version.
+    #   p = communicator.familytree_v2.person :me, :names => 'none', :genders => 'none', :events => 'none'
+    #   
+    #   p.version # => '90194378772'
+    #   p.id # => 'KW3B-NNM'
+    def contributor(id_or_ids)
+      if id_or_ids.kind_of? Array
+        multiple_ids = true
+        url = Base + 'contributor/' + id_or_ids.join(',')
+        props = properties()
+        if id_or_ids.size > props['contributor.max.ids'] 
+          contributors = []
+          id_or_ids.each_slice(props['contributor.max.ids']) do |ids_slice|
+            contributors = contributors + contributor(ids_slice)
+          end
+          return contributors
+        end
+      else
+        multiple_ids = false
+        id = id_or_ids.to_s
+        if id == 'me'
+          url = Base + 'contributor'
+        else
+          url = Base + 'contributor/' + id
+        end
+      end
+      response = @fs_communicator.get(url)
+      familytree = parse_response(response)
+      if multiple_ids
+        return familytree.contributors
+      else
+        return familytree.contributors.first
+      end
+    end
+    
     def properties
       if @properties_hash
         return @properties_hash
