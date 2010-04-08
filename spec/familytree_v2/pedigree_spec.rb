@@ -123,6 +123,8 @@ describe Org::Familysearch::Ws::Familytree::V2::Schema::Pedigree do
     
     before(:each) do
       @person1 = parse_person
+      @person1.properties = Org::Familysearch::Ws::Familytree::V2::Schema::PersonProperties.new
+      @person1.properties.living = true
       @person2 = Org::Familysearch::Ws::Familytree::V2::Schema::Person.new
       @person2.id = 'KJ86-3VW'
       @master_pedigree = Org::Familysearch::Ws::Familytree::V2::Schema::Pedigree.new
@@ -143,6 +145,8 @@ describe Org::Familysearch::Ws::Familytree::V2::Schema::Pedigree do
       @master_pedigree.root.assertions.should == @person1.assertions
       @master_pedigree.root.families.should == @person1.families
       @master_pedigree.root.parents.should == @person1.parents
+      @master_pedigree.root.properties.should == @person1.properties
+      @master_pedigree.root.properties.living.should == true
     end
     
     it "should set the PedigreePerson's :pedigree to the containing pedigree" do

@@ -1296,6 +1296,7 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
         @assertions = person.assertions if person.assertions
         @families = person.families if person.families
         @parents = person.parents if person.parents
+        @properties = person.properties if person.properties
       end
       if pedigree
         @pedigree = pedigree
