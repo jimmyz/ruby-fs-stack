@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{ruby-fs-stack}
-  s.version = "0.4.9"
+  s.version = "0.4.10"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jimmy Zimmerman"]
-  s.date = %q{2010-03-16}
+  s.date = %q{2010-04-07}
   s.description = %q{A library that enables you to read and update information with the new.familysearch.org API.}
   s.email = %q{jimmy.zimmerman@gmail.com}
   s.extra_rdoc_files = [
@@ -76,7 +76,7 @@ Gem::Specification.new do |s|
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.requirements = ["This gem requires a json gem (json, json_pure, or json-jruby)."]
-  s.rubygems_version = %q{1.3.5}
+  s.rubygems_version = %q{1.3.6}
   s.summary = %q{Ruby wrapper for all FamilySearch APIs.}
   s.test_files = [
     "spec/communicator_spec.rb",
