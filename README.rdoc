@@ -5,10 +5,6 @@ API modules provided by FamilySearch.
 
 == Installation
 
-If you haven't added gemcutter.org to your gem sources, run
-
-  gem sources -a http://gemcutter.org
-
 Install the ruby-fs-stack gem
 
   sudo gem install ruby-fs-stack
