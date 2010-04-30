@@ -741,7 +741,7 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
     # ** :ordinance - a hash with values {:date => '15 Nov 2007', :temple => 'SLAKE', :place => 'Utah, United States', :type => "Sealing_to_Spouse"}
     def add_relationship(options)
       g_command = get_command(options[:type])
-      relationship = self.send(g_command.to_sym).find{|r|r.id == options[:with]}
+      relationship = self.send(g_command.to_sym).find{|r|r.id == options[:with] || r.requestedId == options[:with]}
       if relationship.nil?
         relationship = Relationship.new
         relationship.id = options[:with]

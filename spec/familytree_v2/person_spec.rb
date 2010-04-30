@@ -919,6 +919,22 @@ describe Org::Familysearch::Ws::Familytree::V2::Schema::Person do
       @person.relationships.spouses[0].assertions.events.size.should == 2
     end
     
+    it "should be able to build a relationship even if the related person's id has changed" do
+      # set up the initial relationship
+      @person.create_relationship :type => 'spouse', :with => 'KWQS-BBZ', :event => {:type => 'Marriage',:place =>"Utah, United States", :date => '15 Nov 2007'}
+      @person.relationships.spouses.size.should == 1
+      @person.relationships.spouses[0].id.should == 'KWQS-BBZ'
+      @person.relationships.spouses[0].assertions.events[0].value.type.should == 'Marriage'
+      @person.relationships.spouses[0].assertions.events[0].value.date.original.should == '15 Nov 2007'
+      @person.relationships.spouses[0].assertions.events[0].value.place.original.should == 'Utah, United States'
+      @person.relationships.spouses[0].assertions.exists[0].value.should be_instance_of(Org::Familysearch::Ws::Familytree::V2::Schema::ExistsValue)
+      # simulate a change in the related person's ID
+      @person.relationships.spouses[0].requestedId = 'KWQS-BBZ'
+      @person.relationships.spouses[0].id = 'KWQS-BBR'
+      @person.create_relationship :type => 'spouse', :with => 'KWQS-BBZ', :event => {:type => 'Marriage',:place =>"Utah, United States", :date => '15 Nov 2007'}
+      @person.relationships.spouses[0].assertions.events.size.should == 2
+    end
+    
   end
   
   describe "create_combine" do
