@@ -156,8 +156,6 @@ module FamilytreeV2
       
       relationship_type = get_relationship_type(options)
       with_id = options[relationship_type.to_sym]
-            
-      url = "#{Base}person/#{base_id}/#{relationship_type}/#{with_id}"
 
       # Get the existing person/relationship or create a new person
       unless person = relationship(base_id,options.merge({:events => 'none'}))
@@ -175,6 +173,12 @@ module FamilytreeV2
       # Create the payload
       familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.new
       familytree.persons = [person]
+      
+      # Get the most current related ID for the URI
+      rels = person.relationships.get_relationships_of_type(r_options[:type])
+      rel = rels.find{|r|r.id == r_options[:with] || r.requestedId == r_options[:with]}
+      related_id = rel.id
+      url = "#{Base}person/#{base_id}/#{relationship_type}/#{related_id}"
       
       # Post the response and return the resulting person/relationship record from response
       response = @fs_communicator.post(url,familytree.to_json)
@@ -740,8 +744,7 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
     # ** :event - a hash with values {:type => 'Marriage', :date => '15 Nov 2007', :place => 'Utah, United States'}
     # ** :ordinance - a hash with values {:date => '15 Nov 2007', :temple => 'SLAKE', :place => 'Utah, United States', :type => "Sealing_to_Spouse"}
     def add_relationship(options)
-      g_command = get_command(options[:type])
-      relationship = self.send(g_command.to_sym).find{|r|r.id == options[:with] || r.requestedId == options[:with]}
+      relationship = self.get_relationships_of_type(options[:type]).find{|r|r.id == options[:with] || r.requestedId == options[:with]}
       if relationship.nil?
         relationship = Relationship.new
         relationship.id = options[:with]
@@ -759,6 +762,13 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
       end
       s_command = set_command(options[:type])
       self.send(s_command.to_sym,[relationship])
+    end
+    
+    # ====Params
+    # * type - should be 'child', 'spouse', or 'parent'
+    def get_relationships_of_type(type)
+      g_command = get_command(type)
+      relationships = self.send(g_command.to_sym)
     end
     
     # Overriding the Enunciate code because of a bug (parents, spouses, and children were not pluralized)
@@ -805,7 +815,7 @@ module Org::Familysearch::Ws::Familytree::V2::Schema
     
     private
     def get_command(type)
-      (type == 'child') ? 'children' : "#{type}s"
+      (type.to_s == 'child') ? 'children' : "#{type}s"
     end
      
     def set_command(type)

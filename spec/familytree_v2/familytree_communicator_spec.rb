@@ -303,7 +303,8 @@ describe FamilytreeV2::Communicator do
                   
         @person = new_person
         @person2 = new_person
-        Org::Familysearch::Ws::Familytree::V2::Schema::Person.stub!(:new).and_return(@person)
+        @generic_person = new_person
+        Org::Familysearch::Ws::Familytree::V2::Schema::Person.stub!(:new).and_return(@generic_person)
         
       end
       
@@ -315,22 +316,22 @@ describe FamilytreeV2::Communicator do
       it "should create a new person with a relationship since it wasn't yet found" do
         Org::Familysearch::Ws::Familytree::V2::Schema::Person.should_receive(:new).and_return(@person)
         @person.should_receive(:id=).with('KWQS-BBQ')
-        @person.should_receive(:create_relationship).with(:type => 'parent', :with => 'KWQS-BBR', :lineage => 'Biological')
         @ft_v2_com.write_relationship 'KWQS-BBQ', :parent => 'KWQS-BBR', :lineage => 'Biological'
+        @person.relationships.parents.first.id.should == 'KWQS-BBR'
       end
       
       it "should add a marriage event if sent an event key" do
         Org::Familysearch::Ws::Familytree::V2::Schema::Person.should_receive(:new).and_return(@person)
         @person.should_receive(:id=).with('KWQS-BBQ')
-        @person.should_receive(:create_relationship).with(:type => 'spouse', :with => 'KWQS-BBR', :event => {:type => 'Marriage', :place => 'United States', :date => '1800'})
         @ft_v2_com.write_relationship 'KWQS-BBQ', :spouse => 'KWQS-BBR', :event => {:type => 'Marriage', :place => 'United States', :date => '1800'}
+        @person.relationships.spouses.first.id.should == 'KWQS-BBR'
       end
       
       it "should add an ordinances if sent an ordinance key" do
         Org::Familysearch::Ws::Familytree::V2::Schema::Person.should_receive(:new).and_return(@person)
         @person.should_receive(:id=).with('KWQS-BBQ')
-        @person.should_receive(:create_relationship).with(:type => 'spouse', :with => 'KWQS-BBR', :ordinance => {:type => 'Sealing_to_Spouse', :place => 'United States', :date => '1800', :temple => 'SLAKE'})
         @ft_v2_com.write_relationship 'KWQS-BBQ', :spouse => 'KWQS-BBR', :ordinance => {:type => 'Sealing_to_Spouse', :place => 'United States', :date => '1800', :temple => 'SLAKE'}
+        @person.relationships.spouses.first.assertions.ordinances.first.value.type.should == 'Sealing_to_Spouse'
       end
       
       it "should post a familytree request with the person to the correct endpoint" do
@@ -342,6 +343,25 @@ describe FamilytreeV2::Communicator do
         @fs_com_mock.should_receive(:post).with('/familytree/v2/person/KWQS-BBQ/parent/KWQS-BBR', familytree.to_json).and_return(@post_res)
         @ft_v2_com.write_relationship 'KWQS-BBQ', :parent => 'KWQS-BBR', :lineage => 'Biological'
       end
+      
+      it "should post to the correct endpoint even if the related person ID changes" do
+        @person2.create_relationship(:type => 'parent', :with => 'KWQS-BBR', :lineage => 'Biological')
+        # Simulate a changed related ID
+        @person2.relationships.parents.first.id = 'KWQS-JIM'
+        @person2.relationships.parents.first.requestedId = 'KWQS-BBR'
+        @person2.id = 'KWQS-BBQ'
+        
+        # inject this mock person into the write_relationship flow
+        Org::Familysearch::Ws::Familytree::V2::Schema::Person.should_receive(:new).and_return(@person2)
+        @person2.should_receive(:create_relationship)
+        
+        familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.new    
+        familytree.persons = [@person2]
+        
+        @fs_com_mock.should_receive(:post).with('/familytree/v2/person/KWQS-BBQ/parent/KWQS-JIM', familytree.to_json).and_return(@post_res)
+        @ft_v2_com.write_relationship 'KWQS-BBQ', :parent => 'KWQS-BBR', :lineage => 'Biological'
+      end
+      
       
     end
     
