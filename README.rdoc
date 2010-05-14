@@ -62,9 +62,33 @@ or for the pure Ruby implementation
   puts "First spouse's gender: " + person.families[0].parents[1].gender
   puts "First spouse's ID: " + person.families[0].parents[1].id
   
-  # read multiple persons in one request (up to 10)
+  # Read multiple persons in one request.
+  # You can request as many person records as needed. The communicator will
+  # check the person.max.ids property from the /familytree/v2/properties call 
+  # and will automatically break the array into appropriate slices, then return the whole.
   people = communicator.familytree_v2.person ['KW3B-NNM','KWQS-BBQ','KWQS-BBR'], :parents => 'all', :children => 'all', :families => 'all'
   people.size #=> 3
+  
+  # Ruby blocks:
+  # You can pass a block to the person read that will be executed for each person
+  # or set of persons immediately after they are read. This is useful if you want to
+  # create a progress indicator if you are requesting a very large array of persons.
+  ids = ['KWCZ-1WL','KWCH-DGY','KWZR-RPD','KWCH-DPM','KWCH-DP9',
+        'KN1H-HBK','KLYL-KPZ','2794-46L','279W-NDV','KWJJ-5Y3','26KN-QTT',
+        'KWCV-7F7','2NQ9-FGV','K2WM-SHZ','KCR4-MBW','KWZR-RPX']
+  # because we are passing 16 ids, this will require 2 person reads (10 persons each read)
+  # the block will be called twice with the persons in each batch passed
+  progress_count = 0
+  communicator.familytree_v2.person ids do |persons|
+    progress_count += persons.size
+    puts progress_count
+  end
+  
+  # if a single ID is passed, then the block will receive a single person, not an array
+  # of persons
+  communicator.familytree_v2.person :me do |person|
+    puts person.id
+  end
   
 === Searching Records
 

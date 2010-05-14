@@ -39,7 +39,7 @@ module FamilytreeV2
     #   
     #   p.version # => '90194378772'
     #   p.id # => 'KW3B-NNM'
-    def person(id_or_ids, options = {})
+    def person(id_or_ids, options = {}, &block)
       if id_or_ids.kind_of? Array
         multiple_ids = true
         url = Base + 'person/' + id_or_ids.join(',')
@@ -47,7 +47,7 @@ module FamilytreeV2
         if id_or_ids.size > props['person.max.ids'] 
           persons = []
           id_or_ids.each_slice(props['person.max.ids']) do |ids_slice|
-            persons = persons + person(ids_slice,options)
+            persons = persons + person(ids_slice,options,&block)
           end
           return persons
         end
@@ -64,10 +64,12 @@ module FamilytreeV2
       response = @fs_communicator.get(url)
       familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.from_json JSON.parse(response.body)
       if multiple_ids
+        yield(familytree.persons) if block
         return familytree.persons
       else
         person = familytree.persons.find{|p| p.requestedId == id }
         person ||= familytree.persons.first if id == 'me'
+        yield(person) if block
         return person
       end
     end

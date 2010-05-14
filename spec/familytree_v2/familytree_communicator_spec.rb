@@ -74,6 +74,22 @@ describe FamilytreeV2::Communicator do
       @ft_v2_com.person(:me, :names => 'none')
     end
     
+    describe "passing a block" do
+      it "should execute the block given" do
+        mock = mock('FixNum')
+        mock.should_receive(:call!).once.and_return(nil)
+        @ft_v2_com.person :me do |person|
+          mock.call!
+        end
+      end
+      
+      it "should pass the person to the block" do
+        @ft_v2_com.person :me do |person|
+          person.id.should == 'KJ86-3VD'
+        end
+      end
+    end
+    
   end
   
   describe "person read w/ multiple IDs" do
@@ -124,6 +140,28 @@ describe FamilytreeV2::Communicator do
     it "should return an array of persons even if it exceeds the maximum" do
       results = @com.familytree_v2.person ['KWCZ-1WL','KWCH-DGY','KWZR-RPD','KWCH-DPM','KWCH-DP9','KN1H-HBK','KLYL-KPZ','2794-46L','279W-NDV','KWJJ-5Y3','26KN-QTT','KWCV-7F7','2NQ9-FGV','K2WM-SHZ','KCR4-MBW','KWZR-RPX']
       results.should have(16).things
+    end
+    
+    describe "sending a block callback" do
+      before(:each) do
+        @ids = ['KWCZ-1WL','KWCH-DGY','KWZR-RPD','KWCH-DPM','KWCH-DP9','KN1H-HBK','KLYL-KPZ','2794-46L','279W-NDV','KWJJ-5Y3','26KN-QTT','KWCV-7F7','2NQ9-FGV','K2WM-SHZ','KCR4-MBW','KWZR-RPX']
+      end
+      
+      it "should call the block for each slice of the persons requested" do
+        mock = mock('FixNum')
+        mock.should_receive(:call!).exactly(2).times.and_return(nil)
+        @com.familytree_v2.person @ids do |persons|
+          mock.call!
+        end
+      end
+      
+      it "should pass the person or persons to the block" do
+        count = 0
+        @com.familytree_v2.person @ids do |persons|
+          count += persons.size
+        end
+        count.should == 16
+      end
     end
   end
   
