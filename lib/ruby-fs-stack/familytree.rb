@@ -41,50 +41,9 @@ module FamilytreeV2
     #   p.id # => 'KW3B-NNM'
     def person(id_or_ids, options = {}, &block)
       if id_or_ids.kind_of? Array
-        multiple_ids = true
-        url = Base + 'person/' + id_or_ids.join(',')
-        props = properties()
-        if id_or_ids.size > props['person.max.ids'] 
-          persons = []
-          id_or_ids.each_slice(props['person.max.ids']) do |ids_slice|
-            persons = persons + person(ids_slice,options,&block)
-          end
-          return persons
-        end
+        return multi_person_read(id_or_ids,options,&block)
       else
-        multiple_ids = false
-        id = id_or_ids.to_s
-        if id == 'me'
-          url = Base + 'person'
-        else
-          url = Base + 'person/' + id
-        end
-      end
-      url += add_querystring(options)
-      begin
-        response = @fs_communicator.get(url)
-        familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.from_json JSON.parse(response.body)
-      rescue RubyFsStack::ServerError => e 
-        if multiple_ids
-          persons = []
-          id_or_ids.each do |id|
-            persons << person(id,options,&block)
-          end
-          return persons
-        else
-          person = Org::Familysearch::Ws::Familytree::V2::Schema::Person.new
-          person.id = id
-          return person
-        end
-      end
-      if multiple_ids
-        yield(familytree.persons) if block
-        return familytree.persons
-      else
-        person = familytree.persons.find{|p| p.requestedId == id }
-        person ||= familytree.persons.first if id == 'me'
-        yield(person) if block
-        return person
+        return single_person_read(id_or_ids.to_s,options,&block)
       end
     end
     
@@ -355,6 +314,52 @@ module FamilytreeV2
     end
     
     private
+    
+    def multi_person_read(ids,options,&block)
+      url = Base + 'person/' + ids.join(',')
+      props = properties()
+      if ids.size > props['person.max.ids'] 
+        persons = []
+        ids.each_slice(props['person.max.ids']) do |ids_slice|
+          persons = persons + person(ids_slice,options,&block)
+        end
+        return persons
+      end
+      url += add_querystring(options)
+      begin
+        response = @fs_communicator.get(url)
+        familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.from_json JSON.parse(response.body)
+      rescue RubyFsStack::ServerError => e 
+        persons = []
+        ids.each do |id|
+          persons << person(id,options,&block)
+        end
+        return persons
+      end
+      yield(familytree.persons) if block
+      return familytree.persons
+    end
+    
+    def single_person_read(id,options,&block)
+      if id == 'me'
+        url = Base + 'person'
+      else
+        url = Base + 'person/' + id
+      end
+      url += add_querystring(options)
+      begin
+        response = @fs_communicator.get(url)
+        familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.from_json JSON.parse(response.body)
+      rescue RubyFsStack::ServerError => e 
+        person = Org::Familysearch::Ws::Familytree::V2::Schema::Person.new
+        person.id = id
+        return person
+      end
+      person = familytree.persons.find{|p| p.requestedId == id }
+      person ||= familytree.persons.first if id == 'me'
+      yield(person) if block
+      return person
+    end
     
     def parse_response(response)
       Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.from_json JSON.parse(response.body)
