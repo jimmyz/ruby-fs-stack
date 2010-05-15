@@ -61,8 +61,22 @@ module FamilytreeV2
         end
       end
       url += add_querystring(options)
-      response = @fs_communicator.get(url)
-      familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.from_json JSON.parse(response.body)
+      begin
+        response = @fs_communicator.get(url)
+        familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.from_json JSON.parse(response.body)
+      rescue RubyFsStack::ServerError => e 
+        if multiple_ids
+          persons = []
+          id_or_ids.each do |id|
+            persons << person(id,options,&block)
+          end
+          return persons
+        else
+          person = Org::Familysearch::Ws::Familytree::V2::Schema::Person.new
+          person.id = id
+          return person
+        end
+      end
       if multiple_ids
         yield(familytree.persons) if block
         return familytree.persons

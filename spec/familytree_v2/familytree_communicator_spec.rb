@@ -165,6 +165,45 @@ describe FamilytreeV2::Communicator do
     end
   end
   
+  describe "reading multiple persons when 500 errors are returned" do
+    before(:each) do
+      @fs_com_mock = mock("FsCommunicator")
+      @res = mock("HTTP::Response")
+      @json = read_file('multiple_version_read.js')
+      @res.stub!(:body).and_return(@json)
+      @fs_com_mock.stub!(:get).and_return(@res)
+      @ft_v2_com = FamilytreeV2::Communicator.new @fs_com_mock
+      @props = {'person.max.ids' => 10}
+      @ft_v2_com.stub!(:properties).and_return(@props)
+      
+      @single_response = mock('HTTP::Response')
+      single_json = read_file('KJ86-3VD_all.js')
+      @single_response.stub!(:body).and_return(single_json)
+    end
+    
+    it "should read each person separately" do
+      error = RubyFsStack::ServerError.new "Nullpointer Exception", @res
+      @fs_com_mock.should_receive(:get).with('/familytree/v2/person/KW3B-VCY,KW3B-VCB,KW3B-VC1?names=none').and_raise(error)
+      @fs_com_mock.should_receive(:get).with('/familytree/v2/person/KW3B-VCY?names=none').and_return(@single_response)
+      @fs_com_mock.should_receive(:get).with('/familytree/v2/person/KW3B-VCB?names=none').and_return(@single_response)
+      @fs_com_mock.should_receive(:get).with('/familytree/v2/person/KW3B-VC1?names=none').and_return(@single_response)
+      results = @ft_v2_com.person ["KW3B-VCY", "KW3B-VCB", "KW3B-VC1"], :names => 'none'
+      results.should be_a_kind_of(Array)
+      results.size.should == 3
+    end
+    
+    it "should ignore a single failure and return an empty person record (with only an ID)" do
+      error = RubyFsStack::ServerError.new "Nullpointer Exception", @res
+      @fs_com_mock.should_receive(:get).with('/familytree/v2/person/KW3B-VCY,KW3B-VCB,KW3B-VC1?names=none').and_raise(error)
+      @fs_com_mock.should_receive(:get).with('/familytree/v2/person/KW3B-VCY?names=none').and_return(@single_response)
+      @fs_com_mock.should_receive(:get).with('/familytree/v2/person/KW3B-VCB?names=none').and_raise(error)
+      @fs_com_mock.should_receive(:get).with('/familytree/v2/person/KW3B-VC1?names=none').and_return(@single_response)
+      results = @ft_v2_com.person ["KW3B-VCY", "KW3B-VCB", "KW3B-VC1"], :names => 'none'
+      results.size.should == 3
+      results[1].full_name.should be_nil
+    end
+  end
+  
   describe "save_person" do
     before(:each) do
       @fs_com_mock = mock("FsCommunicator")
