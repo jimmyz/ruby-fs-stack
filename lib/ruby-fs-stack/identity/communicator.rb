@@ -29,6 +29,8 @@ module IdentityV1
         return false
       end
     end
+    
+    alias :login :authenticate
   end
   
 end
