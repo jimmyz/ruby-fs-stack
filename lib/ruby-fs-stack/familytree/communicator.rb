@@ -30,6 +30,41 @@ module FamilytreeV2
     #   
     #   p.version # => '90194378772'
     #   p.id # => 'KW3B-NNM'
+    # 
+    # ===Blocks
+    # A block is available for this method, so that you can register a callback of sorts
+    # for when a read has been completed. 
+    # 
+    # For example, if I were to send 500 person IDs to
+    # this method and the current person.max.ids was 10, 50 person reads would be performed
+    # to gather all of the records. This could take some time, so you may want to present a
+    # progress of sorts to the end-user. Using a block enables this to be done.
+    # 
+    #   ids = [] #array of 500 ids
+    #   running_total = 0
+    #   persons = communicator.familytree_v2.person ids, :parents => 'summary' do |people|
+    #     running_total += ps.size
+    #     puts running_total
+    #   end
+    # 
+    #   # If you are only requesting a single individual, the block will be passed a single person record
+    #   person = communicator.familytree_v2.person :me do |p|
+    #     puts p.id
+    #   end
+    # 
+    # ===500 Errors
+    # Occasionally, the FamilySearch API returns 500 errors when reading a person record.
+    # This is problematic when you are requesting 100+ person records from the person read 
+    # because it may happen towards the end of your entire batch and it causes the entire
+    # read to fail. Rather than fail, it does the following.
+    # 
+    # If you are requesting multiple IDs and a 500 is thrown when requesting 10 records, it is
+    # possible that only 1 of the 10 person records actually caused the problem, so this will
+    # re-request the records individually.
+    # 
+    # If a single record throws a 500, then the response will be an empty person record with only
+    # an ID.
+    # 
     def person(id_or_ids, options = {}, &block)
       if id_or_ids.kind_of? Array
         return multi_person_read(id_or_ids,options,&block)
@@ -323,7 +358,7 @@ module FamilytreeV2
       rescue RubyFsStack::ServerError => e 
         persons = []
         ids.each do |id|
-          persons << person(id,options,&block)
+          persons << person(id,options)
         end
         return persons
       end
@@ -344,6 +379,7 @@ module FamilytreeV2
       rescue RubyFsStack::ServerError => e 
         person = Org::Familysearch::Ws::Familytree::V2::Schema::Person.new
         person.id = id
+        person.requestedId = id
         return person
       end
       person = familytree.persons.find{|p| p.requestedId == id }

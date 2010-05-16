@@ -200,7 +200,20 @@ describe FamilytreeV2::Communicator do
       @fs_com_mock.should_receive(:get).with('/familytree/v2/person/KW3B-VC1?names=none').and_return(@single_response)
       results = @ft_v2_com.person ["KW3B-VCY", "KW3B-VCB", "KW3B-VC1"], :names => 'none'
       results.size.should == 3
+      results[1].requestedId.should == 'KW3B-VCB'
       results[1].full_name.should be_nil
+    end
+    
+    it "should always pass an array of persons to the block" do
+      error = RubyFsStack::ServerError.new "Nullpointer Exception", @res
+      @fs_com_mock.should_receive(:get).with('/familytree/v2/person/KW3B-VCY,KW3B-VCB,KW3B-VC1?names=none').and_raise(error)
+      @fs_com_mock.should_receive(:get).with('/familytree/v2/person/KW3B-VCY?names=none').and_return(@single_response)
+      @fs_com_mock.should_receive(:get).with('/familytree/v2/person/KW3B-VCB?names=none').and_raise(error)
+      @fs_com_mock.should_receive(:get).with('/familytree/v2/person/KW3B-VC1?names=none').and_return(@single_response)
+      results = @ft_v2_com.person ["KW3B-VCY", "KW3B-VCB", "KW3B-VC1"], :names => 'none' do |persons|
+        persons.should be_instance_of(Array)
+        persons.size.should == 3
+      end
     end
   end
   
