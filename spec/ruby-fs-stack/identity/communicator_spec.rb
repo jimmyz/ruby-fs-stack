@@ -1,7 +1,7 @@
-require File.dirname(__FILE__) + '/../spec_helper'
+require File.dirname(__FILE__) + '/../../spec_helper'
 require 'ruby-fs-stack/identity'
 
-describe FsCommunicator do
+describe IdentityV1::Communicator do
   include HttpCommunicatorHelper # found in the spec_helper
   
   def do_get(url, credentials = {})
@@ -20,8 +20,8 @@ describe FsCommunicator do
   describe "authenticate" do
     before(:each) do
       filename = File.join(File.dirname(__FILE__),'json','login.js')
-      body = File.read(filename)
-      @mock_response = mock('HTTP::Response', :body => body, :code => '200')
+      @body = File.read(filename)
+      @mock_response = mock('HTTP::Response', :body => @body, :code => '200')
       @http.should_receive(:start).and_return(@mock_response)
       @request.should_receive(:basic_auth).with('user','pass')
       @request.should_receive(:[]=).with('User-Agent',@com.user_agent)
@@ -43,8 +43,12 @@ describe FsCommunicator do
       @com.session.should == 'USYS6325F49E7E47C181EA7E73E897F9A8ED.ptap009-034'
     end
     
-    it "should return false if the login was not successful" do
-      pending
+    it "should raise RubyFsStack::Unauthorized if the login was not successful" do
+      @mock_response.stub!(:code).and_return('401')
+      @mock_response.stub!(:message).and_return('Invalid name or password.')
+      lambda{
+        @com.identity_v1.authenticate(:username => 'user', :password => 'pass')
+      }.should raise_error(RubyFsStack::Unauthorized)
     end
   end
 end

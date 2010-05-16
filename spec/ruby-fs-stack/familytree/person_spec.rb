@@ -1,9 +1,7 @@
-require File.dirname(__FILE__) + '/../spec_helper'
+require File.dirname(__FILE__) + '/spec_helper'
 require 'ruby-fs-stack/familytree'
 
-
 describe Org::Familysearch::Ws::Familytree::V2::Schema::Person do
-  FamTreeV2 = Org::Familysearch::Ws::Familytree::V2::Schema
   
   def new_person
     Org::Familysearch::Ws::Familytree::V2::Schema::Person.new

@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/spec_helper'
+require File.dirname(__FILE__) + '/../spec_helper'
 require 'ruby-fs-stack/fs_utils'
 
 describe FsUtils do

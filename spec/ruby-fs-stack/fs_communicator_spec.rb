@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/spec_helper'
+require File.dirname(__FILE__) + '/../spec_helper'
 require 'ruby-fs-stack/fs_communicator'
 require 'fakeweb'
 require 'logger'
@@ -94,7 +94,7 @@ describe FsCommunicator do
     end
     
     it "should set the ca file to the entrust certificate (for FamilySearch systems)" do
-      @http.should_receive(:ca_file=).with(File.join(File.dirname(__FILE__),'..','lib','ruby-fs-stack','assets','entrust-ca.crt'))
+      @http.should_receive(:ca_file=).with(/entrust-ca\.crt/)      
       do_get(@url)
     end
     
@@ -191,7 +191,7 @@ describe FsCommunicator do
     end
     
     it "should set the ca file to the entrust certificate (for FamilySearch systems)" do
-      @http.should_receive(:ca_file=).with(File.join(File.dirname(__FILE__),'..','lib','ruby-fs-stack','assets','entrust-ca.crt'))
+      @http.should_receive(:ca_file=).with(/entrust-ca\.crt/)
       do_post(@url)
     end
         
@@ -403,7 +403,7 @@ describe FsCommunicator do
     end
     
     it "should log each GET request URL and headers" do
-      response = File.join(File.dirname(__FILE__),'fixtures','fakeweb_response.txt')
+      response = File.join(File.dirname(__FILE__),'..','fixtures','fakeweb_response.txt')
       FakeWeb.register_uri(:get, "https://api.familysearch.org/familytree/v2/person/KWQS-BBQ?sessionId=SESSID&dataFormat=application/json", 
                           :response => response)
       @com.logger.should_receive(:info).with(/GET \/familytree\/v2\/person/)
@@ -423,7 +423,7 @@ describe FsCommunicator do
     end
     
     it "should log each POST request URL and headers" do
-      response = File.join(File.dirname(__FILE__),'fixtures','fakeweb_response.txt')
+      response = File.join(File.dirname(__FILE__),'..','fixtures','fakeweb_response.txt')
       FakeWeb.register_uri(:post, "https://api.familysearch.org/familytree/v2/person/KWQS-BBQ?sessionId=SESSID&dataFormat=application/json", 
                           :response => response)
       @com.logger.should_receive(:info).with(/POST \/familytree\/v2\/person/)

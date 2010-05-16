@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../spec_helper'
+require File.dirname(__FILE__) + '/../../spec_helper'
 
 describe FamilytreeV2::Communicator do
   FamilyTreeV2 = Org::Familysearch::Ws::Familytree::V2::Schema

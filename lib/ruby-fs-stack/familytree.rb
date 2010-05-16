@@ -17,6 +17,7 @@ require 'ruby-fs-stack/familytree/exist'
 require 'ruby-fs-stack/familytree/relationship'
 require 'ruby-fs-stack/familytree/person'
 require 'ruby-fs-stack/familytree/search'
+require 'ruby-fs-stack/familytree/match'
 require 'ruby-fs-stack/familytree/pedigree'
 require 'ruby-fs-stack/familytree/note'
 
