@@ -670,6 +670,19 @@ describe FamilytreeV2::Communicator do
       pedigree.persons.first.id.should == 'KWZF-CFW'
     end
     
+    describe "sending options to pedigree read" do
+      before(:each) do
+        response = File.join(File.dirname(__FILE__),'json','fakeweb_pedigree3.txt')
+        FakeWeb.register_uri(:get, "https://fakeweb.familysearch.org/familytree/v2/pedigree/KWZF-CFW?ancestors=9&sessionId=SESSID&dataFormat=application/json", 
+                            :response => response)
+      end
+      
+      it "should send the options to the querystring" do
+        pedigree = @com.familytree_v2.pedigree 'KWZF-CFW', :ancestors => 9
+        pedigree.id.should == 'ZZZZ-ZZZ'
+      end
+    end
+    
   end
   
   describe "properties read" do

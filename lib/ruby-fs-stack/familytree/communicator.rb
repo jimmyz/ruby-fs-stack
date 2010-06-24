@@ -257,7 +257,7 @@ module FamilytreeV2
       return familytree.persons[0]
     end
     
-    def pedigree(id_or_ids)
+    def pedigree(id_or_ids, options = {})
       if id_or_ids.kind_of? Array
         multiple_ids = true
         url = Base + 'pedigree/' + id_or_ids.join(',')
@@ -270,6 +270,7 @@ module FamilytreeV2
           url = Base + 'pedigree/' + id
         end
       end
+      url += add_querystring(options)
       # url += add_querystring(options)
       response = @fs_communicator.get(url)
       familytree = parse_response(response)
