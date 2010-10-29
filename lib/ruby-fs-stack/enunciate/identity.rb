@@ -68,41 +68,33 @@ module V2a
 module Schema
 
   # 
-  class Session 
+  class Email 
 
-    # session id.
-    attr_accessor :id
-    # session values.
-    attr_accessor :values
+    # name type.
+    attr_accessor :type
+    # name value.
+    attr_accessor :value
 
-    # the json hash for this Session
+    # the json hash for this Email
     def to_jaxb_json_hash
       _h = {}
-      _h['id'] = id.to_jaxb_json_hash unless id.nil?
-      if !values.nil?
-        _ha = Array.new
-        values.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['values'] = _ha
-      end
+      _h['type'] = type.to_jaxb_json_hash unless type.nil?
+      _h['value'] = value.to_jaxb_json_hash unless value.nil?
       return _h
     end
 
-    # the json (string form) for this Session
+    # the json (string form) for this Email
     def to_json
       to_jaxb_json_hash.to_json
     end
 
-    #initializes this Session with a json hash
+    #initializes this Email with a json hash
     def init_jaxb_json_hash(_o)
-      @id = String.from_json(_o['id']) unless _o['id'].nil?
-      if !_o['values'].nil?
-        @values = Array.new
-        _oa = _o['values']
-        _oa.each { | _item | @values.push Org::Familysearch::Ws::Identity::V2a::Schema::SessionValue.from_json(_item) }
-      end
+      @type = String.from_json(_o['type']) unless _o['type'].nil?
+      @value = String.from_json(_o['value']) unless _o['value'].nil?
     end
 
-    # constructs a Session from a (parsed) JSON hash
+    # constructs a Email from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -139,33 +131,29 @@ module V2a
 module Schema
 
   # 
-  class Authentication 
+  class EntityReference 
 
-    # authentication status.
-    attr_accessor :status
-    # authentication resolution URI.
-    attr_accessor :resolutionUri
+    # (no documentation provided)
+    attr_accessor :id
 
-    # the json hash for this Authentication
+    # the json hash for this EntityReference
     def to_jaxb_json_hash
       _h = {}
-      _h['status'] = status.to_jaxb_json_hash unless status.nil?
-      _h['resolutionUri'] = resolutionUri.to_jaxb_json_hash unless resolutionUri.nil?
+      _h['id'] = id.to_jaxb_json_hash unless id.nil?
       return _h
     end
 
-    # the json (string form) for this Authentication
+    # the json (string form) for this EntityReference
     def to_json
       to_jaxb_json_hash.to_json
     end
 
-    #initializes this Authentication with a json hash
+    #initializes this EntityReference with a json hash
     def init_jaxb_json_hash(_o)
-      @status = String.from_json(_o['status']) unless _o['status'].nil?
-      @resolutionUri = String.from_json(_o['resolutionUri']) unless _o['resolutionUri'].nil?
+      @id = String.from_json(_o['id']) unless _o['id'].nil?
     end
 
-    # constructs a Authentication from a (parsed) JSON hash
+    # constructs a EntityReference from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -202,37 +190,33 @@ module V2a
 module Schema
 
   # 
-  class User 
+  class Name 
 
-    # (no documentation provided)
-    attr_accessor :id
-    # (no documentation provided)
-    attr_accessor :displayName
-    # (no documentation provided)
-    attr_accessor :email
+    # name type.
+    attr_accessor :type
+    # name value.
+    attr_accessor :value
 
-    # the json hash for this User
+    # the json hash for this Name
     def to_jaxb_json_hash
       _h = {}
-      _h['id'] = id.to_jaxb_json_hash unless id.nil?
-      _h['displayName'] = displayName.to_jaxb_json_hash unless displayName.nil?
-      _h['email'] = email.to_jaxb_json_hash unless email.nil?
+      _h['type'] = type.to_jaxb_json_hash unless type.nil?
+      _h['value'] = value.to_jaxb_json_hash unless value.nil?
       return _h
     end
 
-    # the json (string form) for this User
+    # the json (string form) for this Name
     def to_json
       to_jaxb_json_hash.to_json
     end
 
-    #initializes this User with a json hash
+    #initializes this Name with a json hash
     def init_jaxb_json_hash(_o)
-      @id = String.from_json(_o['id']) unless _o['id'].nil?
-      @displayName = String.from_json(_o['displayName']) unless _o['displayName'].nil?
-      @email = String.from_json(_o['email']) unless _o['email'].nil?
+      @type = String.from_json(_o['type']) unless _o['type'].nil?
+      @value = String.from_json(_o['value']) unless _o['value'].nil?
     end
 
-    # constructs a User from a (parsed) JSON hash
+    # constructs a Name from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -327,20 +311,204 @@ module Ws
 
 module Identity
 
-module V1
+module V2a
 
 module Schema
 
-  # A identity session.
+  # 
+  class UserPermission 
+
+    # (no documentation provided)
+    attr_accessor :id
+    # (no documentation provided)
+    attr_accessor :name
+
+    # the json hash for this UserPermission
+    def to_jaxb_json_hash
+      _h = {}
+      _h['id'] = id.to_jaxb_json_hash unless id.nil?
+      _h['name'] = name.to_jaxb_json_hash unless name.nil?
+      return _h
+    end
+
+    # the json (string form) for this UserPermission
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this UserPermission with a json hash
+    def init_jaxb_json_hash(_o)
+      @id = String.from_json(_o['id']) unless _o['id'].nil?
+      @name = String.from_json(_o['name']) unless _o['name'].nil?
+    end
+
+    # constructs a UserPermission from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Identity
+
+module V2a
+
+module Schema
+
+  # 
+  class User 
+
+    # (no documentation provided)
+    attr_accessor :id
+    # (no documentation provided)
+    attr_accessor :requestedId
+    # (no documentation provided)
+    attr_accessor :username
+    # (no documentation provided)
+    attr_accessor :password
+    # (no documentation provided)
+    attr_accessor :names
+    # (no documentation provided)
+    attr_accessor :emails
+    # (no documentation provided)
+    attr_accessor :member
+    # (no documentation provided)
+    attr_accessor :preferences
+
+    # the json hash for this User
+    def to_jaxb_json_hash
+      _h = {}
+      _h['id'] = id.to_jaxb_json_hash unless id.nil?
+      _h['requestedId'] = requestedId.to_jaxb_json_hash unless requestedId.nil?
+      _h['username'] = username.to_jaxb_json_hash unless username.nil?
+      _h['password'] = password.to_jaxb_json_hash unless password.nil?
+      if !names.nil?
+        _ha = Array.new
+        names.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['names'] = _ha
+      end
+      if !emails.nil?
+        _ha = Array.new
+        emails.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['emails'] = _ha
+      end
+      _h['member'] = member.to_jaxb_json_hash unless member.nil?
+      if !preferences.nil?
+        _ha = Array.new
+        preferences.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['preferences'] = _ha
+      end
+      return _h
+    end
+
+    # the json (string form) for this User
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this User with a json hash
+    def init_jaxb_json_hash(_o)
+      @id = String.from_json(_o['id']) unless _o['id'].nil?
+      @requestedId = String.from_json(_o['requestedId']) unless _o['requestedId'].nil?
+      @username = String.from_json(_o['username']) unless _o['username'].nil?
+      @password = String.from_json(_o['password']) unless _o['password'].nil?
+      if !_o['names'].nil?
+        @names = Array.new
+        _oa = _o['names']
+        _oa.each { | _item | @names.push Org::Familysearch::Ws::Identity::V2a::Schema::Name.from_json(_item) }
+      end
+      if !_o['emails'].nil?
+        @emails = Array.new
+        _oa = _o['emails']
+        _oa.each { | _item | @emails.push Org::Familysearch::Ws::Identity::V2a::Schema::Email.from_json(_item) }
+      end
+      @member = Org::Familysearch::Ws::Identity::V2a::Schema::Member.from_json(_o['member']) unless _o['member'].nil?
+      if !_o['preferences'].nil?
+        @preferences = Array.new
+        _oa = _o['preferences']
+        _oa.each { | _item | @preferences.push Org::Familysearch::Ws::Identity::V2a::Schema::Preference.from_json(_item) }
+      end
+    end
+
+    # constructs a User from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Identity
+
+module V2a
+
+module Schema
+
+  # 
   class Session 
 
-    # The id of the session.
+    # session id.
     attr_accessor :id
+    # session type.
+    attr_accessor :type
+    # session values.
+    attr_accessor :values
 
     # the json hash for this Session
     def to_jaxb_json_hash
       _h = {}
       _h['id'] = id.to_jaxb_json_hash unless id.nil?
+      _h['type'] = type.to_jaxb_json_hash unless type.nil?
+      if !values.nil?
+        _ha = Array.new
+        values.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['values'] = _ha
+      end
       return _h
     end
 
@@ -352,6 +520,12 @@ module Schema
     #initializes this Session with a json hash
     def init_jaxb_json_hash(_o)
       @id = String.from_json(_o['id']) unless _o['id'].nil?
+      @type = String.from_json(_o['type']) unless _o['type'].nil?
+      if !_o['values'].nil?
+        @values = Array.new
+        _oa = _o['values']
+        _oa.each { | _item | @values.push Org::Familysearch::Ws::Identity::V2a::Schema::SessionValue.from_json(_item) }
+      end
     end
 
     # constructs a Session from a (parsed) JSON hash
@@ -384,9 +558,206 @@ module Familysearch
 
 module Ws
 
-module V1
+module Identity
+
+module V2a
+
+module Schema
 
   # 
+  class Preference 
+
+    # session value name.
+    attr_accessor :name
+    # session value.
+    attr_accessor :value
+
+    # the json hash for this Preference
+    def to_jaxb_json_hash
+      _h = {}
+      _h['name'] = name.to_jaxb_json_hash unless name.nil?
+      _h['value'] = value.to_jaxb_json_hash unless value.nil?
+      return _h
+    end
+
+    # the json (string form) for this Preference
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this Preference with a json hash
+    def init_jaxb_json_hash(_o)
+      @name = String.from_json(_o['name']) unless _o['name'].nil?
+      @value = String.from_json(_o['value']) unless _o['value'].nil?
+    end
+
+    # constructs a Preference from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Identity
+
+module V2a
+
+module Schema
+
+  # 
+  class Member 
+
+    # (no documentation provided)
+    attr_accessor :id
+    # (no documentation provided)
+    attr_accessor :ward
+    # (no documentation provided)
+    attr_accessor :stake
+    # (no documentation provided)
+    attr_accessor :templeDistrict
+
+    # the json hash for this Member
+    def to_jaxb_json_hash
+      _h = {}
+      _h['id'] = id.to_jaxb_json_hash unless id.nil?
+      _h['ward'] = ward.to_jaxb_json_hash unless ward.nil?
+      _h['stake'] = stake.to_jaxb_json_hash unless stake.nil?
+      _h['templeDistrict'] = templeDistrict.to_jaxb_json_hash unless templeDistrict.nil?
+      return _h
+    end
+
+    # the json (string form) for this Member
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this Member with a json hash
+    def init_jaxb_json_hash(_o)
+      @id = String.from_json(_o['id']) unless _o['id'].nil?
+      @ward = Org::Familysearch::Ws::Identity::V2a::Schema::EntityReference.from_json(_o['ward']) unless _o['ward'].nil?
+      @stake = Org::Familysearch::Ws::Identity::V2a::Schema::EntityReference.from_json(_o['stake']) unless _o['stake'].nil?
+      @templeDistrict = Org::Familysearch::Ws::Identity::V2a::Schema::EntityReference.from_json(_o['templeDistrict']) unless _o['templeDistrict'].nil?
+    end
+
+    # constructs a Member from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Identity
+
+module V2a
+
+module Schema
+
+  # 
+  class Authentication 
+
+    # authentication status.
+    attr_accessor :status
+    # authentication resolution URI.
+    attr_accessor :resolutionUri
+
+    # the json hash for this Authentication
+    def to_jaxb_json_hash
+      _h = {}
+      _h['status'] = status.to_jaxb_json_hash unless status.nil?
+      _h['resolutionUri'] = resolutionUri.to_jaxb_json_hash unless resolutionUri.nil?
+      return _h
+    end
+
+    # the json (string form) for this Authentication
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this Authentication with a json hash
+    def init_jaxb_json_hash(_o)
+      @status = String.from_json(_o['status']) unless _o['status'].nil?
+      @resolutionUri = String.from_json(_o['resolutionUri']) unless _o['resolutionUri'].nil?
+    end
+
+    # constructs a Authentication from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module V1
+
+  # A basic property.
   class BasicProperty 
 
     # (no documentation provided)
@@ -424,6 +795,77 @@ module V1
       end
     end
   end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Identity
+
+module V2a
+
+module Schema
+
+  # Email Type
+  class EmailType
+
+    # (no documentation provided)
+    Primary = "Primary"
+
+    # (no documentation provided)
+    Alternate = "Alternate"
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Identity
+
+module V2a
+
+module Schema
+
+  # Name Type
+  class NameType
+
+    # (no documentation provided)
+    Family = "Family"
+
+    # (no documentation provided)
+    Given = "Given"
+
+    # (no documentation provided)
+    Display = "Display"
+  end
+
+end
+
+end
 
 end
 
@@ -513,7 +955,7 @@ module Ws
 
 module V1
 
-  # 
+  # Default error implementation.
   class BasicError 
 
     # (no documentation provided)
@@ -580,21 +1022,21 @@ module Ws
 
 module V1
 
-  # 
+  # Base class for v1 root elements.
   class BasicElement 
 
-    # (no documentation provided)
+    # The response code.
     attr_accessor :statusCode
-    # (no documentation provided)
+    # Deprecated flag.
     attr_accessor :deprecated
-    # (no documentation provided)
+    # The status message.
     attr_accessor :statusMessage
-    # (no documentation provided)
+    # The version.
     attr_accessor :version
-    # (no documentation provided)
-    attr_accessor :properties
-    # (no documentation provided)
+    # The errors.
     attr_accessor :errors
+    # The properties.
+    attr_accessor :properties
 
     # the json hash for this BasicElement
     def to_jaxb_json_hash
@@ -603,15 +1045,15 @@ module V1
       _h['deprecated'] = deprecated.to_jaxb_json_hash unless deprecated.nil?
       _h['statusMessage'] = statusMessage.to_jaxb_json_hash unless statusMessage.nil?
       _h['version'] = version.to_jaxb_json_hash unless version.nil?
-      if !properties.nil?
-        _ha = Array.new
-        properties.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['properties'] = _ha
-      end
       if !errors.nil?
         _ha = Array.new
         errors.each { | _item | _ha.push _item.to_jaxb_json_hash }
         _h['errors'] = _ha
+      end
+      if !properties.nil?
+        _ha = Array.new
+        properties.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['properties'] = _ha
       end
       return _h
     end
@@ -627,15 +1069,15 @@ module V1
       @deprecated = Boolean.from_json(_o['deprecated']) unless _o['deprecated'].nil?
       @statusMessage = String.from_json(_o['statusMessage']) unless _o['statusMessage'].nil?
       @version = String.from_json(_o['version']) unless _o['version'].nil?
-      if !_o['properties'].nil?
-        @properties = Array.new
-        _oa = _o['properties']
-        _oa.each { | _item | @properties.push Org::Familysearch::Ws::V1::BasicProperty.from_json(_item) }
-      end
       if !_o['errors'].nil?
         @errors = Array.new
         _oa = _o['errors']
         _oa.each { | _item | @errors.push Org::Familysearch::Ws::V1::BasicError.from_json(_item) }
+      end
+      if !_o['properties'].nil?
+        @properties = Array.new
+        _oa = _o['properties']
+        _oa.each { | _item | @properties.push Org::Familysearch::Ws::V1::BasicProperty.from_json(_item) }
       end
     end
 
@@ -650,6 +1092,69 @@ module V1
       end
     end
   end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Identity
+
+module V2a
+
+module Schema
+
+  # 
+  class IdentityProperty 
+
+    # (no documentation provided)
+    attr_accessor :name
+    # (no documentation provided)
+    attr_accessor :value
+
+    # the json hash for this IdentityProperty
+    def to_jaxb_json_hash
+      _h = {}
+      _h['name'] = name.to_jaxb_json_hash unless name.nil?
+      _h['value'] = value.to_jaxb_json_hash unless value.nil?
+      return _h
+    end
+
+    # the json (string form) for this IdentityProperty
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this IdentityProperty with a json hash
+    def init_jaxb_json_hash(_o)
+      @name = String.from_json(_o['name']) unless _o['name'].nil?
+      @value = String.from_json(_o['value']) unless _o['value'].nil?
+    end
+
+    # constructs a IdentityProperty from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
 
 end
 
@@ -738,69 +1243,6 @@ module Ws
 
 module Identity
 
-module V2a
-
-module Schema
-
-  # 
-  class IdentityProperty 
-
-    # (no documentation provided)
-    attr_accessor :name
-    # (no documentation provided)
-    attr_accessor :value
-
-    # the json hash for this IdentityProperty
-    def to_jaxb_json_hash
-      _h = {}
-      _h['name'] = name.to_jaxb_json_hash unless name.nil?
-      _h['value'] = value.to_jaxb_json_hash unless value.nil?
-      return _h
-    end
-
-    # the json (string form) for this IdentityProperty
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this IdentityProperty with a json hash
-    def init_jaxb_json_hash(_o)
-      @name = String.from_json(_o['name']) unless _o['name'].nil?
-      @value = String.from_json(_o['value']) unless _o['value'].nil?
-    end
-
-    # constructs a IdentityProperty from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Org
-
-module Familysearch
-
-module Ws
-
-module Identity
-
 module V1
 
 module Schema
@@ -808,20 +1250,16 @@ module Schema
   # 
   class Identity < Org::Familysearch::Ws::V1::BasicElement 
 
-    # The session associated with the identity.
-    attr_accessor :session
 
     # the json hash for this Identity
     def to_jaxb_json_hash
       _h = super
-      _h['session'] = session.to_jaxb_json_hash unless session.nil?
       return _h
     end
 
     #initializes this Identity with a json hash
     def init_jaxb_json_hash(_o)
       super _o
-      @session = Org::Familysearch::Ws::Identity::V1::Schema::Session.from_json(_o['session']) unless _o['session'].nil?
     end
 
     # constructs a Identity from a (parsed) JSON hash
@@ -881,6 +1319,8 @@ module Schema
     attr_accessor :users
     # The properties.
     attr_accessor :properties
+    # permissions.
+    attr_accessor :permissions
 
     # the json hash for this Identity
     def to_jaxb_json_hash
@@ -905,6 +1345,11 @@ module Schema
         _ha = Array.new
         properties.each { | _item | _ha.push _item.to_jaxb_json_hash }
         _h['properties'] = _ha
+      end
+      if !permissions.nil?
+        _ha = Array.new
+        permissions.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['permissions'] = _ha
       end
       return _h
     end
@@ -936,6 +1381,11 @@ module Schema
         @properties = Array.new
         _oa = _o['properties']
         _oa.each { | _item | @properties.push Org::Familysearch::Ws::Identity::V2a::Schema::IdentityProperty.from_json(_item) }
+      end
+      if !_o['permissions'].nil?
+        @permissions = Array.new
+        _oa = _o['permissions']
+        _oa.each { | _item | @permissions.push Org::Familysearch::Ws::Identity::V2a::Schema::UserPermission.from_json(_item) }
       end
     end
 

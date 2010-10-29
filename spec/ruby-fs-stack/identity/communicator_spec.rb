@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../../spec_helper'
 require 'ruby-fs-stack/identity'
 
-describe IdentityV1::Communicator do
+describe IdentityV2::Communicator do
   include HttpCommunicatorHelper # found in the spec_helper
   
   def do_get(url, credentials = {})
@@ -14,9 +14,11 @@ describe IdentityV1::Communicator do
   end
   
   it "should have an extended identity_v1 method on the communicator" do
-    @com.identity_v1.should be_instance_of(IdentityV1::Communicator)
+    @com.identity_v1.should be_instance_of(IdentityV2::Communicator)
   end
   
+  # At this point, we're making an alias on identity_v1 to just use identity_v2 so that you don't have to make 
+  # that many code changes in your clients
   describe "authenticate" do
     before(:each) do
       filename = File.join(File.dirname(__FILE__),'json','login.js')
@@ -27,8 +29,8 @@ describe IdentityV1::Communicator do
       @request.should_receive(:[]=).with('User-Agent',@com.user_agent)
     end
     
-    it "should make a call to /identity/v1/login" do
-      url = "/identity/v1/login?key=KEY"
+    it "should make a call to /identity/v2/login" do
+      url = "/identity/v2/login?key=KEY"
       Net::HTTP::Get.should_receive(:new).with(url+"&dataFormat=application/json").and_return(@request)
       response = @com.identity_v1.authenticate(:username => 'user', :password => 'pass')
     end
@@ -40,7 +42,7 @@ describe IdentityV1::Communicator do
     
     it "should set the communicator's session to the logged in session" do
       @com.identity_v1.authenticate(:username => 'user', :password => 'pass')
-      @com.session.should == 'USYS6325F49E7E47C181EA7E73E897F9A8ED.ptap009-034'
+      @com.session.should == 'USYS5E027A421416AA29BA0A348A84CEA5C9_nbci-045-034'
     end
     
     it "should raise RubyFsStack::Unauthorized if the login was not successful" do
@@ -53,7 +55,7 @@ describe IdentityV1::Communicator do
     
     describe "login" do
       it "should accept the login method and behave the same way" do
-        url = "/identity/v1/login?key=KEY"
+        url = "/identity/v2/login?key=KEY"
         Net::HTTP::Get.should_receive(:new).with(url+"&dataFormat=application/json").and_return(@request)
         response = @com.identity_v1.login(:username => 'user', :password => 'pass')
       end
@@ -65,7 +67,7 @@ describe IdentityV1::Communicator do
 
       it "should set the communicator's session to the logged in session" do
         @com.identity_v1.login(:username => 'user', :password => 'pass')
-        @com.session.should == 'USYS6325F49E7E47C181EA7E73E897F9A8ED.ptap009-034'
+        @com.session.should == 'USYS5E027A421416AA29BA0A348A84CEA5C9_nbci-045-034'
       end
 
       it "should raise RubyFsStack::Unauthorized if the login was not successful" do
