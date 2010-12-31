@@ -470,7 +470,7 @@ describe FamilytreeV2::Communicator do
         
         # Create a payload to compare against
         ft = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.from_json JSON.parse(@json)
-        person = ft.persons.find{|p|p.id=='KWQS-BBQ'}
+        person = ft.persons.find{|p|p.requestedId=='KWQS-BBQ'}
         person.create_relationship :type => 'parent', :with => 'KWQS-BBR', :lineage => 'Biological'
         familytree = Org::Familysearch::Ws::Familytree::V2::Schema::FamilyTree.new
         familytree.persons = [person]
@@ -487,7 +487,7 @@ describe FamilytreeV2::Communicator do
         @ft_v2_com.write_relationship 'KWQS-BBQ', :parent => 'KWQS-BBR', :lineage => 'Biological'
       end
       
-      it "should create a new person with a relationship since it wasn't yet found" do
+      it "should not create a new person because it already exists" do
         @person.should_not_receive(:id=).with('KWQS-BBQ')
         @person.should_receive(:create_relationship).with(:type => 'parent', :with => 'KWQS-BBR', :lineage => 'Biological')
         @ft_v2_com.write_relationship 'KWQS-BBQ', :parent => 'KWQS-BBR', :lineage => 'Biological'

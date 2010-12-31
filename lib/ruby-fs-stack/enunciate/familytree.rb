@@ -334,6 +334,8 @@ module Schema
     attr_accessor :id
     # The requested id of the contributor.
     attr_accessor :requestedId
+    # The id of the CIS user.
+    attr_accessor :cisId
     # The contact name of the user.
     attr_accessor :contactName
     # The full name of the user.
@@ -350,6 +352,7 @@ module Schema
       _h = {}
       _h['id'] = id.to_jaxb_json_hash unless id.nil?
       _h['requestedId'] = requestedId.to_jaxb_json_hash unless requestedId.nil?
+      _h['cisId'] = cisId.to_jaxb_json_hash unless cisId.nil?
       _h['contactName'] = contactName.to_jaxb_json_hash unless contactName.nil?
       _h['fullName'] = fullName.to_jaxb_json_hash unless fullName.nil?
       _h['email'] = email.to_jaxb_json_hash unless email.nil?
@@ -367,6 +370,7 @@ module Schema
     def init_jaxb_json_hash(_o)
       @id = String.from_json(_o['id']) unless _o['id'].nil?
       @requestedId = String.from_json(_o['requestedId']) unless _o['requestedId'].nil?
+      @cisId = String.from_json(_o['cisId']) unless _o['cisId'].nil?
       @contactName = String.from_json(_o['contactName']) unless _o['contactName'].nil?
       @fullName = String.from_json(_o['fullName']) unless _o['fullName'].nil?
       @email = String.from_json(_o['email']) unless _o['email'].nil?
@@ -410,38 +414,34 @@ module V2
 
 module Schema
 
-  # A Family Tree entity reference.
-  class EntityReference 
+  # A discussion about a person.
+  class Discussion 
 
-    # The ref id of the persona.
-    attr_accessor :id
-    # Temp id for this entity reference.
-    attr_accessor :tempId
-    # The version number for this person.
-    attr_accessor :version
+    # The action to perform on the discussion.
+    attr_accessor :action
+    # The URI to the discussion.
+    attr_accessor :uri
 
-    # the json hash for this EntityReference
+    # the json hash for this Discussion
     def to_jaxb_json_hash
       _h = {}
-      _h['id'] = id.to_jaxb_json_hash unless id.nil?
-      _h['tempId'] = tempId.to_jaxb_json_hash unless tempId.nil?
-      _h['version'] = version.to_jaxb_json_hash unless version.nil?
+      _h['action'] = action.to_jaxb_json_hash unless action.nil?
+      _h['uri'] = uri.to_jaxb_json_hash unless uri.nil?
       return _h
     end
 
-    # the json (string form) for this EntityReference
+    # the json (string form) for this Discussion
     def to_json
       to_jaxb_json_hash.to_json
     end
 
-    #initializes this EntityReference with a json hash
+    #initializes this Discussion with a json hash
     def init_jaxb_json_hash(_o)
-      @id = String.from_json(_o['id']) unless _o['id'].nil?
-      @tempId = String.from_json(_o['tempId']) unless _o['tempId'].nil?
-      @version = String.from_json(_o['version']) unless _o['version'].nil?
+      @action = String.from_json(_o['action']) unless _o['action'].nil?
+      @uri = String.from_json(_o['uri']) unless _o['uri'].nil?
     end
 
-    # constructs a EntityReference from a (parsed) JSON hash
+    # constructs a Discussion from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -477,34 +477,38 @@ module V2
 
 module Schema
 
-  # An astro date.
-  class DateAstro 
+  # A Family Tree entity version.
+  class EntityVersion 
 
-    # The earliest astro date.
-    attr_accessor :earliest
-    # The lastest astro date.
-    attr_accessor :latest
+    # The id of the person.
+    attr_accessor :id
+    # The requested id of the person.
+    attr_accessor :requestedId
+    # The version number for this person.
+    attr_accessor :version
 
-    # the json hash for this DateAstro
+    # the json hash for this EntityVersion
     def to_jaxb_json_hash
       _h = {}
-      _h['earliest'] = earliest.to_jaxb_json_hash unless earliest.nil?
-      _h['latest'] = latest.to_jaxb_json_hash unless latest.nil?
+      _h['id'] = id.to_jaxb_json_hash unless id.nil?
+      _h['requestedId'] = requestedId.to_jaxb_json_hash unless requestedId.nil?
+      _h['version'] = version.to_jaxb_json_hash unless version.nil?
       return _h
     end
 
-    # the json (string form) for this DateAstro
+    # the json (string form) for this EntityVersion
     def to_json
       to_jaxb_json_hash.to_json
     end
 
-    #initializes this DateAstro with a json hash
+    #initializes this EntityVersion with a json hash
     def init_jaxb_json_hash(_o)
-      @earliest = String.from_json(_o['earliest']) unless _o['earliest'].nil?
-      @latest = String.from_json(_o['latest']) unless _o['latest'].nil?
+      @id = String.from_json(_o['id']) unless _o['id'].nil?
+      @requestedId = String.from_json(_o['requestedId']) unless _o['requestedId'].nil?
+      @version = String.from_json(_o['version']) unless _o['version'].nil?
     end
 
-    # constructs a DateAstro from a (parsed) JSON hash
+    # constructs a EntityVersion from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -634,6 +638,10 @@ module Schema
     attr_accessor :original
     # The normalized value.
     attr_accessor :normalized
+    # The gedcom value.
+    attr_accessor :gedcom
+    # The numeric value.
+    attr_accessor :numeric
     # The astro date.
     attr_accessor :astro
     # true, if the normalization is user selected.
@@ -644,6 +652,8 @@ module Schema
       _h = {}
       _h['original'] = original.to_jaxb_json_hash unless original.nil?
       _h['normalized'] = normalized.to_jaxb_json_hash unless normalized.nil?
+      _h['gedcom'] = gedcom.to_jaxb_json_hash unless gedcom.nil?
+      _h['numeric'] = numeric.to_jaxb_json_hash unless numeric.nil?
       _h['astro'] = astro.to_jaxb_json_hash unless astro.nil?
       _h['selected'] = selected.to_jaxb_json_hash unless selected.nil?
       return _h
@@ -658,6 +668,8 @@ module Schema
     def init_jaxb_json_hash(_o)
       @original = String.from_json(_o['original']) unless _o['original'].nil?
       @normalized = String.from_json(_o['normalized']) unless _o['normalized'].nil?
+      @gedcom = String.from_json(_o['gedcom']) unless _o['gedcom'].nil?
+      @numeric = String.from_json(_o['numeric']) unless _o['numeric'].nil?
       @astro = Org::Familysearch::Ws::Familytree::V2::Schema::DateAstro.from_json(_o['astro']) unless _o['astro'].nil?
       @selected = Boolean.from_json(_o['selected']) unless _o['selected'].nil?
     end
@@ -699,33 +711,100 @@ module V2
 module Schema
 
   # 
-  class ContributorAlias 
+  class Lifespan 
 
-    # The alias id.
-    attr_accessor :id
-    # The alias contact name.
-    attr_accessor :contactName
+    # (no documentation provided)
+    attr_accessor :birth
+    # (no documentation provided)
+    attr_accessor :death
 
-    # the json hash for this ContributorAlias
+    # the json hash for this Lifespan
     def to_jaxb_json_hash
       _h = {}
-      _h['id'] = id.to_jaxb_json_hash unless id.nil?
-      _h['contactName'] = contactName.to_jaxb_json_hash unless contactName.nil?
+      _h['birth'] = birth.to_jaxb_json_hash unless birth.nil?
+      _h['death'] = death.to_jaxb_json_hash unless death.nil?
       return _h
     end
 
-    # the json (string form) for this ContributorAlias
+    # the json (string form) for this Lifespan
     def to_json
       to_jaxb_json_hash.to_json
     end
 
-    #initializes this ContributorAlias with a json hash
+    #initializes this Lifespan with a json hash
     def init_jaxb_json_hash(_o)
-      @id = String.from_json(_o['id']) unless _o['id'].nil?
-      @contactName = String.from_json(_o['contactName']) unless _o['contactName'].nil?
+      @birth = Org::Familysearch::Ws::Familytree::V2::Schema::LifespanYear.from_json(_o['birth']) unless _o['birth'].nil?
+      @death = Org::Familysearch::Ws::Familytree::V2::Schema::LifespanYear.from_json(_o['death']) unless _o['death'].nil?
     end
 
-    # constructs a ContributorAlias from a (parsed) JSON hash
+    # constructs a Lifespan from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # 
+  class LifespanYear 
+
+    # (no documentation provided)
+    attr_accessor :year
+    # (no documentation provided)
+    attr_accessor :text
+    # (no documentation provided)
+    attr_accessor :astro
+
+    # the json hash for this LifespanYear
+    def to_jaxb_json_hash
+      _h = {}
+      _h['year'] = year.to_jaxb_json_hash unless year.nil?
+      _h['text'] = text.to_jaxb_json_hash unless text.nil?
+      _h['astro'] = astro.to_jaxb_json_hash unless astro.nil?
+      return _h
+    end
+
+    # the json (string form) for this LifespanYear
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this LifespanYear with a json hash
+    def init_jaxb_json_hash(_o)
+      @year = Fixnum.from_json(_o['year']) unless _o['year'].nil?
+      @text = String.from_json(_o['text']) unless _o['text'].nil?
+      @astro = Fixnum.from_json(_o['astro']) unless _o['astro'].nil?
+    end
+
+    # constructs a LifespanYear from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -914,6 +993,8 @@ module Schema
   # 
   class Note 
 
+    # The requestedId of the note.
+    attr_accessor :requestedId
     # The id of the note.
     attr_accessor :id
     # The action.
@@ -942,6 +1023,7 @@ module Schema
     # the json hash for this Note
     def to_jaxb_json_hash
       _h = {}
+      _h['requestedId'] = requestedId.to_jaxb_json_hash unless requestedId.nil?
       _h['id'] = id.to_jaxb_json_hash unless id.nil?
       _h['action'] = action.to_jaxb_json_hash unless action.nil?
       _h['tempId'] = tempId.to_jaxb_json_hash unless tempId.nil?
@@ -972,6 +1054,7 @@ module Schema
 
     #initializes this Note with a json hash
     def init_jaxb_json_hash(_o)
+      @requestedId = String.from_json(_o['requestedId']) unless _o['requestedId'].nil?
       @id = String.from_json(_o['id']) unless _o['id'].nil?
       @action = String.from_json(_o['action']) unless _o['action'].nil?
       @tempId = String.from_json(_o['tempId']) unless _o['tempId'].nil?
@@ -1030,21 +1113,1194 @@ module V2
 
 module Schema
 
-  # A Family Tree person.
-  class Pedigree 
+  # A FamilyTree parents.
+  class ParentsReference 
 
-    # The id of the person.
+    # The action.
+    attr_accessor :action
+    # A collection of parents for this family.
+    attr_accessor :parents
+
+    # the json hash for this ParentsReference
+    def to_jaxb_json_hash
+      _h = {}
+      _h['action'] = action.to_jaxb_json_hash unless action.nil?
+      if !parents.nil?
+        _ha = Array.new
+        parents.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['parent'] = _ha
+      end
+      return _h
+    end
+
+    # the json (string form) for this ParentsReference
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this ParentsReference with a json hash
+    def init_jaxb_json_hash(_o)
+      @action = String.from_json(_o['action']) unless _o['action'].nil?
+      if !_o['parent'].nil?
+        @parents = Array.new
+        _oa = _o['parent']
+        _oa.each { | _item | @parents.push Org::Familysearch::Ws::Familytree::V2::Schema::ParentReference.from_json(_item) }
+      end
+    end
+
+    # constructs a ParentsReference from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # A FamilyTree person asseritons section.
+  class PersonAssertions 
+
+    # A collection of exists assertions for this person.
+    attr_accessor :exists
+    # A collection of names for this person.
+    attr_accessor :names
+    # A collection of genders for this person.
+    attr_accessor :genders
+    # A collection of events for this person.
+    attr_accessor :events
+    # A collection of characteristics for this person.
+    attr_accessor :characteristics
+    # A collection of ordinances for this person.
+    attr_accessor :ordinances
+
+    # the json hash for this PersonAssertions
+    def to_jaxb_json_hash
+      _h = {}
+      if !exists.nil?
+        _ha = Array.new
+        exists.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['exists'] = _ha
+      end
+      if !names.nil?
+        _ha = Array.new
+        names.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['names'] = _ha
+      end
+      if !genders.nil?
+        _ha = Array.new
+        genders.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['genders'] = _ha
+      end
+      if !events.nil?
+        _ha = Array.new
+        events.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['events'] = _ha
+      end
+      if !characteristics.nil?
+        _ha = Array.new
+        characteristics.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['characteristics'] = _ha
+      end
+      if !ordinances.nil?
+        _ha = Array.new
+        ordinances.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['ordinances'] = _ha
+      end
+      return _h
+    end
+
+    # the json (string form) for this PersonAssertions
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this PersonAssertions with a json hash
+    def init_jaxb_json_hash(_o)
+      if !_o['exists'].nil?
+        @exists = Array.new
+        _oa = _o['exists']
+        _oa.each { | _item | @exists.push Org::Familysearch::Ws::Familytree::V2::Schema::ExistsAssertion.from_json(_item) }
+      end
+      if !_o['names'].nil?
+        @names = Array.new
+        _oa = _o['names']
+        _oa.each { | _item | @names.push Org::Familysearch::Ws::Familytree::V2::Schema::NameAssertion.from_json(_item) }
+      end
+      if !_o['genders'].nil?
+        @genders = Array.new
+        _oa = _o['genders']
+        _oa.each { | _item | @genders.push Org::Familysearch::Ws::Familytree::V2::Schema::GenderAssertion.from_json(_item) }
+      end
+      if !_o['events'].nil?
+        @events = Array.new
+        _oa = _o['events']
+        _oa.each { | _item | @events.push Org::Familysearch::Ws::Familytree::V2::Schema::EventAssertion.from_json(_item) }
+      end
+      if !_o['characteristics'].nil?
+        @characteristics = Array.new
+        _oa = _o['characteristics']
+        _oa.each { | _item | @characteristics.push Org::Familysearch::Ws::Familytree::V2::Schema::CharacteristicAssertion.from_json(_item) }
+      end
+      if !_o['ordinances'].nil?
+        @ordinances = Array.new
+        _oa = _o['ordinances']
+        _oa.each { | _item | @ordinances.push Org::Familysearch::Ws::Familytree::V2::Schema::OrdinanceAssertion.from_json(_item) }
+      end
+    end
+
+    # constructs a PersonAssertions from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # A FamilyTree person asseritons section.
+  class PersonPersonas 
+
+    # The action to take on the personas.
+    attr_accessor :action
+    # Temp id for when you're moving records.
+    attr_accessor :tempId
+    # The target id to use when combining personas to a specific person.
+    attr_accessor :target
+    # A collection of persona references for this person.
+    attr_accessor :personas
+
+    # the json hash for this PersonPersonas
+    def to_jaxb_json_hash
+      _h = {}
+      _h['action'] = action.to_jaxb_json_hash unless action.nil?
+      _h['tempId'] = tempId.to_jaxb_json_hash unless tempId.nil?
+      _h['target'] = target.to_jaxb_json_hash unless target.nil?
+      if !personas.nil?
+        _ha = Array.new
+        personas.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['persona'] = _ha
+      end
+      return _h
+    end
+
+    # the json (string form) for this PersonPersonas
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this PersonPersonas with a json hash
+    def init_jaxb_json_hash(_o)
+      @action = String.from_json(_o['action']) unless _o['action'].nil?
+      @tempId = String.from_json(_o['tempId']) unless _o['tempId'].nil?
+      @target = Org::Familysearch::Ws::Familytree::V2::Schema::EntityReference.from_json(_o['target']) unless _o['target'].nil?
+      if !_o['persona'].nil?
+        @personas = Array.new
+        _oa = _o['persona']
+        _oa.each { | _item | @personas.push Org::Familysearch::Ws::Familytree::V2::Schema::PersonPersona.from_json(_item) }
+      end
+    end
+
+    # constructs a PersonPersonas from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # A FamilyTree person relationships section.
+  class PersonRelationships 
+
+    # A collection of parent relationships for this person.
+    attr_accessor :parents
+    # A collection of spouse relationships for this person.
+    attr_accessor :spouses
+    # A collection of parent relationships for this person.
+    attr_accessor :children
+
+    # the json hash for this PersonRelationships
+    def to_jaxb_json_hash
+      _h = {}
+      if !parents.nil?
+        _ha = Array.new
+        parents.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['parent'] = _ha
+      end
+      if !spouses.nil?
+        _ha = Array.new
+        spouses.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['spouse'] = _ha
+      end
+      if !children.nil?
+        _ha = Array.new
+        children.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['child'] = _ha
+      end
+      return _h
+    end
+
+    # the json (string form) for this PersonRelationships
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this PersonRelationships with a json hash
+    def init_jaxb_json_hash(_o)
+      if !_o['parent'].nil?
+        @parents = Array.new
+        _oa = _o['parent']
+        _oa.each { | _item | @parents.push Org::Familysearch::Ws::Familytree::V2::Schema::Relationship.from_json(_item) }
+      end
+      if !_o['spouse'].nil?
+        @spouses = Array.new
+        _oa = _o['spouse']
+        _oa.each { | _item | @spouses.push Org::Familysearch::Ws::Familytree::V2::Schema::Relationship.from_json(_item) }
+      end
+      if !_o['child'].nil?
+        @children = Array.new
+        _oa = _o['child']
+        _oa.each { | _item | @children.push Org::Familysearch::Ws::Familytree::V2::Schema::Relationship.from_json(_item) }
+      end
+    end
+
+    # constructs a PersonRelationships from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # Not used.
+  class ProxyRole 
+
+    # Not used.
     attr_accessor :id
-    # The id of the person.
-    attr_accessor :requestedId
-    # The persons.
-    attr_accessor :persons
+    # Not used.
+    attr_accessor :contactName
+    # Not used.
+    attr_accessor :systemName
 
-    # the json hash for this Pedigree
+    # the json hash for this ProxyRole
+    def to_jaxb_json_hash
+      _h = {}
+      _h['id'] = id.to_jaxb_json_hash unless id.nil?
+      _h['contactName'] = contactName.to_jaxb_json_hash unless contactName.nil?
+      _h['systemName'] = systemName.to_jaxb_json_hash unless systemName.nil?
+      return _h
+    end
+
+    # the json (string form) for this ProxyRole
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this ProxyRole with a json hash
+    def init_jaxb_json_hash(_o)
+      @id = String.from_json(_o['id']) unless _o['id'].nil?
+      @contactName = String.from_json(_o['contactName']) unless _o['contactName'].nil?
+      @systemName = String.from_json(_o['systemName']) unless _o['systemName'].nil?
+    end
+
+    # constructs a ProxyRole from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # A Family Tree relationship query.
+  class RelationshipQuery 
+
+    # The id of the relationship query.
+    attr_accessor :id
+    # The id of the relationship query.
+    attr_accessor :requestedId
+    # (no documentation provided)
+    attr_accessor :error
+    # (no documentation provided)
+    attr_accessor :connections
+
+    # the json hash for this RelationshipQuery
     def to_jaxb_json_hash
       _h = {}
       _h['id'] = id.to_jaxb_json_hash unless id.nil?
       _h['requestedId'] = requestedId.to_jaxb_json_hash unless requestedId.nil?
+      _h['error'] = error.to_jaxb_json_hash unless error.nil?
+      if !connections.nil?
+        _ha = Array.new
+        connections.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['connections'] = _ha
+      end
+      return _h
+    end
+
+    # the json (string form) for this RelationshipQuery
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this RelationshipQuery with a json hash
+    def init_jaxb_json_hash(_o)
+      @id = String.from_json(_o['id']) unless _o['id'].nil?
+      @requestedId = String.from_json(_o['requestedId']) unless _o['requestedId'].nil?
+      @error = String.from_json(_o['error']) unless _o['error'].nil?
+      if !_o['connections'].nil?
+        @connections = Array.new
+        _oa = _o['connections']
+        _oa.each { | _item | @connections.push Org::Familysearch::Ws::Familytree::V2::Schema::RelationshipQueryConnection.from_json(_item) }
+      end
+    end
+
+    # constructs a RelationshipQuery from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # Created by IntelliJ IDEA. User: kuehneds Date: Jan 28, 2010 Time: 2:49:26 PM To change this template use File | Settings | File Templates.
+  class RelationshipQueryPathNode 
+
+    # (no documentation provided)
+    attr_accessor :id
+    # (no documentation provided)
+    attr_accessor :gender
+
+    # the json hash for this RelationshipQueryPathNode
+    def to_jaxb_json_hash
+      _h = {}
+      _h['id'] = id.to_jaxb_json_hash unless id.nil?
+      _h['gender'] = gender.to_jaxb_json_hash unless gender.nil?
+      return _h
+    end
+
+    # the json (string form) for this RelationshipQueryPathNode
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this RelationshipQueryPathNode with a json hash
+    def init_jaxb_json_hash(_o)
+      @id = String.from_json(_o['id']) unless _o['id'].nil?
+      @gender = String.from_json(_o['gender']) unless _o['gender'].nil?
+    end
+
+    # constructs a RelationshipQueryPathNode from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # Created by IntelliJ IDEA. User: kuehneds Date: Jan 26, 2010 Time: 10:36:46 PM To change this template use File | Settings | File Templates.
+  class RelationshipQueryPerson 
+
+    # (no documentation provided)
+    attr_accessor :id
+    # (no documentation provided)
+    attr_accessor :paths
+    # (no documentation provided)
+    attr_accessor :distance
+
+    # the json hash for this RelationshipQueryPerson
+    def to_jaxb_json_hash
+      _h = {}
+      _h['id'] = id.to_jaxb_json_hash unless id.nil?
+      if !paths.nil?
+        _ha = Array.new
+        paths.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['paths'] = _ha
+      end
+      _h['distance'] = distance.to_jaxb_json_hash unless distance.nil?
+      return _h
+    end
+
+    # the json (string form) for this RelationshipQueryPerson
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this RelationshipQueryPerson with a json hash
+    def init_jaxb_json_hash(_o)
+      @id = String.from_json(_o['id']) unless _o['id'].nil?
+      if !_o['paths'].nil?
+        @paths = Array.new
+        _oa = _o['paths']
+        _oa.each { | _item | @paths.push Org::Familysearch::Ws::Familytree::V2::Schema::RelationshipQueryPath.from_json(_item) }
+      end
+      @distance = Fixnum.from_json(_o['distance']) unless _o['distance'].nil?
+    end
+
+    # constructs a RelationshipQueryPerson from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # User: mullinstw Date: Mar 31, 2009 Time: 12:32:26 PM
+  class SearchMatchParameters 
+
+    # parameters
+    attr_accessor :parameters
+
+    # the json hash for this SearchMatchParameters
+    def to_jaxb_json_hash
+      _h = {}
+      if !parameters.nil?
+        _ha = Array.new
+        parameters.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['parameter'] = _ha
+      end
+      return _h
+    end
+
+    # the json (string form) for this SearchMatchParameters
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this SearchMatchParameters with a json hash
+    def init_jaxb_json_hash(_o)
+      if !_o['parameter'].nil?
+        @parameters = Array.new
+        _oa = _o['parameter']
+        _oa.each { | _item | @parameters.push Org::Familysearch::Ws::Familytree::V2::Schema::SearchMatchParameter.from_json(_item) }
+      end
+    end
+
+    # constructs a SearchMatchParameters from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # 
+  class SearchResult 
+
+    # The id of the primary person.
+    attr_accessor :id
+    # The search score for this person.
+    attr_accessor :score
+    # The primary person in this search hit.
+    attr_accessor :person
+    # The parents of the primary person for this search hit.
+    attr_accessor :parents
+    # The spouses of the primary person for this search hit.
+    attr_accessor :spouses
+    # The children of the primary person for this search hit.
+    attr_accessor :children
+
+    # the json hash for this SearchResult
+    def to_jaxb_json_hash
+      _h = {}
+      _h['id'] = id.to_jaxb_json_hash unless id.nil?
+      _h['score'] = score.to_jaxb_json_hash unless score.nil?
+      _h['person'] = person.to_jaxb_json_hash unless person.nil?
+      if !parents.nil?
+        _ha = Array.new
+        parents.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['parent'] = _ha
+      end
+      if !spouses.nil?
+        _ha = Array.new
+        spouses.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['spouse'] = _ha
+      end
+      if !children.nil?
+        _ha = Array.new
+        children.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['child'] = _ha
+      end
+      return _h
+    end
+
+    # the json (string form) for this SearchResult
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this SearchResult with a json hash
+    def init_jaxb_json_hash(_o)
+      @id = String.from_json(_o['id']) unless _o['id'].nil?
+      @score = Float.from_json(_o['score']) unless _o['score'].nil?
+      @person = Org::Familysearch::Ws::Familytree::V2::Schema::SearchPerson.from_json(_o['person']) unless _o['person'].nil?
+      if !_o['parent'].nil?
+        @parents = Array.new
+        _oa = _o['parent']
+        _oa.each { | _item | @parents.push Org::Familysearch::Ws::Familytree::V2::Schema::SearchPerson.from_json(_item) }
+      end
+      if !_o['spouse'].nil?
+        @spouses = Array.new
+        _oa = _o['spouse']
+        _oa.each { | _item | @spouses.push Org::Familysearch::Ws::Familytree::V2::Schema::SearchPerson.from_json(_item) }
+      end
+      if !_o['child'].nil?
+        @children = Array.new
+        _oa = _o['child']
+        _oa.each { | _item | @children.push Org::Familysearch::Ws::Familytree::V2::Schema::SearchPerson.from_json(_item) }
+      end
+    end
+
+    # constructs a SearchResult from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # Created by IntelliJ IDEA. User: kuehneds Date: Jan 27, 2010 Time: 1:11:29 PM To change this template use File | Settings | File Templates.
+  class RelationshipQueryPath 
+
+    # (no documentation provided)
+    attr_accessor :nodes
+
+    # the json hash for this RelationshipQueryPath
+    def to_jaxb_json_hash
+      _h = {}
+      if !nodes.nil?
+        _ha = Array.new
+        nodes.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['node'] = _ha
+      end
+      return _h
+    end
+
+    # the json (string form) for this RelationshipQueryPath
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this RelationshipQueryPath with a json hash
+    def init_jaxb_json_hash(_o)
+      if !_o['node'].nil?
+        @nodes = Array.new
+        _oa = _o['node']
+        _oa.each { | _item | @nodes.push Org::Familysearch::Ws::Familytree::V2::Schema::RelationshipQueryPathNode.from_json(_item) }
+      end
+    end
+
+    # constructs a RelationshipQueryPath from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # A user id.
+  class UserIdentifier 
+
+    # The type.
+    attr_accessor :type
+    # The value of the id.
+    attr_accessor :value
+
+    # the json hash for this UserIdentifier
+    def to_jaxb_json_hash
+      _h = {}
+      _h['type'] = type.to_jaxb_json_hash unless type.nil?
+      _h['value'] = value.to_jaxb_json_hash unless value.nil?
+      return _h
+    end
+
+    # the json (string form) for this UserIdentifier
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this UserIdentifier with a json hash
+    def init_jaxb_json_hash(_o)
+      @type = String.from_json(_o['type']) unless _o['type'].nil?
+      @value = String.from_json(_o['value']) unless _o['value'].nil?
+    end
+
+    # constructs a UserIdentifier from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # 
+  class UserPerson 
+
+    # The person id.
+    attr_accessor :id
+
+    # the json hash for this UserPerson
+    def to_jaxb_json_hash
+      _h = {}
+      _h['id'] = id.to_jaxb_json_hash unless id.nil?
+      return _h
+    end
+
+    # the json (string form) for this UserPerson
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this UserPerson with a json hash
+    def init_jaxb_json_hash(_o)
+      @id = String.from_json(_o['id']) unless _o['id'].nil?
+    end
+
+    # constructs a UserPerson from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # 
+  class UserMembership 
+
+    # The membership id.
+    attr_accessor :id
+    # (no documentation provided)
+    attr_accessor :confirmation
+    # (no documentation provided)
+    attr_accessor :ward
+    # (no documentation provided)
+    attr_accessor :stake
+    # (no documentation provided)
+    attr_accessor :temple
+    # (no documentation provided)
+    attr_accessor :address
+
+    # the json hash for this UserMembership
+    def to_jaxb_json_hash
+      _h = {}
+      _h['id'] = id.to_jaxb_json_hash unless id.nil?
+      _h['confirmation'] = confirmation.to_jaxb_json_hash unless confirmation.nil?
+      _h['ward'] = ward.to_jaxb_json_hash unless ward.nil?
+      _h['stake'] = stake.to_jaxb_json_hash unless stake.nil?
+      _h['temple'] = temple.to_jaxb_json_hash unless temple.nil?
+      _h['address'] = address.to_jaxb_json_hash unless address.nil?
+      return _h
+    end
+
+    # the json (string form) for this UserMembership
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this UserMembership with a json hash
+    def init_jaxb_json_hash(_o)
+      @id = String.from_json(_o['id']) unless _o['id'].nil?
+      @confirmation = Org::Familysearch::Ws::Familytree::V2::Schema::GenDate.from_json(_o['confirmation']) unless _o['confirmation'].nil?
+      @ward = Org::Familysearch::Ws::Familytree::V2::Schema::UserWard.from_json(_o['ward']) unless _o['ward'].nil?
+      @stake = Org::Familysearch::Ws::Familytree::V2::Schema::UserStake.from_json(_o['stake']) unless _o['stake'].nil?
+      @temple = Org::Familysearch::Ws::Familytree::V2::Schema::UserTemple.from_json(_o['temple']) unless _o['temple'].nil?
+      @address = Org::Familysearch::Ws::Familytree::V2::Schema::PostalAddress.from_json(_o['address']) unless _o['address'].nil?
+    end
+
+    # constructs a UserMembership from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # 
+  class UserAccount 
+
+    # (no documentation provided)
+    attr_accessor :registered
+    # (no documentation provided)
+    attr_accessor :status
+    # (no documentation provided)
+    attr_accessor :enabled
+    # (no documentation provided)
+    attr_accessor :changePassword
+    # (no documentation provided)
+    attr_accessor :terms
+    # (no documentation provided)
+    attr_accessor :created
+    # (no documentation provided)
+    attr_accessor :updated
+
+    # the json hash for this UserAccount
+    def to_jaxb_json_hash
+      _h = {}
+      _h['registered'] = registered.to_jaxb_json_hash unless registered.nil?
+      _h['status'] = status.to_jaxb_json_hash unless status.nil?
+      _h['enabled'] = enabled.to_jaxb_json_hash unless enabled.nil?
+      _h['changePassword'] = changePassword.to_jaxb_json_hash unless changePassword.nil?
+      _h['terms'] = terms.to_jaxb_json_hash unless terms.nil?
+      _h['created'] = created.to_jaxb_json_hash unless created.nil?
+      _h['updated'] = updated.to_jaxb_json_hash unless updated.nil?
+      return _h
+    end
+
+    # the json (string form) for this UserAccount
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this UserAccount with a json hash
+    def init_jaxb_json_hash(_o)
+      @registered = Boolean.from_json(_o['registered']) unless _o['registered'].nil?
+      @status = String.from_json(_o['status']) unless _o['status'].nil?
+      @enabled = Boolean.from_json(_o['enabled']) unless _o['enabled'].nil?
+      @changePassword = Boolean.from_json(_o['changePassword']) unless _o['changePassword'].nil?
+      @terms = Org::Familysearch::Ws::Familytree::V2::Schema::UserTerms.from_json(_o['terms']) unless _o['terms'].nil?
+      @created = Time.from_json(_o['created']) unless _o['created'].nil?
+      @updated = Time.from_json(_o['updated']) unless _o['updated'].nil?
+    end
+
+    # constructs a UserAccount from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # Created by IntelliJ IDEA. User: kuehneds Date: Feb 3, 2010 Time: 11:14:50 AM To change this template use File | Settings | File Templates.
+  class RelationshipQueryConnection 
+
+    # The id of a common ancestor
+    attr_accessor :ancestor
+    # (no documentation provided)
+    attr_accessor :description
+    # (no documentation provided)
+    attr_accessor :persons
+
+    # the json hash for this RelationshipQueryConnection
+    def to_jaxb_json_hash
+      _h = {}
+      _h['ancestor'] = ancestor.to_jaxb_json_hash unless ancestor.nil?
+      _h['description'] = description.to_jaxb_json_hash unless description.nil?
       if !persons.nil?
         _ha = Array.new
         persons.each { | _item | _ha.push _item.to_jaxb_json_hash }
@@ -1053,23 +2309,23 @@ module Schema
       return _h
     end
 
-    # the json (string form) for this Pedigree
+    # the json (string form) for this RelationshipQueryConnection
     def to_json
       to_jaxb_json_hash.to_json
     end
 
-    #initializes this Pedigree with a json hash
+    #initializes this RelationshipQueryConnection with a json hash
     def init_jaxb_json_hash(_o)
-      @id = String.from_json(_o['id']) unless _o['id'].nil?
-      @requestedId = String.from_json(_o['requestedId']) unless _o['requestedId'].nil?
+      @ancestor = Org::Familysearch::Ws::Familytree::V2::Schema::RelationshipQueryCommonAncestor.from_json(_o['ancestor']) unless _o['ancestor'].nil?
+      @description = String.from_json(_o['description']) unless _o['description'].nil?
       if !_o['persons'].nil?
         @persons = Array.new
         _oa = _o['persons']
-        _oa.each { | _item | @persons.push Org::Familysearch::Ws::Familytree::V2::Schema::Person.from_json(_item) }
+        _oa.each { | _item | @persons.push Org::Familysearch::Ws::Familytree::V2::Schema::RelationshipQueryPerson.from_json(_item) }
       end
     end
 
-    # constructs a Pedigree from a (parsed) JSON hash
+    # constructs a RelationshipQueryConnection from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -1105,34 +2361,30 @@ module V2
 
 module Schema
 
-  # A person id.
-  class PersonIdentifier 
+  # Created by IntelliJ IDEA. User: kuehneds Date: Feb 3, 2010 Time: 10:51:07 AM To change this template use File | Settings | File Templates.
+  class RelationshipQueryCommonAncestor 
 
-    # The type.
-    attr_accessor :type
-    # The value of the id.
-    attr_accessor :value
+    # (no documentation provided)
+    attr_accessor :id
 
-    # the json hash for this PersonIdentifier
+    # the json hash for this RelationshipQueryCommonAncestor
     def to_jaxb_json_hash
       _h = {}
-      _h['type'] = type.to_jaxb_json_hash unless type.nil?
-      _h['value'] = value.to_jaxb_json_hash unless value.nil?
+      _h['id'] = id.to_jaxb_json_hash unless id.nil?
       return _h
     end
 
-    # the json (string form) for this PersonIdentifier
+    # the json (string form) for this RelationshipQueryCommonAncestor
     def to_json
       to_jaxb_json_hash.to_json
     end
 
-    #initializes this PersonIdentifier with a json hash
+    #initializes this RelationshipQueryCommonAncestor with a json hash
     def init_jaxb_json_hash(_o)
-      @type = String.from_json(_o['type']) unless _o['type'].nil?
-      @value = String.from_json(_o['value']) unless _o['value'].nil?
+      @id = String.from_json(_o['id']) unless _o['id'].nil?
     end
 
-    # constructs a PersonIdentifier from a (parsed) JSON hash
+    # constructs a RelationshipQueryCommonAncestor from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -1168,46 +2420,30 @@ module V2
 
 module Schema
 
-  # A FamilyTree person properties section.
-  class PersonProperties 
+  # A FamilyTree relationship properties section.
+  class RelationshipProperties 
 
-    # The calculated living status for this person.
-    attr_accessor :living
     # The modified timestamp for this person.
     attr_accessor :modified
-    # Is the person modifiable by the current user?
-    attr_accessor :modifiable
-    # Is the person part of more than one family as the parent?
-    attr_accessor :multipleFamiliesAsParent
-    # Is the person part of more than one family as the child?
-    attr_accessor :multipleFamiliesAsChild
 
-    # the json hash for this PersonProperties
+    # the json hash for this RelationshipProperties
     def to_jaxb_json_hash
       _h = {}
-      _h['living'] = living.to_jaxb_json_hash unless living.nil?
       _h['modified'] = modified.to_jaxb_json_hash unless modified.nil?
-      _h['modifiable'] = modifiable.to_jaxb_json_hash unless modifiable.nil?
-      _h['multipleFamiliesAsParent'] = multipleFamiliesAsParent.to_jaxb_json_hash unless multipleFamiliesAsParent.nil?
-      _h['multipleFamiliesAsChild'] = multipleFamiliesAsChild.to_jaxb_json_hash unless multipleFamiliesAsChild.nil?
       return _h
     end
 
-    # the json (string form) for this PersonProperties
+    # the json (string form) for this RelationshipProperties
     def to_json
       to_jaxb_json_hash.to_json
     end
 
-    #initializes this PersonProperties with a json hash
+    #initializes this RelationshipProperties with a json hash
     def init_jaxb_json_hash(_o)
-      @living = Boolean.from_json(_o['living']) unless _o['living'].nil?
       @modified = Time.from_json(_o['modified']) unless _o['modified'].nil?
-      @modifiable = Boolean.from_json(_o['modifiable']) unless _o['modifiable'].nil?
-      @multipleFamiliesAsParent = Boolean.from_json(_o['multipleFamiliesAsParent']) unless _o['multipleFamiliesAsParent'].nil?
-      @multipleFamiliesAsChild = Boolean.from_json(_o['multipleFamiliesAsChild']) unless _o['multipleFamiliesAsChild'].nil?
     end
 
-    # constructs a PersonProperties from a (parsed) JSON hash
+    # constructs a RelationshipProperties from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -1243,38 +2479,74 @@ module V2
 
 module Schema
 
-  # A standardized place.
-  class Place 
+  # A FamilyTree relationships assertions section.
+  class RelationshipAssertions 
 
-    # The place value.
-    attr_accessor :original
-    # The normalized form of the place.
-    attr_accessor :normalized
-    # true, if the normalization is user selected.
-    attr_accessor :selected
+    # A collection of exists assertions for this relationship.
+    attr_accessor :exists
+    # A collection of events for this relationship.
+    attr_accessor :events
+    # A collection of characteristics for this relationship.
+    attr_accessor :characteristics
+    # A collection of ordinances for this relationship.
+    attr_accessor :ordinances
 
-    # the json hash for this Place
+    # the json hash for this RelationshipAssertions
     def to_jaxb_json_hash
       _h = {}
-      _h['original'] = original.to_jaxb_json_hash unless original.nil?
-      _h['normalized'] = normalized.to_jaxb_json_hash unless normalized.nil?
-      _h['selected'] = selected.to_jaxb_json_hash unless selected.nil?
+      if !exists.nil?
+        _ha = Array.new
+        exists.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['exists'] = _ha
+      end
+      if !events.nil?
+        _ha = Array.new
+        events.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['events'] = _ha
+      end
+      if !characteristics.nil?
+        _ha = Array.new
+        characteristics.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['characteristics'] = _ha
+      end
+      if !ordinances.nil?
+        _ha = Array.new
+        ordinances.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['ordinances'] = _ha
+      end
       return _h
     end
 
-    # the json (string form) for this Place
+    # the json (string form) for this RelationshipAssertions
     def to_json
       to_jaxb_json_hash.to_json
     end
 
-    #initializes this Place with a json hash
+    #initializes this RelationshipAssertions with a json hash
     def init_jaxb_json_hash(_o)
-      @original = String.from_json(_o['original']) unless _o['original'].nil?
-      @normalized = Org::Familysearch::Ws::Familytree::V2::Schema::NormalizedPlace.from_json(_o['normalized']) unless _o['normalized'].nil?
-      @selected = Boolean.from_json(_o['selected']) unless _o['selected'].nil?
+      if !_o['exists'].nil?
+        @exists = Array.new
+        _oa = _o['exists']
+        _oa.each { | _item | @exists.push Org::Familysearch::Ws::Familytree::V2::Schema::ExistsAssertion.from_json(_item) }
+      end
+      if !_o['events'].nil?
+        @events = Array.new
+        _oa = _o['events']
+        _oa.each { | _item | @events.push Org::Familysearch::Ws::Familytree::V2::Schema::EventAssertion.from_json(_item) }
+      end
+      if !_o['characteristics'].nil?
+        @characteristics = Array.new
+        _oa = _o['characteristics']
+        _oa.each { | _item | @characteristics.push Org::Familysearch::Ws::Familytree::V2::Schema::CharacteristicAssertion.from_json(_item) }
+      end
+      if !_o['ordinances'].nil?
+        @ordinances = Array.new
+        _oa = _o['ordinances']
+        _oa.each { | _item | @ordinances.push Org::Familysearch::Ws::Familytree::V2::Schema::OrdinanceAssertion.from_json(_item) }
+      end
     end
 
-    # constructs a Place from a (parsed) JSON hash
+    # constructs a RelationshipAssertions from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -1405,6 +2677,1315 @@ module V2
 
 module Schema
 
+  # A proxy for a user.
+  class Proxy 
+
+    # Id of the user that is being proxied.
+    attr_accessor :id
+    # The update action to perform on the proxy.
+    attr_accessor :action
+    # Name of the user being proxied.
+    attr_accessor :name
+    # Access number of the user being proxied.
+    attr_accessor :accessNumber
+    # Birth date of the user to be proxied.
+    attr_accessor :birth
+
+    # the json hash for this Proxy
+    def to_jaxb_json_hash
+      _h = {}
+      _h['id'] = id.to_jaxb_json_hash unless id.nil?
+      _h['action'] = action.to_jaxb_json_hash unless action.nil?
+      _h['name'] = name.to_jaxb_json_hash unless name.nil?
+      _h['accessNumber'] = accessNumber.to_jaxb_json_hash unless accessNumber.nil?
+      _h['birth'] = birth.to_jaxb_json_hash unless birth.nil?
+      return _h
+    end
+
+    # the json (string form) for this Proxy
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this Proxy with a json hash
+    def init_jaxb_json_hash(_o)
+      @id = String.from_json(_o['id']) unless _o['id'].nil?
+      @action = String.from_json(_o['action']) unless _o['action'].nil?
+      @name = String.from_json(_o['name']) unless _o['name'].nil?
+      @accessNumber = String.from_json(_o['accessNumber']) unless _o['accessNumber'].nil?
+      @birth = String.from_json(_o['birth']) unless _o['birth'].nil?
+    end
+
+    # constructs a Proxy from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # A postal address.
+  class PostalAddress 
+
+    # (no documentation provided)
+    attr_accessor :type
+    # The first address field for the postal address.
+    attr_accessor :address1
+    # The second address field for the postal address.
+    attr_accessor :address2
+    # The third address field for the postal address.
+    attr_accessor :address3
+    # The fourth address field for the postal address.
+    attr_accessor :address4
+    # The first street field for the postal street.
+    attr_accessor :street1
+    # The second street field for the postal street.
+    attr_accessor :street2
+    # The third street field for the postal street.
+    attr_accessor :street3
+    # The city.
+    attr_accessor :city
+    # The province.
+    attr_accessor :province
+    # (no documentation provided)
+    attr_accessor :provinceIso
+    # The country.
+    attr_accessor :country
+    # (no documentation provided)
+    attr_accessor :countryIso
+    # The postal code.
+    attr_accessor :postalCode
+
+    # the json hash for this PostalAddress
+    def to_jaxb_json_hash
+      _h = {}
+      _h['type'] = type.to_jaxb_json_hash unless type.nil?
+      _h['address1'] = address1.to_jaxb_json_hash unless address1.nil?
+      _h['address2'] = address2.to_jaxb_json_hash unless address2.nil?
+      _h['address3'] = address3.to_jaxb_json_hash unless address3.nil?
+      _h['address4'] = address4.to_jaxb_json_hash unless address4.nil?
+      _h['street1'] = street1.to_jaxb_json_hash unless street1.nil?
+      _h['street2'] = street2.to_jaxb_json_hash unless street2.nil?
+      _h['street3'] = street3.to_jaxb_json_hash unless street3.nil?
+      _h['city'] = city.to_jaxb_json_hash unless city.nil?
+      _h['province'] = province.to_jaxb_json_hash unless province.nil?
+      _h['provinceIso'] = provinceIso.to_jaxb_json_hash unless provinceIso.nil?
+      _h['country'] = country.to_jaxb_json_hash unless country.nil?
+      _h['countryIso'] = countryIso.to_jaxb_json_hash unless countryIso.nil?
+      _h['postalCode'] = postalCode.to_jaxb_json_hash unless postalCode.nil?
+      return _h
+    end
+
+    # the json (string form) for this PostalAddress
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this PostalAddress with a json hash
+    def init_jaxb_json_hash(_o)
+      @type = String.from_json(_o['type']) unless _o['type'].nil?
+      @address1 = String.from_json(_o['address1']) unless _o['address1'].nil?
+      @address2 = String.from_json(_o['address2']) unless _o['address2'].nil?
+      @address3 = String.from_json(_o['address3']) unless _o['address3'].nil?
+      @address4 = String.from_json(_o['address4']) unless _o['address4'].nil?
+      @street1 = String.from_json(_o['street1']) unless _o['street1'].nil?
+      @street2 = String.from_json(_o['street2']) unless _o['street2'].nil?
+      @street3 = String.from_json(_o['street3']) unless _o['street3'].nil?
+      @city = String.from_json(_o['city']) unless _o['city'].nil?
+      @province = String.from_json(_o['province']) unless _o['province'].nil?
+      @provinceIso = String.from_json(_o['provinceIso']) unless _o['provinceIso'].nil?
+      @country = String.from_json(_o['country']) unless _o['country'].nil?
+      @countryIso = String.from_json(_o['countryIso']) unless _o['countryIso'].nil?
+      @postalCode = String.from_json(_o['postalCode']) unless _o['postalCode'].nil?
+    end
+
+    # constructs a PostalAddress from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # A standardized place.
+  class Place 
+
+    # The place value.
+    attr_accessor :original
+    # The normalized form of the place.
+    attr_accessor :normalized
+    # true, if the normalization is user selected.
+    attr_accessor :selected
+
+    # the json hash for this Place
+    def to_jaxb_json_hash
+      _h = {}
+      _h['original'] = original.to_jaxb_json_hash unless original.nil?
+      _h['normalized'] = normalized.to_jaxb_json_hash unless normalized.nil?
+      _h['selected'] = selected.to_jaxb_json_hash unless selected.nil?
+      return _h
+    end
+
+    # the json (string form) for this Place
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this Place with a json hash
+    def init_jaxb_json_hash(_o)
+      @original = String.from_json(_o['original']) unless _o['original'].nil?
+      @normalized = Org::Familysearch::Ws::Familytree::V2::Schema::NormalizedPlace.from_json(_o['normalized']) unless _o['normalized'].nil?
+      @selected = Boolean.from_json(_o['selected']) unless _o['selected'].nil?
+    end
+
+    # constructs a Place from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # A FamilyTree person properties section.
+  class PersonProperties 
+
+    # The calculated living status for this person.
+    attr_accessor :living
+    # The modified timestamp for this person.
+    attr_accessor :modified
+    # Is the person modifiable by the current user?
+    attr_accessor :modifiable
+    # Is the person modifiable by the current user?
+    attr_accessor :selectable
+    # Can changes to the person be watched?
+    attr_accessor :watchable
+    # the lifespan of the person.
+    attr_accessor :lifespan
+    # Is the person part of more than one family as the parent?
+    attr_accessor :multipleFamiliesAsParent
+    # Is the person part of more than one family as the child?
+    attr_accessor :multipleFamiliesAsChild
+
+    # the json hash for this PersonProperties
+    def to_jaxb_json_hash
+      _h = {}
+      _h['living'] = living.to_jaxb_json_hash unless living.nil?
+      _h['modified'] = modified.to_jaxb_json_hash unless modified.nil?
+      _h['modifiable'] = modifiable.to_jaxb_json_hash unless modifiable.nil?
+      _h['selectable'] = selectable.to_jaxb_json_hash unless selectable.nil?
+      _h['watchable'] = watchable.to_jaxb_json_hash unless watchable.nil?
+      _h['lifespan'] = lifespan.to_jaxb_json_hash unless lifespan.nil?
+      _h['multipleFamiliesAsParent'] = multipleFamiliesAsParent.to_jaxb_json_hash unless multipleFamiliesAsParent.nil?
+      _h['multipleFamiliesAsChild'] = multipleFamiliesAsChild.to_jaxb_json_hash unless multipleFamiliesAsChild.nil?
+      return _h
+    end
+
+    # the json (string form) for this PersonProperties
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this PersonProperties with a json hash
+    def init_jaxb_json_hash(_o)
+      @living = Boolean.from_json(_o['living']) unless _o['living'].nil?
+      @modified = Time.from_json(_o['modified']) unless _o['modified'].nil?
+      @modifiable = Boolean.from_json(_o['modifiable']) unless _o['modifiable'].nil?
+      @selectable = Boolean.from_json(_o['selectable']) unless _o['selectable'].nil?
+      @watchable = Boolean.from_json(_o['watchable']) unless _o['watchable'].nil?
+      @lifespan = Org::Familysearch::Ws::Familytree::V2::Schema::Lifespan.from_json(_o['lifespan']) unless _o['lifespan'].nil?
+      @multipleFamiliesAsParent = Boolean.from_json(_o['multipleFamiliesAsParent']) unless _o['multipleFamiliesAsParent'].nil?
+      @multipleFamiliesAsChild = Boolean.from_json(_o['multipleFamiliesAsChild']) unless _o['multipleFamiliesAsChild'].nil?
+    end
+
+    # constructs a PersonProperties from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # A FamilyTree person identifiers section.
+  class PersonIdentifiers 
+
+    # The list of person identifiers.
+    attr_accessor :identifiers
+
+    # the json hash for this PersonIdentifiers
+    def to_jaxb_json_hash
+      _h = {}
+      if !identifiers.nil?
+        _ha = Array.new
+        identifiers.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['identifier'] = _ha
+      end
+      return _h
+    end
+
+    # the json (string form) for this PersonIdentifiers
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this PersonIdentifiers with a json hash
+    def init_jaxb_json_hash(_o)
+      if !_o['identifier'].nil?
+        @identifiers = Array.new
+        _oa = _o['identifier']
+        _oa.each { | _item | @identifiers.push Org::Familysearch::Ws::Familytree::V2::Schema::PersonIdentifier.from_json(_item) }
+      end
+    end
+
+    # constructs a PersonIdentifiers from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # A person id.
+  class PersonIdentifier 
+
+    # The type.
+    attr_accessor :type
+    # The value of the id.
+    attr_accessor :value
+
+    # the json hash for this PersonIdentifier
+    def to_jaxb_json_hash
+      _h = {}
+      _h['type'] = type.to_jaxb_json_hash unless type.nil?
+      _h['value'] = value.to_jaxb_json_hash unless value.nil?
+      return _h
+    end
+
+    # the json (string form) for this PersonIdentifier
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this PersonIdentifier with a json hash
+    def init_jaxb_json_hash(_o)
+      @type = String.from_json(_o['type']) unless _o['type'].nil?
+      @value = String.from_json(_o['value']) unless _o['value'].nil?
+    end
+
+    # constructs a PersonIdentifier from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # A Family Tree person.
+  class Person 
+
+    # The id of the person.
+    attr_accessor :requestedId
+    # The version number for this person.
+    attr_accessor :version
+    # The id of the person.
+    attr_accessor :id
+    # In the case of a persona, the id of the person of which this is a persona.
+    attr_accessor :personId
+    # A temporary id for this person (e.g. for a person not persisted yet).
+    attr_accessor :tempId
+    # A collection of properties for this person.
+    attr_accessor :properties
+    # A collection of identifiers for this person.
+    attr_accessor :identifiers
+    # A collection of assertions for this person.
+    attr_accessor :assertions
+    # A collection of families for this person.
+    attr_accessor :families
+    # A collection of parents for this person.
+    attr_accessor :parents
+    # A collection of persona references for this person.
+    attr_accessor :personas
+    # The relationships.
+    attr_accessor :relationships
+    # A list of changes to the person
+    attr_accessor :changes
+    # The discussions about this person.
+    attr_accessor :discussions
+    # The changes about this person.
+    attr_accessor :watches
+
+    # the json hash for this Person
+    def to_jaxb_json_hash
+      _h = {}
+      _h['requestedId'] = requestedId.to_jaxb_json_hash unless requestedId.nil?
+      _h['version'] = version.to_jaxb_json_hash unless version.nil?
+      _h['id'] = id.to_jaxb_json_hash unless id.nil?
+      _h['personId'] = personId.to_jaxb_json_hash unless personId.nil?
+      _h['tempId'] = tempId.to_jaxb_json_hash unless tempId.nil?
+      _h['properties'] = properties.to_jaxb_json_hash unless properties.nil?
+      _h['identifiers'] = identifiers.to_jaxb_json_hash unless identifiers.nil?
+      _h['assertions'] = assertions.to_jaxb_json_hash unless assertions.nil?
+      if !families.nil?
+        _ha = Array.new
+        families.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['families'] = _ha
+      end
+      if !parents.nil?
+        _ha = Array.new
+        parents.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['parents'] = _ha
+      end
+      _h['personas'] = personas.to_jaxb_json_hash unless personas.nil?
+      _h['relationships'] = relationships.to_jaxb_json_hash unless relationships.nil?
+      _h['changes'] = changes.to_jaxb_json_hash unless changes.nil?
+      if !discussions.nil?
+        _ha = Array.new
+        discussions.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['discussions'] = _ha
+      end
+      if !watches.nil?
+        _ha = Array.new
+        watches.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['watches'] = _ha
+      end
+      return _h
+    end
+
+    # the json (string form) for this Person
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this Person with a json hash
+    def init_jaxb_json_hash(_o)
+      @requestedId = String.from_json(_o['requestedId']) unless _o['requestedId'].nil?
+      @version = String.from_json(_o['version']) unless _o['version'].nil?
+      @id = String.from_json(_o['id']) unless _o['id'].nil?
+      @personId = String.from_json(_o['personId']) unless _o['personId'].nil?
+      @tempId = String.from_json(_o['tempId']) unless _o['tempId'].nil?
+      @properties = Org::Familysearch::Ws::Familytree::V2::Schema::PersonProperties.from_json(_o['properties']) unless _o['properties'].nil?
+      @identifiers = Org::Familysearch::Ws::Familytree::V2::Schema::PersonIdentifiers.from_json(_o['identifiers']) unless _o['identifiers'].nil?
+      @assertions = Org::Familysearch::Ws::Familytree::V2::Schema::PersonAssertions.from_json(_o['assertions']) unless _o['assertions'].nil?
+      if !_o['families'].nil?
+        @families = Array.new
+        _oa = _o['families']
+        _oa.each { | _item | @families.push Org::Familysearch::Ws::Familytree::V2::Schema::FamilyReference.from_json(_item) }
+      end
+      if !_o['parents'].nil?
+        @parents = Array.new
+        _oa = _o['parents']
+        _oa.each { | _item | @parents.push Org::Familysearch::Ws::Familytree::V2::Schema::ParentsReference.from_json(_item) }
+      end
+      @personas = Org::Familysearch::Ws::Familytree::V2::Schema::PersonPersonas.from_json(_o['personas']) unless _o['personas'].nil?
+      @relationships = Org::Familysearch::Ws::Familytree::V2::Schema::PersonRelationships.from_json(_o['relationships']) unless _o['relationships'].nil?
+      @changes = Org::Familysearch::Ws::Familytree::V2::Schema::Changes.from_json(_o['changes']) unless _o['changes'].nil?
+      if !_o['discussions'].nil?
+        @discussions = Array.new
+        _oa = _o['discussions']
+        _oa.each { | _item | @discussions.push Org::Familysearch::Ws::Familytree::V2::Schema::Discussion.from_json(_item) }
+      end
+      if !_o['watches'].nil?
+        @watches = Array.new
+        _oa = _o['watches']
+        _oa.each { | _item | @watches.push String.from_json(_item) }
+      end
+    end
+
+    # constructs a Person from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # A Family Tree person.
+  class Pedigree 
+
+    # The id of the person.
+    attr_accessor :id
+    # The id of the person.
+    attr_accessor :requestedId
+    # The persons.
+    attr_accessor :persons
+
+    # the json hash for this Pedigree
+    def to_jaxb_json_hash
+      _h = {}
+      _h['id'] = id.to_jaxb_json_hash unless id.nil?
+      _h['requestedId'] = requestedId.to_jaxb_json_hash unless requestedId.nil?
+      if !persons.nil?
+        _ha = Array.new
+        persons.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['persons'] = _ha
+      end
+      return _h
+    end
+
+    # the json (string form) for this Pedigree
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this Pedigree with a json hash
+    def init_jaxb_json_hash(_o)
+      @id = String.from_json(_o['id']) unless _o['id'].nil?
+      @requestedId = String.from_json(_o['requestedId']) unless _o['requestedId'].nil?
+      if !_o['persons'].nil?
+        @persons = Array.new
+        _oa = _o['persons']
+        _oa.each { | _item | @persons.push Org::Familysearch::Ws::Familytree::V2::Schema::Person.from_json(_item) }
+      end
+    end
+
+    # constructs a Pedigree from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # Authority normalized place.
+  class NormalizedPlace 
+
+    # The place authority id.
+    attr_accessor :id
+    # The place authority version.
+    attr_accessor :version
+    # The value.
+    attr_accessor :value
+
+    # the json hash for this NormalizedPlace
+    def to_jaxb_json_hash
+      _h = {}
+      _h['id'] = id.to_jaxb_json_hash unless id.nil?
+      _h['version'] = version.to_jaxb_json_hash unless version.nil?
+      _h['value'] = value.to_jaxb_json_hash unless value.nil?
+      return _h
+    end
+
+    # the json (string form) for this NormalizedPlace
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this NormalizedPlace with a json hash
+    def init_jaxb_json_hash(_o)
+      @id = String.from_json(_o['id']) unless _o['id'].nil?
+      @version = String.from_json(_o['version']) unless _o['version'].nil?
+      @value = String.from_json(_o['value']) unless _o['value'].nil?
+    end
+
+    # constructs a NormalizedPlace from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # 
+  class MatchResults 
+
+    # The id of the person to which the matches are applicable.
+    attr_accessor :id
+    # The count of matches.
+    attr_accessor :count
+    # The matches.
+    attr_accessor :results
+    # query parameters
+    attr_accessor :query
+
+    # the json hash for this MatchResults
+    def to_jaxb_json_hash
+      _h = {}
+      _h['id'] = id.to_jaxb_json_hash unless id.nil?
+      _h['count'] = count.to_jaxb_json_hash unless count.nil?
+      if !results.nil?
+        _ha = Array.new
+        results.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['match'] = _ha
+      end
+      _h['query'] = query.to_jaxb_json_hash unless query.nil?
+      return _h
+    end
+
+    # the json (string form) for this MatchResults
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this MatchResults with a json hash
+    def init_jaxb_json_hash(_o)
+      @id = String.from_json(_o['id']) unless _o['id'].nil?
+      @count = Fixnum.from_json(_o['count']) unless _o['count'].nil?
+      if !_o['match'].nil?
+        @results = Array.new
+        _oa = _o['match']
+        _oa.each { | _item | @results.push Org::Familysearch::Ws::Familytree::V2::Schema::MatchResult.from_json(_item) }
+      end
+      @query = Org::Familysearch::Ws::Familytree::V2::Schema::SearchMatchParameters.from_json(_o['query']) unless _o['query'].nil?
+    end
+
+    # constructs a MatchResults from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # A Family Tree entity reference.
+  class EntityReference 
+
+    # The id of the entity.
+    attr_accessor :id
+    # Is the entity associated with the currently authenticated user?
+    attr_accessor :current
+    # The temp id of the entity.
+    attr_accessor :tempId
+    # The version number for this entity.
+    attr_accessor :version
+
+    # the json hash for this EntityReference
+    def to_jaxb_json_hash
+      _h = {}
+      _h['id'] = id.to_jaxb_json_hash unless id.nil?
+      _h['current'] = current.to_jaxb_json_hash unless current.nil?
+      _h['tempId'] = tempId.to_jaxb_json_hash unless tempId.nil?
+      _h['version'] = version.to_jaxb_json_hash unless version.nil?
+      return _h
+    end
+
+    # the json (string form) for this EntityReference
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this EntityReference with a json hash
+    def init_jaxb_json_hash(_o)
+      @id = String.from_json(_o['id']) unless _o['id'].nil?
+      @current = Boolean.from_json(_o['current']) unless _o['current'].nil?
+      @tempId = String.from_json(_o['tempId']) unless _o['tempId'].nil?
+      @version = String.from_json(_o['version']) unless _o['version'].nil?
+    end
+
+    # constructs a EntityReference from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # An astro date.
+  class DateAstro 
+
+    # The earliest astro date.
+    attr_accessor :earliest
+    # The lastest astro date.
+    attr_accessor :latest
+
+    # the json hash for this DateAstro
+    def to_jaxb_json_hash
+      _h = {}
+      _h['earliest'] = earliest.to_jaxb_json_hash unless earliest.nil?
+      _h['latest'] = latest.to_jaxb_json_hash unless latest.nil?
+      return _h
+    end
+
+    # the json (string form) for this DateAstro
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this DateAstro with a json hash
+    def init_jaxb_json_hash(_o)
+      @earliest = String.from_json(_o['earliest']) unless _o['earliest'].nil?
+      @latest = String.from_json(_o['latest']) unless _o['latest'].nil?
+    end
+
+    # constructs a DateAstro from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # 
+  class ContributorAlias 
+
+    # The alias id.
+    attr_accessor :id
+    # The alias contact name.
+    attr_accessor :contactName
+
+    # the json hash for this ContributorAlias
+    def to_jaxb_json_hash
+      _h = {}
+      _h['id'] = id.to_jaxb_json_hash unless id.nil?
+      _h['contactName'] = contactName.to_jaxb_json_hash unless contactName.nil?
+      return _h
+    end
+
+    # the json (string form) for this ContributorAlias
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this ContributorAlias with a json hash
+    def init_jaxb_json_hash(_o)
+      @id = String.from_json(_o['id']) unless _o['id'].nil?
+      @contactName = String.from_json(_o['contactName']) unless _o['contactName'].nil?
+    end
+
+    # constructs a ContributorAlias from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # An Assertion Comment.
+  class Citation 
+
+    # The requestedId of the citation.
+    attr_accessor :requestedId
+    # citation type
+    attr_accessor :type
+    # The id of the citation.
+    attr_accessor :id
+    # The action.
+    attr_accessor :action
+    # A temporary id for this citation (e.g. for a citation not persisted yet).
+    attr_accessor :tempId
+    # The persona id for this citation
+    attr_accessor :person
+    # The parent ids for this citation
+    attr_accessor :parents
+    # The spouse ids for this citation
+    attr_accessor :spouses
+    # The child id for this citation
+    attr_accessor :child
+    # assertionId
+    attr_accessor :assertion
+    # a reference to the contributor of the change.
+    attr_accessor :contributor
+    # a reference to the submitter.
+    attr_accessor :submitter
+    # the assertion assertion.
+    attr_accessor :disposition
+    # (no documentation provided)
+    attr_accessor :primarySource
+    # (no documentation provided)
+    attr_accessor :directEvidence
+    # (no documentation provided)
+    attr_accessor :entryDate
+    # citation fields.
+    attr_accessor :fields
+    # The citation source.
+    attr_accessor :source
+    # The citation comment.
+    attr_accessor :comment
+
+    # the json hash for this Citation
+    def to_jaxb_json_hash
+      _h = {}
+      _h['requestedId'] = requestedId.to_jaxb_json_hash unless requestedId.nil?
+      _h['type'] = type.to_jaxb_json_hash unless type.nil?
+      _h['id'] = id.to_jaxb_json_hash unless id.nil?
+      _h['action'] = action.to_jaxb_json_hash unless action.nil?
+      _h['tempId'] = tempId.to_jaxb_json_hash unless tempId.nil?
+      _h['person'] = person.to_jaxb_json_hash unless person.nil?
+      if !parents.nil?
+        _ha = Array.new
+        parents.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['parents'] = _ha
+      end
+      if !spouses.nil?
+        _ha = Array.new
+        spouses.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['spouses'] = _ha
+      end
+      _h['child'] = child.to_jaxb_json_hash unless child.nil?
+      _h['assertion'] = assertion.to_jaxb_json_hash unless assertion.nil?
+      _h['contributor'] = contributor.to_jaxb_json_hash unless contributor.nil?
+      _h['submitter'] = submitter.to_jaxb_json_hash unless submitter.nil?
+      _h['disposition'] = disposition.to_jaxb_json_hash unless disposition.nil?
+      _h['primarySource'] = primarySource.to_jaxb_json_hash unless primarySource.nil?
+      _h['directEvidence'] = directEvidence.to_jaxb_json_hash unless directEvidence.nil?
+      _h['entryDate'] = entryDate.to_jaxb_json_hash unless entryDate.nil?
+      if !fields.nil?
+        _ha = Array.new
+        fields.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['fields'] = _ha
+      end
+      _h['source'] = source.to_jaxb_json_hash unless source.nil?
+      _h['comment'] = comment.to_jaxb_json_hash unless comment.nil?
+      return _h
+    end
+
+    # the json (string form) for this Citation
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this Citation with a json hash
+    def init_jaxb_json_hash(_o)
+      @requestedId = String.from_json(_o['requestedId']) unless _o['requestedId'].nil?
+      @type = String.from_json(_o['type']) unless _o['type'].nil?
+      @id = String.from_json(_o['id']) unless _o['id'].nil?
+      @action = String.from_json(_o['action']) unless _o['action'].nil?
+      @tempId = String.from_json(_o['tempId']) unless _o['tempId'].nil?
+      @person = Org::Familysearch::Ws::Familytree::V2::Schema::EntityReference.from_json(_o['person']) unless _o['person'].nil?
+      if !_o['parents'].nil?
+        @parents = Array.new
+        _oa = _o['parents']
+        _oa.each { | _item | @parents.push Org::Familysearch::Ws::Familytree::V2::Schema::EntityReference.from_json(_item) }
+      end
+      if !_o['spouses'].nil?
+        @spouses = Array.new
+        _oa = _o['spouses']
+        _oa.each { | _item | @spouses.push Org::Familysearch::Ws::Familytree::V2::Schema::EntityReference.from_json(_item) }
+      end
+      @child = Org::Familysearch::Ws::Familytree::V2::Schema::EntityReference.from_json(_o['child']) unless _o['child'].nil?
+      @assertion = Org::Familysearch::Ws::Familytree::V2::Schema::EntityReference.from_json(_o['assertion']) unless _o['assertion'].nil?
+      @contributor = Org::Familysearch::Ws::Familytree::V2::Schema::EntityReference.from_json(_o['contributor']) unless _o['contributor'].nil?
+      @submitter = Org::Familysearch::Ws::Familytree::V2::Schema::EntityReference.from_json(_o['submitter']) unless _o['submitter'].nil?
+      @disposition = String.from_json(_o['disposition']) unless _o['disposition'].nil?
+      @primarySource = Boolean.from_json(_o['primarySource']) unless _o['primarySource'].nil?
+      @directEvidence = Boolean.from_json(_o['directEvidence']) unless _o['directEvidence'].nil?
+      @entryDate = String.from_json(_o['entryDate']) unless _o['entryDate'].nil?
+      if !_o['fields'].nil?
+        @fields = Array.new
+        _oa = _o['fields']
+        _oa.each { | _item | @fields.push Org::Familysearch::Ws::Familytree::V2::Schema::CitationField.from_json(_item) }
+      end
+      @source = Org::Familysearch::Ws::Familytree::V2::Schema::Source.from_json(_o['source']) unless _o['source'].nil?
+      @comment = String.from_json(_o['comment']) unless _o['comment'].nil?
+    end
+
+    # constructs a Citation from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # 
+  class Change 
+
+    # the change id.
+    attr_accessor :id
+    # the change type.
+    attr_accessor :type
+    # the change action.
+    attr_accessor :action
+    # the change parent id.
+    attr_accessor :parent
+    # a list of person references in a change entry.
+    attr_accessor :sources
+    # a list of references to the resulting persons of the change.
+    attr_accessor :results
+    # a list of references to the previous extract persons of the change.
+    attr_accessor :previous
+    # a reference to the contributor of the change.
+    attr_accessor :contributor
+    # a reference to the submitter of the change.
+    attr_accessor :submitter
+    # the timestamp of the change.
+    attr_accessor :timestamp
+
+    # the json hash for this Change
+    def to_jaxb_json_hash
+      _h = {}
+      _h['id'] = id.to_jaxb_json_hash unless id.nil?
+      _h['type'] = type.to_jaxb_json_hash unless type.nil?
+      _h['action'] = action.to_jaxb_json_hash unless action.nil?
+      _h['parent'] = parent.to_jaxb_json_hash unless parent.nil?
+      if !sources.nil?
+        _ha = Array.new
+        sources.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['sourcePersons'] = _ha
+      end
+      if !results.nil?
+        _ha = Array.new
+        results.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['resultPersons'] = _ha
+      end
+      if !previous.nil?
+        _ha = Array.new
+        previous.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['previousPersons'] = _ha
+      end
+      _h['contributor'] = contributor.to_jaxb_json_hash unless contributor.nil?
+      _h['submitter'] = submitter.to_jaxb_json_hash unless submitter.nil?
+      _h['timestamp'] = timestamp.to_jaxb_json_hash unless timestamp.nil?
+      return _h
+    end
+
+    # the json (string form) for this Change
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this Change with a json hash
+    def init_jaxb_json_hash(_o)
+      @id = String.from_json(_o['id']) unless _o['id'].nil?
+      @type = String.from_json(_o['type']) unless _o['type'].nil?
+      @action = Org::Familysearch::Ws::Familytree::V2::Schema::ChangeAction.from_json(_o['action']) unless _o['action'].nil?
+      @parent = Org::Familysearch::Ws::Familytree::V2::Schema::EntityReference.from_json(_o['parent']) unless _o['parent'].nil?
+      if !_o['sourcePersons'].nil?
+        @sources = Array.new
+        _oa = _o['sourcePersons']
+        _oa.each { | _item | @sources.push Org::Familysearch::Ws::Familytree::V2::Schema::EntityReference.from_json(_item) }
+      end
+      if !_o['resultPersons'].nil?
+        @results = Array.new
+        _oa = _o['resultPersons']
+        _oa.each { | _item | @results.push Org::Familysearch::Ws::Familytree::V2::Schema::EntityReference.from_json(_item) }
+      end
+      if !_o['previousPersons'].nil?
+        @previous = Array.new
+        _oa = _o['previousPersons']
+        _oa.each { | _item | @previous.push Org::Familysearch::Ws::Familytree::V2::Schema::EntityReference.from_json(_item) }
+      end
+      @contributor = Org::Familysearch::Ws::Familytree::V2::Schema::EntityReference.from_json(_o['contributor']) unless _o['contributor'].nil?
+      @submitter = Org::Familysearch::Ws::Familytree::V2::Schema::EntityReference.from_json(_o['submitter']) unless _o['submitter'].nil?
+      @timestamp = Time.from_json(_o['timestamp']) unless _o['timestamp'].nil?
+    end
+
+    # constructs a Change from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
   # Source Repository
   class Repository 
 
@@ -1488,38 +4069,133 @@ module V2
 
 module Schema
 
-  # User: mullinstw Date: Mar 31, 2009 Time: 12:32:26 PM
-  class SearchMatchParameters 
+  # A search parameter.
+  class SearchMatchParameter 
 
-    # parameters
-    attr_accessor :parameters
+    # The relationship to the primary person of the person to which this parameter applies.
+    attr_accessor :relationship
+    # The field to which to apply the value of this parameter.
+    attr_accessor :field
+    # exact Is this parameter exact.
+    attr_accessor :exact
+    # authority id
+    attr_accessor :authority
+    # The value of the parameter.
+    attr_accessor :value
 
-    # the json hash for this SearchMatchParameters
+    # the json hash for this SearchMatchParameter
     def to_jaxb_json_hash
       _h = {}
-      if !parameters.nil?
-        _ha = Array.new
-        parameters.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['parameter'] = _ha
-      end
+      _h['relationship'] = relationship.to_jaxb_json_hash unless relationship.nil?
+      _h['field'] = field.to_jaxb_json_hash unless field.nil?
+      _h['exact'] = exact.to_jaxb_json_hash unless exact.nil?
+      _h['authority'] = authority.to_jaxb_json_hash unless authority.nil?
+      _h['value'] = value.to_jaxb_json_hash unless value.nil?
       return _h
     end
 
-    # the json (string form) for this SearchMatchParameters
+    # the json (string form) for this SearchMatchParameter
     def to_json
       to_jaxb_json_hash.to_json
     end
 
-    #initializes this SearchMatchParameters with a json hash
+    #initializes this SearchMatchParameter with a json hash
     def init_jaxb_json_hash(_o)
-      if !_o['parameter'].nil?
-        @parameters = Array.new
-        _oa = _o['parameter']
-        _oa.each { | _item | @parameters.push Org::Familysearch::Ws::Familytree::V2::Schema::SearchMatchParameter.from_json(_item) }
-      end
+      @relationship = String.from_json(_o['relationship']) unless _o['relationship'].nil?
+      @field = String.from_json(_o['field']) unless _o['field'].nil?
+      @exact = Boolean.from_json(_o['exact']) unless _o['exact'].nil?
+      @authority = Org::Familysearch::Ws::Familytree::V2::Schema::EntityReference.from_json(_o['authority']) unless _o['authority'].nil?
+      @value = String.from_json(_o['value']) unless _o['value'].nil?
     end
 
-    # constructs a SearchMatchParameters from a (parsed) JSON hash
+    # constructs a SearchMatchParameter from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # The results of a search.
+  class SearchResults 
+
+    # The number of returned hits.
+    attr_accessor :count
+    # The estimated number of partial hits.
+    attr_accessor :partial
+    # The total number of close hits.
+    attr_accessor :close
+    # The results in the search.
+    attr_accessor :results
+    # The context id for repeating the search.
+    attr_accessor :contextId
+    # query parameters
+    attr_accessor :query
+
+    # the json hash for this SearchResults
+    def to_jaxb_json_hash
+      _h = {}
+      _h['count'] = count.to_jaxb_json_hash unless count.nil?
+      _h['partial'] = partial.to_jaxb_json_hash unless partial.nil?
+      _h['close'] = close.to_jaxb_json_hash unless close.nil?
+      if !results.nil?
+        _ha = Array.new
+        results.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['search'] = _ha
+      end
+      _h['contextId'] = contextId.to_jaxb_json_hash unless contextId.nil?
+      _h['query'] = query.to_jaxb_json_hash unless query.nil?
+      return _h
+    end
+
+    # the json (string form) for this SearchResults
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this SearchResults with a json hash
+    def init_jaxb_json_hash(_o)
+      @count = Fixnum.from_json(_o['count']) unless _o['count'].nil?
+      @partial = Fixnum.from_json(_o['partial']) unless _o['partial'].nil?
+      @close = Fixnum.from_json(_o['close']) unless _o['close'].nil?
+      if !_o['search'].nil?
+        @results = Array.new
+        _oa = _o['search']
+        _oa.each { | _item | @results.push Org::Familysearch::Ws::Familytree::V2::Schema::SearchResult.from_json(_item) }
+      end
+      @contextId = String.from_json(_o['contextId']) unless _o['contextId'].nil?
+      @query = Org::Familysearch::Ws::Familytree::V2::Schema::SearchMatchParameters.from_json(_o['query']) unless _o['query'].nil?
+    end
+
+    # constructs a SearchResults from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -1768,6 +4444,128 @@ module V2
 
 module Schema
 
+  # 
+  class UserStake 
+
+    # The stake id.
+    attr_accessor :id
+
+    # the json hash for this UserStake
+    def to_jaxb_json_hash
+      _h = {}
+      _h['id'] = id.to_jaxb_json_hash unless id.nil?
+      return _h
+    end
+
+    # the json (string form) for this UserStake
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this UserStake with a json hash
+    def init_jaxb_json_hash(_o)
+      @id = String.from_json(_o['id']) unless _o['id'].nil?
+    end
+
+    # constructs a UserStake from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # 
+  class UserTerms 
+
+    # (no documentation provided)
+    attr_accessor :version
+    # (no documentation provided)
+    attr_accessor :date
+
+    # the json hash for this UserTerms
+    def to_jaxb_json_hash
+      _h = {}
+      _h['version'] = version.to_jaxb_json_hash unless version.nil?
+      _h['date'] = date.to_jaxb_json_hash unless date.nil?
+      return _h
+    end
+
+    # the json (string form) for this UserTerms
+    def to_json
+      to_jaxb_json_hash.to_json
+    end
+
+    #initializes this UserTerms with a json hash
+    def init_jaxb_json_hash(_o)
+      @version = String.from_json(_o['version']) unless _o['version'].nil?
+      @date = Time.from_json(_o['date']) unless _o['date'].nil?
+    end
+
+    # constructs a UserTerms from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
   # Selected Information (Selectable Summary).
   class ValueSelection 
 
@@ -1831,58 +4629,30 @@ module V2
 
 module Schema
 
-  # The results of a search.
-  class SearchResults 
+  # 
+  class UserWard 
 
-    # The number of returned hits.
-    attr_accessor :count
-    # The estimated number of partial hits.
-    attr_accessor :partial
-    # The total number of close hits.
-    attr_accessor :close
-    # The results in the search.
-    attr_accessor :results
-    # The context id for repeating the search.
-    attr_accessor :contextId
-    # query parameters
-    attr_accessor :query
+    # The ward id.
+    attr_accessor :id
 
-    # the json hash for this SearchResults
+    # the json hash for this UserWard
     def to_jaxb_json_hash
       _h = {}
-      _h['count'] = count.to_jaxb_json_hash unless count.nil?
-      _h['partial'] = partial.to_jaxb_json_hash unless partial.nil?
-      _h['close'] = close.to_jaxb_json_hash unless close.nil?
-      if !results.nil?
-        _ha = Array.new
-        results.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['search'] = _ha
-      end
-      _h['contextId'] = contextId.to_jaxb_json_hash unless contextId.nil?
-      _h['query'] = query.to_jaxb_json_hash unless query.nil?
+      _h['id'] = id.to_jaxb_json_hash unless id.nil?
       return _h
     end
 
-    # the json (string form) for this SearchResults
+    # the json (string form) for this UserWard
     def to_json
       to_jaxb_json_hash.to_json
     end
 
-    #initializes this SearchResults with a json hash
+    #initializes this UserWard with a json hash
     def init_jaxb_json_hash(_o)
-      @count = Fixnum.from_json(_o['count']) unless _o['count'].nil?
-      @partial = Fixnum.from_json(_o['partial']) unless _o['partial'].nil?
-      @close = Fixnum.from_json(_o['close']) unless _o['close'].nil?
-      if !_o['search'].nil?
-        @results = Array.new
-        _oa = _o['search']
-        _oa.each { | _item | @results.push Org::Familysearch::Ws::Familytree::V2::Schema::SearchResult.from_json(_item) }
-      end
-      @contextId = String.from_json(_o['contextId']) unless _o['contextId'].nil?
-      @query = Org::Familysearch::Ws::Familytree::V2::Schema::SearchMatchParameters.from_json(_o['query']) unless _o['query'].nil?
+      @id = String.from_json(_o['id']) unless _o['id'].nil?
     end
 
-    # constructs a SearchResults from a (parsed) JSON hash
+    # constructs a UserWard from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -1919,1521 +4689,29 @@ module V2
 module Schema
 
   # 
-  class SearchResult 
+  class UserTemple 
 
-    # The id of the primary person.
+    # The temple district id.
     attr_accessor :id
-    # The search score for this person.
-    attr_accessor :score
-    # The primary person in this search hit.
-    attr_accessor :person
-    # The parents of the primary person for this search hit.
-    attr_accessor :parents
-    # The spouses of the primary person for this search hit.
-    attr_accessor :spouses
-    # The children of the primary person for this search hit.
-    attr_accessor :children
 
-    # the json hash for this SearchResult
+    # the json hash for this UserTemple
     def to_jaxb_json_hash
       _h = {}
       _h['id'] = id.to_jaxb_json_hash unless id.nil?
-      _h['score'] = score.to_jaxb_json_hash unless score.nil?
-      _h['person'] = person.to_jaxb_json_hash unless person.nil?
-      if !parents.nil?
-        _ha = Array.new
-        parents.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['parent'] = _ha
-      end
-      if !spouses.nil?
-        _ha = Array.new
-        spouses.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['spouse'] = _ha
-      end
-      if !children.nil?
-        _ha = Array.new
-        children.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['child'] = _ha
-      end
       return _h
     end
 
-    # the json (string form) for this SearchResult
+    # the json (string form) for this UserTemple
     def to_json
       to_jaxb_json_hash.to_json
     end
 
-    #initializes this SearchResult with a json hash
+    #initializes this UserTemple with a json hash
     def init_jaxb_json_hash(_o)
       @id = String.from_json(_o['id']) unless _o['id'].nil?
-      @score = Float.from_json(_o['score']) unless _o['score'].nil?
-      @person = Org::Familysearch::Ws::Familytree::V2::Schema::SearchPerson.from_json(_o['person']) unless _o['person'].nil?
-      if !_o['parent'].nil?
-        @parents = Array.new
-        _oa = _o['parent']
-        _oa.each { | _item | @parents.push Org::Familysearch::Ws::Familytree::V2::Schema::SearchPerson.from_json(_item) }
-      end
-      if !_o['spouse'].nil?
-        @spouses = Array.new
-        _oa = _o['spouse']
-        _oa.each { | _item | @spouses.push Org::Familysearch::Ws::Familytree::V2::Schema::SearchPerson.from_json(_item) }
-      end
-      if !_o['child'].nil?
-        @children = Array.new
-        _oa = _o['child']
-        _oa.each { | _item | @children.push Org::Familysearch::Ws::Familytree::V2::Schema::SearchPerson.from_json(_item) }
-      end
     end
 
-    # constructs a SearchResult from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Org
-
-module Familysearch
-
-module Ws
-
-module Familytree
-
-module V2
-
-module Schema
-
-  # A search parameter.
-  class SearchMatchParameter 
-
-    # The relationship to the primary person of the person to which this parameter applies.
-    attr_accessor :relationship
-    # The field to which to apply the value of this parameter.
-    attr_accessor :field
-    # authority id
-    attr_accessor :authority
-    # The value of the parameter.
-    attr_accessor :value
-
-    # the json hash for this SearchMatchParameter
-    def to_jaxb_json_hash
-      _h = {}
-      _h['relationship'] = relationship.to_jaxb_json_hash unless relationship.nil?
-      _h['field'] = field.to_jaxb_json_hash unless field.nil?
-      _h['authority'] = authority.to_jaxb_json_hash unless authority.nil?
-      _h['value'] = value.to_jaxb_json_hash unless value.nil?
-      return _h
-    end
-
-    # the json (string form) for this SearchMatchParameter
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this SearchMatchParameter with a json hash
-    def init_jaxb_json_hash(_o)
-      @relationship = String.from_json(_o['relationship']) unless _o['relationship'].nil?
-      @field = String.from_json(_o['field']) unless _o['field'].nil?
-      @authority = Org::Familysearch::Ws::Familytree::V2::Schema::EntityReference.from_json(_o['authority']) unless _o['authority'].nil?
-      @value = String.from_json(_o['value']) unless _o['value'].nil?
-    end
-
-    # constructs a SearchMatchParameter from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Org
-
-module Familysearch
-
-module Ws
-
-module Familytree
-
-module V2
-
-module Schema
-
-  # A FamilyTree relationship properties section.
-  class RelationshipProperties 
-
-    # The modified timestamp for this person.
-    attr_accessor :modified
-
-    # the json hash for this RelationshipProperties
-    def to_jaxb_json_hash
-      _h = {}
-      _h['modified'] = modified.to_jaxb_json_hash unless modified.nil?
-      return _h
-    end
-
-    # the json (string form) for this RelationshipProperties
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this RelationshipProperties with a json hash
-    def init_jaxb_json_hash(_o)
-      @modified = Time.from_json(_o['modified']) unless _o['modified'].nil?
-    end
-
-    # constructs a RelationshipProperties from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Org
-
-module Familysearch
-
-module Ws
-
-module Familytree
-
-module V2
-
-module Schema
-
-  # A FamilyTree relationships asseritons section.
-  class RelationshipAssertions 
-
-    # A collection of exists assertions for this relationship.
-    attr_accessor :exists
-    # A collection of events for this relationship.
-    attr_accessor :events
-    # A collection of characteristics for this relationship.
-    attr_accessor :characteristics
-    # A collection of ordinances for this relationship.
-    attr_accessor :ordinances
-
-    # the json hash for this RelationshipAssertions
-    def to_jaxb_json_hash
-      _h = {}
-      if !exists.nil?
-        _ha = Array.new
-        exists.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['exists'] = _ha
-      end
-      if !events.nil?
-        _ha = Array.new
-        events.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['events'] = _ha
-      end
-      if !characteristics.nil?
-        _ha = Array.new
-        characteristics.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['characteristics'] = _ha
-      end
-      if !ordinances.nil?
-        _ha = Array.new
-        ordinances.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['ordinances'] = _ha
-      end
-      return _h
-    end
-
-    # the json (string form) for this RelationshipAssertions
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this RelationshipAssertions with a json hash
-    def init_jaxb_json_hash(_o)
-      if !_o['exists'].nil?
-        @exists = Array.new
-        _oa = _o['exists']
-        _oa.each { | _item | @exists.push Org::Familysearch::Ws::Familytree::V2::Schema::ExistsAssertion.from_json(_item) }
-      end
-      if !_o['events'].nil?
-        @events = Array.new
-        _oa = _o['events']
-        _oa.each { | _item | @events.push Org::Familysearch::Ws::Familytree::V2::Schema::EventAssertion.from_json(_item) }
-      end
-      if !_o['characteristics'].nil?
-        @characteristics = Array.new
-        _oa = _o['characteristics']
-        _oa.each { | _item | @characteristics.push Org::Familysearch::Ws::Familytree::V2::Schema::CharacteristicAssertion.from_json(_item) }
-      end
-      if !_o['ordinances'].nil?
-        @ordinances = Array.new
-        _oa = _o['ordinances']
-        _oa.each { | _item | @ordinances.push Org::Familysearch::Ws::Familytree::V2::Schema::OrdinanceAssertion.from_json(_item) }
-      end
-    end
-
-    # constructs a RelationshipAssertions from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Org
-
-module Familysearch
-
-module Ws
-
-module Familytree
-
-module V2
-
-module Schema
-
-  # Not used.
-  class ProxyRole 
-
-    # Not used.
-    attr_accessor :id
-    # Not used.
-    attr_accessor :contactName
-    # Not used.
-    attr_accessor :systemName
-
-    # the json hash for this ProxyRole
-    def to_jaxb_json_hash
-      _h = {}
-      _h['id'] = id.to_jaxb_json_hash unless id.nil?
-      _h['contactName'] = contactName.to_jaxb_json_hash unless contactName.nil?
-      _h['systemName'] = systemName.to_jaxb_json_hash unless systemName.nil?
-      return _h
-    end
-
-    # the json (string form) for this ProxyRole
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this ProxyRole with a json hash
-    def init_jaxb_json_hash(_o)
-      @id = String.from_json(_o['id']) unless _o['id'].nil?
-      @contactName = String.from_json(_o['contactName']) unless _o['contactName'].nil?
-      @systemName = String.from_json(_o['systemName']) unless _o['systemName'].nil?
-    end
-
-    # constructs a ProxyRole from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Org
-
-module Familysearch
-
-module Ws
-
-module Familytree
-
-module V2
-
-module Schema
-
-  # A proxy for a user.
-  class Proxy 
-
-    # Id of the user that is being proxied.
-    attr_accessor :id
-    # The update action to perform on the proxy.
-    attr_accessor :action
-    # Name of the user being proxied.
-    attr_accessor :name
-    # Access number of the user being proxied.
-    attr_accessor :accessNumber
-    # Birth date of the user to be proxied.
-    attr_accessor :birth
-
-    # the json hash for this Proxy
-    def to_jaxb_json_hash
-      _h = {}
-      _h['id'] = id.to_jaxb_json_hash unless id.nil?
-      _h['action'] = action.to_jaxb_json_hash unless action.nil?
-      _h['name'] = name.to_jaxb_json_hash unless name.nil?
-      _h['accessNumber'] = accessNumber.to_jaxb_json_hash unless accessNumber.nil?
-      _h['birth'] = birth.to_jaxb_json_hash unless birth.nil?
-      return _h
-    end
-
-    # the json (string form) for this Proxy
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this Proxy with a json hash
-    def init_jaxb_json_hash(_o)
-      @id = String.from_json(_o['id']) unless _o['id'].nil?
-      @action = String.from_json(_o['action']) unless _o['action'].nil?
-      @name = String.from_json(_o['name']) unless _o['name'].nil?
-      @accessNumber = String.from_json(_o['accessNumber']) unless _o['accessNumber'].nil?
-      @birth = String.from_json(_o['birth']) unless _o['birth'].nil?
-    end
-
-    # constructs a Proxy from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Org
-
-module Familysearch
-
-module Ws
-
-module Familytree
-
-module V2
-
-module Schema
-
-  # A postal address.
-  class PostalAddress 
-
-    # The first address field for the postal address.
-    attr_accessor :address1
-    # The second address field for the postal address.
-    attr_accessor :address2
-    # The third address field for the postal address.
-    attr_accessor :address3
-    # The fourth address field for the postal address.
-    attr_accessor :address4
-    # The first street field for the postal street.
-    attr_accessor :street1
-    # The second street field for the postal street.
-    attr_accessor :street2
-    # The third street field for the postal street.
-    attr_accessor :street3
-    # The city.
-    attr_accessor :city
-    # The province.
-    attr_accessor :province
-    # The country.
-    attr_accessor :country
-    # The postal code.
-    attr_accessor :postalcode
-
-    # the json hash for this PostalAddress
-    def to_jaxb_json_hash
-      _h = {}
-      _h['address1'] = address1.to_jaxb_json_hash unless address1.nil?
-      _h['address2'] = address2.to_jaxb_json_hash unless address2.nil?
-      _h['address3'] = address3.to_jaxb_json_hash unless address3.nil?
-      _h['address4'] = address4.to_jaxb_json_hash unless address4.nil?
-      _h['street1'] = street1.to_jaxb_json_hash unless street1.nil?
-      _h['street2'] = street2.to_jaxb_json_hash unless street2.nil?
-      _h['street3'] = street3.to_jaxb_json_hash unless street3.nil?
-      _h['city'] = city.to_jaxb_json_hash unless city.nil?
-      _h['province'] = province.to_jaxb_json_hash unless province.nil?
-      _h['country'] = country.to_jaxb_json_hash unless country.nil?
-      _h['postalcode'] = postalcode.to_jaxb_json_hash unless postalcode.nil?
-      return _h
-    end
-
-    # the json (string form) for this PostalAddress
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this PostalAddress with a json hash
-    def init_jaxb_json_hash(_o)
-      @address1 = String.from_json(_o['address1']) unless _o['address1'].nil?
-      @address2 = String.from_json(_o['address2']) unless _o['address2'].nil?
-      @address3 = String.from_json(_o['address3']) unless _o['address3'].nil?
-      @address4 = String.from_json(_o['address4']) unless _o['address4'].nil?
-      @street1 = String.from_json(_o['street1']) unless _o['street1'].nil?
-      @street2 = String.from_json(_o['street2']) unless _o['street2'].nil?
-      @street3 = String.from_json(_o['street3']) unless _o['street3'].nil?
-      @city = String.from_json(_o['city']) unless _o['city'].nil?
-      @province = String.from_json(_o['province']) unless _o['province'].nil?
-      @country = String.from_json(_o['country']) unless _o['country'].nil?
-      @postalcode = String.from_json(_o['postalcode']) unless _o['postalcode'].nil?
-    end
-
-    # constructs a PostalAddress from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Org
-
-module Familysearch
-
-module Ws
-
-module Familytree
-
-module V2
-
-module Schema
-
-  # A FamilyTree person relationships section.
-  class PersonRelationships 
-
-    # A collection of parent relationships for this person.
-    attr_accessor :parents
-    # A collection of spouse relationships for this person.
-    attr_accessor :spouses
-    # A collection of parent relationships for this person.
-    attr_accessor :children
-
-    # the json hash for this PersonRelationships
-    def to_jaxb_json_hash
-      _h = {}
-      if !parents.nil?
-        _ha = Array.new
-        parents.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['parent'] = _ha
-      end
-      if !spouses.nil?
-        _ha = Array.new
-        spouses.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['spouse'] = _ha
-      end
-      if !children.nil?
-        _ha = Array.new
-        children.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['child'] = _ha
-      end
-      return _h
-    end
-
-    # the json (string form) for this PersonRelationships
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this PersonRelationships with a json hash
-    def init_jaxb_json_hash(_o)
-      if !_o['parent'].nil?
-        @parents = Array.new
-        _oa = _o['parent']
-        _oa.each { | _item | @parents.push Org::Familysearch::Ws::Familytree::V2::Schema::Relationship.from_json(_item) }
-      end
-      if !_o['spouse'].nil?
-        @spouses = Array.new
-        _oa = _o['spouse']
-        _oa.each { | _item | @spouses.push Org::Familysearch::Ws::Familytree::V2::Schema::Relationship.from_json(_item) }
-      end
-      if !_o['child'].nil?
-        @children = Array.new
-        _oa = _o['child']
-        _oa.each { | _item | @children.push Org::Familysearch::Ws::Familytree::V2::Schema::Relationship.from_json(_item) }
-      end
-    end
-
-    # constructs a PersonRelationships from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Org
-
-module Familysearch
-
-module Ws
-
-module Familytree
-
-module V2
-
-module Schema
-
-  # A FamilyTree person asseritons section.
-  class PersonPersonas 
-
-    # The action to take on the personas.
-    attr_accessor :action
-    # Temp id for when you're moving records.
-    attr_accessor :tempId
-    # The target id to use when combining personas to a specific person.
-    attr_accessor :target
-    # A collection of persona references for this person.
-    attr_accessor :personas
-
-    # the json hash for this PersonPersonas
-    def to_jaxb_json_hash
-      _h = {}
-      _h['action'] = action.to_jaxb_json_hash unless action.nil?
-      _h['tempId'] = tempId.to_jaxb_json_hash unless tempId.nil?
-      _h['target'] = target.to_jaxb_json_hash unless target.nil?
-      if !personas.nil?
-        _ha = Array.new
-        personas.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['persona'] = _ha
-      end
-      return _h
-    end
-
-    # the json (string form) for this PersonPersonas
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this PersonPersonas with a json hash
-    def init_jaxb_json_hash(_o)
-      @action = String.from_json(_o['action']) unless _o['action'].nil?
-      @tempId = String.from_json(_o['tempId']) unless _o['tempId'].nil?
-      @target = Org::Familysearch::Ws::Familytree::V2::Schema::EntityReference.from_json(_o['target']) unless _o['target'].nil?
-      if !_o['persona'].nil?
-        @personas = Array.new
-        _oa = _o['persona']
-        _oa.each { | _item | @personas.push Org::Familysearch::Ws::Familytree::V2::Schema::PersonPersona.from_json(_item) }
-      end
-    end
-
-    # constructs a PersonPersonas from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Org
-
-module Familysearch
-
-module Ws
-
-module Familytree
-
-module V2
-
-module Schema
-
-  # A FamilyTree person identifiers section.
-  class PersonIdentifiers 
-
-    # The list of person identifiers.
-    attr_accessor :identifiers
-
-    # the json hash for this PersonIdentifiers
-    def to_jaxb_json_hash
-      _h = {}
-      if !identifiers.nil?
-        _ha = Array.new
-        identifiers.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['identifier'] = _ha
-      end
-      return _h
-    end
-
-    # the json (string form) for this PersonIdentifiers
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this PersonIdentifiers with a json hash
-    def init_jaxb_json_hash(_o)
-      if !_o['identifier'].nil?
-        @identifiers = Array.new
-        _oa = _o['identifier']
-        _oa.each { | _item | @identifiers.push Org::Familysearch::Ws::Familytree::V2::Schema::PersonIdentifier.from_json(_item) }
-      end
-    end
-
-    # constructs a PersonIdentifiers from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Org
-
-module Familysearch
-
-module Ws
-
-module Familytree
-
-module V2
-
-module Schema
-
-  # A FamilyTree person asseritons section.
-  class PersonAssertions 
-
-    # A collection of exists assertions for this person.
-    attr_accessor :exists
-    # A collection of names for this person.
-    attr_accessor :names
-    # A collection of genders for this person.
-    attr_accessor :genders
-    # A collection of events for this person.
-    attr_accessor :events
-    # A collection of characteristics for this person.
-    attr_accessor :characteristics
-    # A collection of ordinances for this person.
-    attr_accessor :ordinances
-
-    # the json hash for this PersonAssertions
-    def to_jaxb_json_hash
-      _h = {}
-      if !exists.nil?
-        _ha = Array.new
-        exists.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['exists'] = _ha
-      end
-      if !names.nil?
-        _ha = Array.new
-        names.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['names'] = _ha
-      end
-      if !genders.nil?
-        _ha = Array.new
-        genders.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['genders'] = _ha
-      end
-      if !events.nil?
-        _ha = Array.new
-        events.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['events'] = _ha
-      end
-      if !characteristics.nil?
-        _ha = Array.new
-        characteristics.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['characteristics'] = _ha
-      end
-      if !ordinances.nil?
-        _ha = Array.new
-        ordinances.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['ordinances'] = _ha
-      end
-      return _h
-    end
-
-    # the json (string form) for this PersonAssertions
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this PersonAssertions with a json hash
-    def init_jaxb_json_hash(_o)
-      if !_o['exists'].nil?
-        @exists = Array.new
-        _oa = _o['exists']
-        _oa.each { | _item | @exists.push Org::Familysearch::Ws::Familytree::V2::Schema::ExistsAssertion.from_json(_item) }
-      end
-      if !_o['names'].nil?
-        @names = Array.new
-        _oa = _o['names']
-        _oa.each { | _item | @names.push Org::Familysearch::Ws::Familytree::V2::Schema::NameAssertion.from_json(_item) }
-      end
-      if !_o['genders'].nil?
-        @genders = Array.new
-        _oa = _o['genders']
-        _oa.each { | _item | @genders.push Org::Familysearch::Ws::Familytree::V2::Schema::GenderAssertion.from_json(_item) }
-      end
-      if !_o['events'].nil?
-        @events = Array.new
-        _oa = _o['events']
-        _oa.each { | _item | @events.push Org::Familysearch::Ws::Familytree::V2::Schema::EventAssertion.from_json(_item) }
-      end
-      if !_o['characteristics'].nil?
-        @characteristics = Array.new
-        _oa = _o['characteristics']
-        _oa.each { | _item | @characteristics.push Org::Familysearch::Ws::Familytree::V2::Schema::CharacteristicAssertion.from_json(_item) }
-      end
-      if !_o['ordinances'].nil?
-        @ordinances = Array.new
-        _oa = _o['ordinances']
-        _oa.each { | _item | @ordinances.push Org::Familysearch::Ws::Familytree::V2::Schema::OrdinanceAssertion.from_json(_item) }
-      end
-    end
-
-    # constructs a PersonAssertions from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Org
-
-module Familysearch
-
-module Ws
-
-module Familytree
-
-module V2
-
-module Schema
-
-  # A Family Tree person.
-  class Person 
-
-    # The id of the person.
-    attr_accessor :requestedId
-    # The version number for this person.
-    attr_accessor :version
-    # The id of the person.
-    attr_accessor :id
-    # In the case of a persona, the id of the person of which this is a persona.
-    attr_accessor :personId
-    # A temporary id for this person (e.g. for a person not persisted yet).
-    attr_accessor :tempId
-    # A collection of properties for this person.
-    attr_accessor :properties
-    # A collection of identifiers for this person.
-    attr_accessor :identifiers
-    # A collection of assertions for this person.
-    attr_accessor :assertions
-    # A collection of families for this person.
-    attr_accessor :families
-    # A collection of parents for this person.
-    attr_accessor :parents
-    # A collection of persona references for this person.
-    attr_accessor :personas
-    # The relationships.
-    attr_accessor :relationships
-    # A list of changes to the person
-    attr_accessor :changes
-
-    # the json hash for this Person
-    def to_jaxb_json_hash
-      _h = {}
-      _h['requestedId'] = requestedId.to_jaxb_json_hash unless requestedId.nil?
-      _h['version'] = version.to_jaxb_json_hash unless version.nil?
-      _h['id'] = id.to_jaxb_json_hash unless id.nil?
-      _h['personId'] = personId.to_jaxb_json_hash unless personId.nil?
-      _h['tempId'] = tempId.to_jaxb_json_hash unless tempId.nil?
-      _h['properties'] = properties.to_jaxb_json_hash unless properties.nil?
-      _h['identifiers'] = identifiers.to_jaxb_json_hash unless identifiers.nil?
-      _h['assertions'] = assertions.to_jaxb_json_hash unless assertions.nil?
-      if !families.nil?
-        _ha = Array.new
-        families.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['families'] = _ha
-      end
-      if !parents.nil?
-        _ha = Array.new
-        parents.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['parents'] = _ha
-      end
-      _h['personas'] = personas.to_jaxb_json_hash unless personas.nil?
-      _h['relationships'] = relationships.to_jaxb_json_hash unless relationships.nil?
-      _h['changes'] = changes.to_jaxb_json_hash unless changes.nil?
-      return _h
-    end
-
-    # the json (string form) for this Person
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this Person with a json hash
-    def init_jaxb_json_hash(_o)
-      @requestedId = String.from_json(_o['requestedId']) unless _o['requestedId'].nil?
-      @version = String.from_json(_o['version']) unless _o['version'].nil?
-      @id = String.from_json(_o['id']) unless _o['id'].nil?
-      @personId = String.from_json(_o['personId']) unless _o['personId'].nil?
-      @tempId = String.from_json(_o['tempId']) unless _o['tempId'].nil?
-      @properties = Org::Familysearch::Ws::Familytree::V2::Schema::PersonProperties.from_json(_o['properties']) unless _o['properties'].nil?
-      @identifiers = Org::Familysearch::Ws::Familytree::V2::Schema::PersonIdentifiers.from_json(_o['identifiers']) unless _o['identifiers'].nil?
-      @assertions = Org::Familysearch::Ws::Familytree::V2::Schema::PersonAssertions.from_json(_o['assertions']) unless _o['assertions'].nil?
-      if !_o['families'].nil?
-        @families = Array.new
-        _oa = _o['families']
-        _oa.each { | _item | @families.push Org::Familysearch::Ws::Familytree::V2::Schema::FamilyReference.from_json(_item) }
-      end
-      if !_o['parents'].nil?
-        @parents = Array.new
-        _oa = _o['parents']
-        _oa.each { | _item | @parents.push Org::Familysearch::Ws::Familytree::V2::Schema::ParentsReference.from_json(_item) }
-      end
-      @personas = Org::Familysearch::Ws::Familytree::V2::Schema::PersonPersonas.from_json(_o['personas']) unless _o['personas'].nil?
-      @relationships = Org::Familysearch::Ws::Familytree::V2::Schema::PersonRelationships.from_json(_o['relationships']) unless _o['relationships'].nil?
-      @changes = Org::Familysearch::Ws::Familytree::V2::Schema::Changes.from_json(_o['changes']) unless _o['changes'].nil?
-    end
-
-    # constructs a Person from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Org
-
-module Familysearch
-
-module Ws
-
-module Familytree
-
-module V2
-
-module Schema
-
-  # A FamilyTree parents.
-  class ParentsReference 
-
-    # The action.
-    attr_accessor :action
-    # A collection of parents for this family.
-    attr_accessor :parents
-
-    # the json hash for this ParentsReference
-    def to_jaxb_json_hash
-      _h = {}
-      _h['action'] = action.to_jaxb_json_hash unless action.nil?
-      if !parents.nil?
-        _ha = Array.new
-        parents.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['parent'] = _ha
-      end
-      return _h
-    end
-
-    # the json (string form) for this ParentsReference
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this ParentsReference with a json hash
-    def init_jaxb_json_hash(_o)
-      @action = String.from_json(_o['action']) unless _o['action'].nil?
-      if !_o['parent'].nil?
-        @parents = Array.new
-        _oa = _o['parent']
-        _oa.each { | _item | @parents.push Org::Familysearch::Ws::Familytree::V2::Schema::PersonReference.from_json(_item) }
-      end
-    end
-
-    # constructs a ParentsReference from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Org
-
-module Familysearch
-
-module Ws
-
-module Familytree
-
-module V2
-
-module Schema
-
-  # Authority normalized place.
-  class NormalizedPlace 
-
-    # The place authority id.
-    attr_accessor :id
-    # The place authority version.
-    attr_accessor :version
-    # The value.
-    attr_accessor :value
-
-    # the json hash for this NormalizedPlace
-    def to_jaxb_json_hash
-      _h = {}
-      _h['id'] = id.to_jaxb_json_hash unless id.nil?
-      _h['version'] = version.to_jaxb_json_hash unless version.nil?
-      _h['value'] = value.to_jaxb_json_hash unless value.nil?
-      return _h
-    end
-
-    # the json (string form) for this NormalizedPlace
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this NormalizedPlace with a json hash
-    def init_jaxb_json_hash(_o)
-      @id = String.from_json(_o['id']) unless _o['id'].nil?
-      @version = String.from_json(_o['version']) unless _o['version'].nil?
-      @value = String.from_json(_o['value']) unless _o['value'].nil?
-    end
-
-    # constructs a NormalizedPlace from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Org
-
-module Familysearch
-
-module Ws
-
-module Familytree
-
-module V2
-
-module Schema
-
-  # 
-  class MatchResults 
-
-    # The id of the person to which the matches are applicable.
-    attr_accessor :id
-    # The count of matches.
-    attr_accessor :count
-    # The matches.
-    attr_accessor :results
-    # query parameters
-    attr_accessor :query
-
-    # the json hash for this MatchResults
-    def to_jaxb_json_hash
-      _h = {}
-      _h['id'] = id.to_jaxb_json_hash unless id.nil?
-      _h['count'] = count.to_jaxb_json_hash unless count.nil?
-      if !results.nil?
-        _ha = Array.new
-        results.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['match'] = _ha
-      end
-      _h['query'] = query.to_jaxb_json_hash unless query.nil?
-      return _h
-    end
-
-    # the json (string form) for this MatchResults
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this MatchResults with a json hash
-    def init_jaxb_json_hash(_o)
-      @id = String.from_json(_o['id']) unless _o['id'].nil?
-      @count = Fixnum.from_json(_o['count']) unless _o['count'].nil?
-      if !_o['match'].nil?
-        @results = Array.new
-        _oa = _o['match']
-        _oa.each { | _item | @results.push Org::Familysearch::Ws::Familytree::V2::Schema::MatchResult.from_json(_item) }
-      end
-      @query = Org::Familysearch::Ws::Familytree::V2::Schema::SearchMatchParameters.from_json(_o['query']) unless _o['query'].nil?
-    end
-
-    # constructs a MatchResults from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Org
-
-module Familysearch
-
-module Ws
-
-module Familytree
-
-module V2
-
-module Schema
-
-  # An Assertion Comment.
-  class Citation 
-
-    # citation type
-    attr_accessor :type
-    # The id of the citation.
-    attr_accessor :id
-    # The action.
-    attr_accessor :action
-    # A temporary id for this citation (e.g. for a citation not persisted yet).
-    attr_accessor :tempId
-    # The persona id for this citation
-    attr_accessor :person
-    # The parent ids for this citation
-    attr_accessor :parents
-    # The spouse ids for this citation
-    attr_accessor :spouses
-    # The child id for this citation
-    attr_accessor :child
-    # assertionId
-    attr_accessor :assertion
-    # a reference to the contributor of the change.
-    attr_accessor :contributor
-    # a reference to the submitter.
-    attr_accessor :submitter
-    # the assertion assertion.
-    attr_accessor :disposition
-    # (no documentation provided)
-    attr_accessor :primarySource
-    # (no documentation provided)
-    attr_accessor :directEvidence
-    # (no documentation provided)
-    attr_accessor :entryDate
-    # citation fields.
-    attr_accessor :fields
-    # The citation source.
-    attr_accessor :source
-    # The citation comment.
-    attr_accessor :comment
-
-    # the json hash for this Citation
-    def to_jaxb_json_hash
-      _h = {}
-      _h['type'] = type.to_jaxb_json_hash unless type.nil?
-      _h['id'] = id.to_jaxb_json_hash unless id.nil?
-      _h['action'] = action.to_jaxb_json_hash unless action.nil?
-      _h['tempId'] = tempId.to_jaxb_json_hash unless tempId.nil?
-      _h['person'] = person.to_jaxb_json_hash unless person.nil?
-      if !parents.nil?
-        _ha = Array.new
-        parents.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['parents'] = _ha
-      end
-      if !spouses.nil?
-        _ha = Array.new
-        spouses.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['spouses'] = _ha
-      end
-      _h['child'] = child.to_jaxb_json_hash unless child.nil?
-      _h['assertion'] = assertion.to_jaxb_json_hash unless assertion.nil?
-      _h['contributor'] = contributor.to_jaxb_json_hash unless contributor.nil?
-      _h['submitter'] = submitter.to_jaxb_json_hash unless submitter.nil?
-      _h['disposition'] = disposition.to_jaxb_json_hash unless disposition.nil?
-      _h['primarySource'] = primarySource.to_jaxb_json_hash unless primarySource.nil?
-      _h['directEvidence'] = directEvidence.to_jaxb_json_hash unless directEvidence.nil?
-      _h['entryDate'] = entryDate.to_jaxb_json_hash unless entryDate.nil?
-      if !fields.nil?
-        _ha = Array.new
-        fields.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['fields'] = _ha
-      end
-      _h['source'] = source.to_jaxb_json_hash unless source.nil?
-      _h['comment'] = comment.to_jaxb_json_hash unless comment.nil?
-      return _h
-    end
-
-    # the json (string form) for this Citation
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this Citation with a json hash
-    def init_jaxb_json_hash(_o)
-      @type = String.from_json(_o['type']) unless _o['type'].nil?
-      @id = String.from_json(_o['id']) unless _o['id'].nil?
-      @action = String.from_json(_o['action']) unless _o['action'].nil?
-      @tempId = String.from_json(_o['tempId']) unless _o['tempId'].nil?
-      @person = Org::Familysearch::Ws::Familytree::V2::Schema::EntityReference.from_json(_o['person']) unless _o['person'].nil?
-      if !_o['parents'].nil?
-        @parents = Array.new
-        _oa = _o['parents']
-        _oa.each { | _item | @parents.push Org::Familysearch::Ws::Familytree::V2::Schema::EntityReference.from_json(_item) }
-      end
-      if !_o['spouses'].nil?
-        @spouses = Array.new
-        _oa = _o['spouses']
-        _oa.each { | _item | @spouses.push Org::Familysearch::Ws::Familytree::V2::Schema::EntityReference.from_json(_item) }
-      end
-      @child = Org::Familysearch::Ws::Familytree::V2::Schema::EntityReference.from_json(_o['child']) unless _o['child'].nil?
-      @assertion = Org::Familysearch::Ws::Familytree::V2::Schema::EntityReference.from_json(_o['assertion']) unless _o['assertion'].nil?
-      @contributor = Org::Familysearch::Ws::Familytree::V2::Schema::EntityReference.from_json(_o['contributor']) unless _o['contributor'].nil?
-      @submitter = Org::Familysearch::Ws::Familytree::V2::Schema::EntityReference.from_json(_o['submitter']) unless _o['submitter'].nil?
-      @disposition = String.from_json(_o['disposition']) unless _o['disposition'].nil?
-      @primarySource = Boolean.from_json(_o['primarySource']) unless _o['primarySource'].nil?
-      @directEvidence = Boolean.from_json(_o['directEvidence']) unless _o['directEvidence'].nil?
-      @entryDate = String.from_json(_o['entryDate']) unless _o['entryDate'].nil?
-      if !_o['fields'].nil?
-        @fields = Array.new
-        _oa = _o['fields']
-        _oa.each { | _item | @fields.push Org::Familysearch::Ws::Familytree::V2::Schema::CitationField.from_json(_item) }
-      end
-      @source = Org::Familysearch::Ws::Familytree::V2::Schema::Source.from_json(_o['source']) unless _o['source'].nil?
-      @comment = String.from_json(_o['comment']) unless _o['comment'].nil?
-    end
-
-    # constructs a Citation from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Org
-
-module Familysearch
-
-module Ws
-
-module Familytree
-
-module V2
-
-module Schema
-
-  # 
-  class Change 
-
-    # the change id.
-    attr_accessor :id
-    # the change type.
-    attr_accessor :type
-    # the change action.
-    attr_accessor :action
-    # the change parent id.
-    attr_accessor :parent
-    # a list of person references in a change entry.
-    attr_accessor :sources
-    # a list of references to the resulting persons of the change.
-    attr_accessor :results
-    # a list of references to the previous extract persons of the change.
-    attr_accessor :previous
-    # a reference to the contributor of the change.
-    attr_accessor :contributor
-    # a reference to the submitter of the change.
-    attr_accessor :submitter
-    # the timestamp of the change.
-    attr_accessor :timestamp
-
-    # the json hash for this Change
-    def to_jaxb_json_hash
-      _h = {}
-      _h['id'] = id.to_jaxb_json_hash unless id.nil?
-      _h['type'] = type.to_jaxb_json_hash unless type.nil?
-      _h['action'] = action.to_jaxb_json_hash unless action.nil?
-      _h['parent'] = parent.to_jaxb_json_hash unless parent.nil?
-      if !sources.nil?
-        _ha = Array.new
-        sources.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['sourcePersons'] = _ha
-      end
-      if !results.nil?
-        _ha = Array.new
-        results.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['resultPersons'] = _ha
-      end
-      if !previous.nil?
-        _ha = Array.new
-        previous.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['previousPersons'] = _ha
-      end
-      _h['contributor'] = contributor.to_jaxb_json_hash unless contributor.nil?
-      _h['submitter'] = submitter.to_jaxb_json_hash unless submitter.nil?
-      _h['timestamp'] = timestamp.to_jaxb_json_hash unless timestamp.nil?
-      return _h
-    end
-
-    # the json (string form) for this Change
-    def to_json
-      to_jaxb_json_hash.to_json
-    end
-
-    #initializes this Change with a json hash
-    def init_jaxb_json_hash(_o)
-      @id = String.from_json(_o['id']) unless _o['id'].nil?
-      @type = String.from_json(_o['type']) unless _o['type'].nil?
-      @action = Org::Familysearch::Ws::Familytree::V2::Schema::ChangeAction.from_json(_o['action']) unless _o['action'].nil?
-      @parent = Org::Familysearch::Ws::Familytree::V2::Schema::EntityReference.from_json(_o['parent']) unless _o['parent'].nil?
-      if !_o['sourcePersons'].nil?
-        @sources = Array.new
-        _oa = _o['sourcePersons']
-        _oa.each { | _item | @sources.push Org::Familysearch::Ws::Familytree::V2::Schema::EntityReference.from_json(_item) }
-      end
-      if !_o['resultPersons'].nil?
-        @results = Array.new
-        _oa = _o['resultPersons']
-        _oa.each { | _item | @results.push Org::Familysearch::Ws::Familytree::V2::Schema::EntityReference.from_json(_item) }
-      end
-      if !_o['previousPersons'].nil?
-        @previous = Array.new
-        _oa = _o['previousPersons']
-        _oa.each { | _item | @previous.push Org::Familysearch::Ws::Familytree::V2::Schema::EntityReference.from_json(_item) }
-      end
-      @contributor = Org::Familysearch::Ws::Familytree::V2::Schema::EntityReference.from_json(_o['contributor']) unless _o['contributor'].nil?
-      @submitter = Org::Familysearch::Ws::Familytree::V2::Schema::EntityReference.from_json(_o['submitter']) unless _o['submitter'].nil?
-      @timestamp = Time.from_json(_o['timestamp']) unless _o['timestamp'].nil?
-    end
-
-    # constructs a Change from a (parsed) JSON hash
+    # constructs a UserTemple from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -3604,6 +4882,40 @@ module V2
 
 module Schema
 
+  # A user id type.
+  class UserIdType
+
+    # (no documentation provided)
+    CIS = "CIS"
+
+    # (no documentation provided)
+    IMS = "IMS"
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
   # Change Action Type
   class ChangeActionType
 
@@ -3639,91 +4951,6 @@ module Schema
 
     # (no documentation provided)
     IMS_Auto_Combine = "IMS_Auto_Combine"
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Org
-
-module Familysearch
-
-module Ws
-
-module Familytree
-
-module V2
-
-module Schema
-
-  # Citation Field Type
-  class CitationFieldType
-
-    # (no documentation provided)
-    Actual_Text = "Actual_Text"
-
-    # (no documentation provided)
-    Batch_Number = "Batch_Number"
-
-    # (no documentation provided)
-    Batch_Type = "Batch_Type"
-
-    # (no documentation provided)
-    Book_Number = "Book_Number"
-
-    # (no documentation provided)
-    Call_Number = "Call_Number"
-
-    # (no documentation provided)
-    Description = "Description"
-
-    # (no documentation provided)
-    Event_Date = "Event_Date"
-
-    # (no documentation provided)
-    Event_Role = "Event_Role"
-
-    # (no documentation provided)
-    Event_Type = "Event_Type"
-
-    # (no documentation provided)
-    Frame_Number = "Frame_Number"
-
-    # (no documentation provided)
-    Image_Number = "Image_Number"
-
-    # (no documentation provided)
-    Link = "Link"
-
-    # (no documentation provided)
-    LDS_Temple_Record_Number = "LDS_Temple_Record_Number"
-
-    # (no documentation provided)
-    Location_in_Source = "Location_in_Source"
-
-    # (no documentation provided)
-    Page_Number = "Page_Number"
-
-    # (no documentation provided)
-    Record_Number = "Record_Number"
-
-    # (no documentation provided)
-    Reference_Number = "Reference_Number"
-
-    # (no documentation provided)
-    Serial_Number = "Serial_Number"
-
-    # (no documentation provided)
-    Sheet_Number = "Sheet_Number"
   end
 
 end
@@ -3913,808 +5140,6 @@ module V2
 
 module Schema
 
-  # Source Type
-  class SourceType
-
-    # (no documentation provided)
-    Church_Record = "Church_Record"
-
-    # (no documentation provided)
-    Company_Record = "Company_Record"
-
-    # (no documentation provided)
-    Family_Possession = "Family_Possession"
-
-    # (no documentation provided)
-    Government_Record = "Government_Record"
-
-    # (no documentation provided)
-    Memory_of_Someone = "Memory_of_Someone"
-
-    # (no documentation provided)
-    Published_Information = "Published_Information"
-
-    # (no documentation provided)
-    School_Record = "School_Record"
-
-    # (no documentation provided)
-    Other = "Other"
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Org
-
-module Familysearch
-
-module Ws
-
-module Familytree
-
-module V2
-
-module Schema
-
-  # 
-  class UserPreferenceType
-
-    # 
-    DisplayContactName = "DisplayContactName"
-
-    # 
-    DisplayFullName = "DisplayFullName"
-
-    # 
-    DisplayPhone = "DisplayPhone"
-
-    # 
-    DisplayEmail = "DisplayEmail"
-
-    # 
-    DisplayPostalAddress = "DisplayPostalAddress"
-
-    # 
-    PreferredLocale = "PreferredLocale"
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Org
-
-module Familysearch
-
-module Ws
-
-module Familytree
-
-module V2
-
-module Schema
-
-  # User Permission
-  class UserPermission
-
-    # (no documentation provided)
-    Read = "Read"
-
-    # (no documentation provided)
-    Write = "Write"
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Org
-
-module Familysearch
-
-module Ws
-
-module Familytree
-
-module V2
-
-module Schema
-
-  # A user of the new FamilySearch.
-  class User < Org::Familysearch::Ws::Familytree::V2::Schema::Contact 
-
-    # The preferred name of the user.
-    attr_accessor :preferredName
-    # The helper access number.
-    attr_accessor :accessNumber
-    # The user's permissions.
-    attr_accessor :permissions
-    # The current proxy for the user.
-    attr_accessor :proxy
-    # the user preferences.
-    attr_accessor :preferences
-    # Not used.
-    attr_accessor :roles
-
-    # the json hash for this User
-    def to_jaxb_json_hash
-      _h = super
-      _h['preferredName'] = preferredName.to_jaxb_json_hash unless preferredName.nil?
-      _h['accessNumber'] = accessNumber.to_jaxb_json_hash unless accessNumber.nil?
-      if !permissions.nil?
-        _ha = Array.new
-        permissions.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['permissions'] = _ha
-      end
-      _h['proxy'] = proxy.to_jaxb_json_hash unless proxy.nil?
-      if !preferences.nil?
-        _ha = Array.new
-        preferences.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['preferences'] = _ha
-      end
-      if !roles.nil?
-        _ha = Array.new
-        roles.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['roles'] = _ha
-      end
-      return _h
-    end
-
-    #initializes this User with a json hash
-    def init_jaxb_json_hash(_o)
-      super _o
-      @preferredName = String.from_json(_o['preferredName']) unless _o['preferredName'].nil?
-      @accessNumber = String.from_json(_o['accessNumber']) unless _o['accessNumber'].nil?
-      if !_o['permissions'].nil?
-        @permissions = Array.new
-        _oa = _o['permissions']
-        _oa.each { | _item | @permissions.push String.from_json(_item) }
-      end
-      @proxy = Org::Familysearch::Ws::Familytree::V2::Schema::Proxy.from_json(_o['proxy']) unless _o['proxy'].nil?
-      if !_o['preferences'].nil?
-        @preferences = Array.new
-        _oa = _o['preferences']
-        _oa.each { | _item | @preferences.push Org::Familysearch::Ws::Familytree::V2::Schema::UserPreference.from_json(_item) }
-      end
-      if !_o['roles'].nil?
-        @roles = Array.new
-        _oa = _o['roles']
-        _oa.each { | _item | @roles.push Org::Familysearch::Ws::Familytree::V2::Schema::ProxyRole.from_json(_item) }
-      end
-    end
-
-    # constructs a User from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Org
-
-module Familysearch
-
-module Ws
-
-module Familytree
-
-module V2
-
-module Schema
-
-  # Source Field Type
-  class SourceFieldType
-
-    # (no documentation provided)
-    Abbreviation = "Abbreviation"
-
-    # (no documentation provided)
-    Actual_Text = "Actual_Text"
-
-    # (no documentation provided)
-    Agency = "Agency"
-
-    # (no documentation provided)
-    Author = "Author"
-
-    # (no documentation provided)
-    Batch_Number = "Batch_Number"
-
-    # (no documentation provided)
-    Call_Number = "Call_Number"
-
-    # (no documentation provided)
-    Film_Number = "Film_Number"
-
-    # (no documentation provided)
-    Language = "Language"
-
-    # (no documentation provided)
-    Link = "Link"
-
-    # (no documentation provided)
-    Locality = "Locality"
-
-    # (no documentation provided)
-    Place = "Place"
-
-    # (no documentation provided)
-    Provider = "Provider"
-
-    # (no documentation provided)
-    Publication_Information = "Publication_Information"
-
-    # (no documentation provided)
-    Reference_Number = "Reference_Number"
-
-    # (no documentation provided)
-    Template = "Template"
-
-    # (no documentation provided)
-    Template_Type = "Template_Type"
-
-    # (no documentation provided)
-    Time_Period = "Time_Period"
-
-    # (no documentation provided)
-    Title = "Title"
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Org
-
-module Familysearch
-
-module Ws
-
-module Familytree
-
-module V2
-
-module Schema
-
-  # Source Detail
-  class SourceDetail
-
-    # (no documentation provided)
-    Adoption_Papers = "Adoption_Papers"
-
-    # (no documentation provided)
-    Anniversary_Announcement = "Anniversary_Announcement"
-
-    # (no documentation provided)
-    Baptism_Record = "Baptism_Record"
-
-    # (no documentation provided)
-    Birth_Announcement = "Birth_Announcement"
-
-    # (no documentation provided)
-    Birth_Record = "Birth_Record"
-
-    # (no documentation provided)
-    Blessing_Record = "Blessing_Record"
-
-    # (no documentation provided)
-    Burial_Record = "Burial_Record"
-
-    # (no documentation provided)
-    Cemetery_Record = "Cemetery_Record"
-
-    # (no documentation provided)
-    Census_Record = "Census_Record"
-
-    # (no documentation provided)
-    Christening_Record = "Christening_Record"
-
-    # (no documentation provided)
-    Citizenship_Record = "Citizenship_Record"
-
-    # (no documentation provided)
-    Court_Record = "Court_Record"
-
-    # (no documentation provided)
-    Death_Record = "Death_Record"
-
-    # (no documentation provided)
-    Diploma = "Diploma"
-
-    # (no documentation provided)
-    Divorce_Record = "Divorce_Record"
-
-    # (no documentation provided)
-    Family_Bible = "Family_Bible"
-
-    # (no documentation provided)
-    Family_Genealogies = "Family_Genealogies"
-
-    # (no documentation provided)
-    Memory_of_Friend = "Memory_of_Friend"
-
-    # (no documentation provided)
-    Funeral_Program = "Funeral_Program"
-
-    # (no documentation provided)
-    Handwritten_Information = "Handwritten_Information"
-
-    # (no documentation provided)
-    Honor_Roll = "Honor_Roll"
-
-    # (no documentation provided)
-    Insurance_Policy = "Insurance_Policy"
-
-    # (no documentation provided)
-    Journal = "Journal"
-
-    # (no documentation provided)
-    Land_Record = "Land_Record"
-
-    # (no documentation provided)
-    Letter = "Letter"
-
-    # (no documentation provided)
-    Marriage_Record = "Marriage_Record"
-
-    # (no documentation provided)
-    Medical_Record = "Medical_Record"
-
-    # (no documentation provided)
-    Military_Record = "Military_Record"
-
-    # (no documentation provided)
-    Mortgage_Record = "Mortgage_Record"
-
-    # (no documentation provided)
-    My_Memory = "My_Memory"
-
-    # (no documentation provided)
-    Newspaper_Article = "Newspaper_Article"
-
-    # (no documentation provided)
-    Obituary = "Obituary"
-
-    # (no documentation provided)
-    Ordination_Record = "Ordination_Record"
-
-    # (no documentation provided)
-    Memory_of_Parent = "Memory_of_Parent"
-
-    # (no documentation provided)
-    Passenger_Record = "Passenger_Record"
-
-    # (no documentation provided)
-    Photographs = "Photographs"
-
-    # (no documentation provided)
-    Probate_Record = "Probate_Record"
-
-    # (no documentation provided)
-    Memory_of_Relative = "Memory_of_Relative"
-
-    # (no documentation provided)
-    Memory_of_Sibling = "Memory_of_Sibling"
-
-    # (no documentation provided)
-    Report_Card = "Report_Card"
-
-    # (no documentation provided)
-    Social_Security_Record = "Social_Security_Record"
-
-    # (no documentation provided)
-    Society_Membership = "Society_Membership"
-
-    # (no documentation provided)
-    Tax_Record = "Tax_Record"
-
-    # (no documentation provided)
-    Transcript = "Transcript"
-
-    # (no documentation provided)
-    Voting_Record = "Voting_Record"
-
-    # (no documentation provided)
-    Wedding_Announcement = "Wedding_Announcement"
-
-    # (no documentation provided)
-    Yearbook = "Yearbook"
-
-    # (no documentation provided)
-    Unknown = "Unknown"
-
-    # (no documentation provided)
-    Other = "Other"
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Org
-
-module Familysearch
-
-module Ws
-
-module Familytree
-
-module V2
-
-module Schema
-
-  # The field type of a search parameter.
-  class SearchMatchParameterField
-
-    #  The person id.
-    Id = "id"
-
-    #  The gender.
-    Gender = "gender"
-
-    #  The name.
-    Name = "name"
-
-    #  The given name.
-    GivenName = "givenName"
-
-    #  The surname.
-    FamilyName = "familyName"
-
-    #  The name suffix.
-    NameSuffix = "nameSuffix"
-
-    #  The birth date.
-    BirthDate = "birthDate"
-
-    #  The christening date.
-    ChristeningDate = "christeningDate"
-
-    #  The death date.
-    DeathDate = "deathDate"
-
-    #  The burial date.
-    BurialDate = "burialDate"
-
-    #  The marriage date.
-    MarriageDate = "marriageDate"
-
-    #  The residence date.
-    ResidenceDate = "residenceDate"
-
-    #  The immigration date.
-    ImmigrationDate = "immigrationDate"
-
-    #  The emigration date.
-    EmigrationDate = "emigrationDate"
-
-    #  The birth place.
-    BirthPlace = "birthPlace"
-
-    #  The christening place.
-    ChristeningPlace = "christeningPlace"
-
-    #  The death place.
-    DeathPlace = "deathPlace"
-
-    #  The burial place.
-    BurialPlace = "burialPlace"
-
-    #  The marriage place.
-    MarriagePlace = "marriagePlace"
-
-    #  The residence place.
-    ResidencePlace = "residencePlace"
-
-    #  The immigration place.
-    ImmigrationPlace = "immigrationPlace"
-
-    #  The emigration place.
-    EmigrationPlace = "emigrationPlace"
-
-    #  The birth year.
-    BirthYear = "birthYear"
-
-    #  The christening year.
-    ChristeningYear = "christeningYear"
-
-    #  The death year.
-    DeathYear = "deathYear"
-
-    #  The burial year.
-    BurialYear = "burialYear"
-
-    #  The marriage year.
-    MarriageYear = "marriageYear"
-
-    #  The residence year.
-    ResidenceYear = "residenceYear"
-
-    #  The immigration year.
-    ImmigrationYear = "immigrationYear"
-
-    #  The emigration year.
-    EmigrationYear = "emigrationYear"
-
-    #  The birth month.
-    BirthMonth = "birthMonth"
-
-    #  The christening month.
-    ChristeningMonth = "christeningMonth"
-
-    #  The death month.
-    DeathMonth = "deathMonth"
-
-    #  The burial month.
-    BurialMonth = "burialMonth"
-
-    #  The marriage month.
-    MarriageMonth = "marriageMonth"
-
-    #  The residence month.
-    ResidenceMonth = "residenceMonth"
-
-    #  The immigration month.
-    ImmigrationMonth = "immigrationMonth"
-
-    #  The emigration month.
-    EmigrationMonth = "emigrationMonth"
-
-    #  The birth day.
-    BirthDay = "birthDay"
-
-    #  The christening day.
-    ChristeningDay = "christeningDay"
-
-    #  The death day.
-    DeathDay = "deathDay"
-
-    #  The burial day.
-    BurialDay = "burialDay"
-
-    #  The marriage day.
-    MarriageDay = "marriageDay"
-
-    #  The residence day.
-    ResidenceDay = "residenceDay"
-
-    #  The immigration day.
-    ImmigrationDay = "immigrationDay"
-
-    #  The emigration day.
-    EmigrationDay = "emigrationDay"
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Org
-
-module Familysearch
-
-module Ws
-
-module Familytree
-
-module V2
-
-module Schema
-
-  # A person used for displaying seach results.
-  class SearchPerson < Org::Familysearch::Ws::Familytree::V2::Schema::Person 
-
-    # The minimum birth year for this person.
-    attr_accessor :minBirthYear
-    # The maximum death year for this person.
-    attr_accessor :maxDeathYear
-
-    # the json hash for this SearchPerson
-    def to_jaxb_json_hash
-      _h = super
-      _h['minBirthYear'] = minBirthYear.to_jaxb_json_hash unless minBirthYear.nil?
-      _h['maxDeathYear'] = maxDeathYear.to_jaxb_json_hash unless maxDeathYear.nil?
-      return _h
-    end
-
-    #initializes this SearchPerson with a json hash
-    def init_jaxb_json_hash(_o)
-      super _o
-      @minBirthYear = String.from_json(_o['minBirthYear']) unless _o['minBirthYear'].nil?
-      @maxDeathYear = String.from_json(_o['maxDeathYear']) unless _o['maxDeathYear'].nil?
-    end
-
-    # constructs a SearchPerson from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Org
-
-module Familysearch
-
-module Ws
-
-module Familytree
-
-module V2
-
-module Schema
-
-  # The relationship type of a search parameter.
-  class SearchMatchParameterRelationship
-
-    #  Specifies that the search parameter applies to the primary person.
-    Self = "self"
-
-    #  Specifies that the search parameter applies to a father of the primary person.
-    Father = "father"
-
-    #  Specifies that the search parameter applies to a mother of the primary person.
-    Mother = "mother"
-
-    #  Specifies that the search parameter applies to a spouse of the primary person.
-    Spouse = "spouse"
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Org
-
-module Familysearch
-
-module Ws
-
-module Familytree
-
-module V2
-
-module Schema
-
-  # Repository Type
-  class RepositoryType
-
-    # (no documentation provided)
-    Archive = "Archive"
-
-    # (no documentation provided)
-    Church = "Church"
-
-    # (no documentation provided)
-    Individual = "Individual"
-
-    # (no documentation provided)
-    Government = "Government"
-
-    # (no documentation provided)
-    Library = "Library"
-
-    # (no documentation provided)
-    Newspaper = "Newspaper"
-
-    # (no documentation provided)
-    School = "School"
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Org
-
-module Familysearch
-
-module Ws
-
-module Familytree
-
-module V2
-
-module Schema
-
   # The existence of a person or relationship.
   class ExistsAssertion < Org::Familysearch::Ws::Familytree::V2::Schema::Assertion 
 
@@ -4795,43 +5220,6 @@ module Schema
         return inst
       end
     end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Org
-
-module Familysearch
-
-module Ws
-
-module Familytree
-
-module V2
-
-module Schema
-
-  # The gender types.
-  class GenderType
-
-    # (no documentation provided)
-    Male = "Male"
-
-    # (no documentation provided)
-    Female = "Female"
-
-    # (no documentation provided)
-    Unknown = "Unknown"
   end
 
 end
@@ -5042,69 +5430,6 @@ module V2
 
 module Schema
 
-  # A Family Tree person reference.
-  class PersonPersona < Org::Familysearch::Ws::Familytree::V2::Schema::EntityReference 
-
-    # The contributors.
-    attr_accessor :contributors
-
-    # the json hash for this PersonPersona
-    def to_jaxb_json_hash
-      _h = super
-      if !contributors.nil?
-        _ha = Array.new
-        contributors.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['contributors'] = _ha
-      end
-      return _h
-    end
-
-    #initializes this PersonPersona with a json hash
-    def init_jaxb_json_hash(_o)
-      super _o
-      if !_o['contributors'].nil?
-        @contributors = Array.new
-        _oa = _o['contributors']
-        _oa.each { | _item | @contributors.push Org::Familysearch::Ws::Familytree::V2::Schema::ContributorReference.from_json(_item) }
-      end
-    end
-
-    # constructs a PersonPersona from a (parsed) JSON hash
-    def self.from_json(o)
-      if o.nil?
-        return nil
-      else
-        inst = new
-        inst.init_jaxb_json_hash o
-        return inst
-      end
-    end
-  end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-end
-
-module Org
-
-module Familysearch
-
-module Ws
-
-module Familytree
-
-module V2
-
-module Schema
-
   # Media Type
   class MediaType
 
@@ -5188,6 +5513,69 @@ module Schema
 
     # (no documentation provided)
     Other = "Other"
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # A Family Tree person reference.
+  class PersonPersona < Org::Familysearch::Ws::Familytree::V2::Schema::EntityReference 
+
+    # The contributors.
+    attr_accessor :contributors
+
+    # the json hash for this PersonPersona
+    def to_jaxb_json_hash
+      _h = super
+      if !contributors.nil?
+        _ha = Array.new
+        contributors.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['contributors'] = _ha
+      end
+      return _h
+    end
+
+    #initializes this PersonPersona with a json hash
+    def init_jaxb_json_hash(_o)
+      super _o
+      if !_o['contributors'].nil?
+        @contributors = Array.new
+        _oa = _o['contributors']
+        _oa.each { | _item | @contributors.push Org::Familysearch::Ws::Familytree::V2::Schema::ContributorReference.from_json(_item) }
+      end
+    end
+
+    # constructs a PersonPersona from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
   end
 
 end
@@ -5614,6 +6002,36 @@ module Schema
 
     # (no documentation provided)
     Cyrillic = "Cyrillic"
+
+    # (no documentation provided)
+    Chinese_Han = "Chinese_Han"
+
+    # (no documentation provided)
+    Chinese_Hanja = "Chinese_Hanja"
+
+    # (no documentation provided)
+    Chinese_Kanji = "Chinese_Kanji"
+
+    # (no documentation provided)
+    Cyrillic_Russian = "Cyrillic_Russian"
+
+    # (no documentation provided)
+    Cyrillic_Mongolian = "Cyrillic_Mongolian"
+
+    # (no documentation provided)
+    Thai = "Thai"
+
+    # (no documentation provided)
+    Khmer = "Khmer"
+
+    # (no documentation provided)
+    Roman_Eurotypic = "Roman_Eurotypic"
+
+    # (no documentation provided)
+    Roman_Sinotypic = "Roman_Sinotypic"
+
+    # (no documentation provided)
+    Roman_Monotypic = "Roman_Monotypic"
   end
 
 end
@@ -5761,6 +6179,789 @@ module Schema
 
     # (no documentation provided)
     Low = "Low"
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # The gender types.
+  class GenderType
+
+    # (no documentation provided)
+    Male = "Male"
+
+    # (no documentation provided)
+    Female = "Female"
+
+    # (no documentation provided)
+    Unknown = "Unknown"
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # Repository Type
+  class RepositoryType
+
+    # (no documentation provided)
+    Archive = "Archive"
+
+    # (no documentation provided)
+    Church = "Church"
+
+    # (no documentation provided)
+    Individual = "Individual"
+
+    # (no documentation provided)
+    Government = "Government"
+
+    # (no documentation provided)
+    Library = "Library"
+
+    # (no documentation provided)
+    Newspaper = "Newspaper"
+
+    # (no documentation provided)
+    School = "School"
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # The relationship type of a search parameter.
+  class SearchMatchParameterRelationship
+
+    #  Specifies that the search parameter applies to the primary person.
+    Self = "self"
+
+    #  Specifies that the search parameter applies to a father of the primary person.
+    Father = "father"
+
+    #  Specifies that the search parameter applies to a mother of the primary person.
+    Mother = "mother"
+
+    #  Specifies that the search parameter applies to a spouse of the primary person.
+    Spouse = "spouse"
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # Source Field Type
+  class SourceFieldType
+
+    # (no documentation provided)
+    Abbreviation = "Abbreviation"
+
+    # (no documentation provided)
+    Actual_Text = "Actual_Text"
+
+    # (no documentation provided)
+    Agency = "Agency"
+
+    # (no documentation provided)
+    Author = "Author"
+
+    # (no documentation provided)
+    Batch_Number = "Batch_Number"
+
+    # (no documentation provided)
+    Call_Number = "Call_Number"
+
+    # (no documentation provided)
+    Film_Number = "Film_Number"
+
+    # (no documentation provided)
+    Language = "Language"
+
+    # (no documentation provided)
+    Link = "Link"
+
+    # (no documentation provided)
+    Locality = "Locality"
+
+    # (no documentation provided)
+    Place = "Place"
+
+    # (no documentation provided)
+    Provider = "Provider"
+
+    # (no documentation provided)
+    Publication_Information = "Publication_Information"
+
+    # (no documentation provided)
+    Reference_Number = "Reference_Number"
+
+    # (no documentation provided)
+    Template = "Template"
+
+    # (no documentation provided)
+    Template_Type = "Template_Type"
+
+    # (no documentation provided)
+    Time_Period = "Time_Period"
+
+    # (no documentation provided)
+    Title = "Title"
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # Source Type
+  class SourceType
+
+    # (no documentation provided)
+    Church_Record = "Church_Record"
+
+    # (no documentation provided)
+    Company_Record = "Company_Record"
+
+    # (no documentation provided)
+    Family_Possession = "Family_Possession"
+
+    # (no documentation provided)
+    Government_Record = "Government_Record"
+
+    # (no documentation provided)
+    Memory_of_Someone = "Memory_of_Someone"
+
+    # (no documentation provided)
+    Published_Information = "Published_Information"
+
+    # (no documentation provided)
+    School_Record = "School_Record"
+
+    # (no documentation provided)
+    Other = "Other"
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # User Permission
+  class UserPermission
+
+    # (no documentation provided)
+    Read = "Read"
+
+    # (no documentation provided)
+    Write = "Write"
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # 
+  class UserPreferenceType
+
+    # 
+    DisplayContactName = "DisplayContactName"
+
+    # 
+    DisplayFullName = "DisplayFullName"
+
+    # 
+    DisplayPhone = "DisplayPhone"
+
+    # 
+    DisplayEmail = "DisplayEmail"
+
+    # 
+    DisplayPostalAddress = "DisplayPostalAddress"
+
+    # 
+    PreferredLocale = "PreferredLocale"
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # A user account status.
+  class UserAccountStatus
+
+    # (no documentation provided)
+    Valid = "Valid"
+
+    # (no documentation provided)
+    Under_12 = "Under_12"
+
+    # (no documentation provided)
+    Under_18 = "Under_18"
+
+    # (no documentation provided)
+    Indeterminate = "Indeterminate"
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # Source Detail
+  class SourceDetail
+
+    # (no documentation provided)
+    Adoption_Papers = "Adoption_Papers"
+
+    # (no documentation provided)
+    Anniversary_Announcement = "Anniversary_Announcement"
+
+    # (no documentation provided)
+    Baptism_Record = "Baptism_Record"
+
+    # (no documentation provided)
+    Birth_Announcement = "Birth_Announcement"
+
+    # (no documentation provided)
+    Birth_Record = "Birth_Record"
+
+    # (no documentation provided)
+    Blessing_Record = "Blessing_Record"
+
+    # (no documentation provided)
+    Burial_Record = "Burial_Record"
+
+    # (no documentation provided)
+    Cemetery_Record = "Cemetery_Record"
+
+    # (no documentation provided)
+    Census_Record = "Census_Record"
+
+    # (no documentation provided)
+    Christening_Record = "Christening_Record"
+
+    # (no documentation provided)
+    Citizenship_Record = "Citizenship_Record"
+
+    # (no documentation provided)
+    Court_Record = "Court_Record"
+
+    # (no documentation provided)
+    Death_Record = "Death_Record"
+
+    # (no documentation provided)
+    Diploma = "Diploma"
+
+    # (no documentation provided)
+    Divorce_Record = "Divorce_Record"
+
+    # (no documentation provided)
+    Family_Bible = "Family_Bible"
+
+    # (no documentation provided)
+    Family_Genealogies = "Family_Genealogies"
+
+    # (no documentation provided)
+    Memory_of_Friend = "Memory_of_Friend"
+
+    # (no documentation provided)
+    Funeral_Program = "Funeral_Program"
+
+    # (no documentation provided)
+    Handwritten_Information = "Handwritten_Information"
+
+    # (no documentation provided)
+    Honor_Roll = "Honor_Roll"
+
+    # (no documentation provided)
+    Insurance_Policy = "Insurance_Policy"
+
+    # (no documentation provided)
+    Journal = "Journal"
+
+    # (no documentation provided)
+    Land_Record = "Land_Record"
+
+    # (no documentation provided)
+    Letter = "Letter"
+
+    # (no documentation provided)
+    Marriage_Record = "Marriage_Record"
+
+    # (no documentation provided)
+    Medical_Record = "Medical_Record"
+
+    # (no documentation provided)
+    Military_Record = "Military_Record"
+
+    # (no documentation provided)
+    Mortgage_Record = "Mortgage_Record"
+
+    # (no documentation provided)
+    My_Memory = "My_Memory"
+
+    # (no documentation provided)
+    Newspaper_Article = "Newspaper_Article"
+
+    # (no documentation provided)
+    Obituary = "Obituary"
+
+    # (no documentation provided)
+    Ordination_Record = "Ordination_Record"
+
+    # (no documentation provided)
+    Memory_of_Parent = "Memory_of_Parent"
+
+    # (no documentation provided)
+    Passenger_Record = "Passenger_Record"
+
+    # (no documentation provided)
+    Photographs = "Photographs"
+
+    # (no documentation provided)
+    Probate_Record = "Probate_Record"
+
+    # (no documentation provided)
+    Memory_of_Relative = "Memory_of_Relative"
+
+    # (no documentation provided)
+    Memory_of_Sibling = "Memory_of_Sibling"
+
+    # (no documentation provided)
+    Report_Card = "Report_Card"
+
+    # (no documentation provided)
+    Social_Security_Record = "Social_Security_Record"
+
+    # (no documentation provided)
+    Society_Membership = "Society_Membership"
+
+    # (no documentation provided)
+    Tax_Record = "Tax_Record"
+
+    # (no documentation provided)
+    Transcript = "Transcript"
+
+    # (no documentation provided)
+    Voting_Record = "Voting_Record"
+
+    # (no documentation provided)
+    Wedding_Announcement = "Wedding_Announcement"
+
+    # (no documentation provided)
+    Yearbook = "Yearbook"
+
+    # (no documentation provided)
+    Unknown = "Unknown"
+
+    # (no documentation provided)
+    Other = "Other"
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # A person used for displaying seach results.
+  class SearchPerson < Org::Familysearch::Ws::Familytree::V2::Schema::Person 
+
+    # The minimum birth year for this person.
+    attr_accessor :minBirthYear
+    # The maximum death year for this person.
+    attr_accessor :maxDeathYear
+
+    # the json hash for this SearchPerson
+    def to_jaxb_json_hash
+      _h = super
+      _h['minBirthYear'] = minBirthYear.to_jaxb_json_hash unless minBirthYear.nil?
+      _h['maxDeathYear'] = maxDeathYear.to_jaxb_json_hash unless maxDeathYear.nil?
+      return _h
+    end
+
+    #initializes this SearchPerson with a json hash
+    def init_jaxb_json_hash(_o)
+      super _o
+      @minBirthYear = String.from_json(_o['minBirthYear']) unless _o['minBirthYear'].nil?
+      @maxDeathYear = String.from_json(_o['maxDeathYear']) unless _o['maxDeathYear'].nil?
+    end
+
+    # constructs a SearchPerson from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # The field type of a search parameter.
+  class SearchMatchParameterField
+
+    #  The person id. Available for match calls.
+    Id = "id"
+
+    #  The gender. Available for search and match calls.
+    Gender = "gender"
+
+    #  The name. Available for search calls.
+    Name = "name"
+
+    #  The given name. Available for search and match calls.
+    GivenName = "givenName"
+
+    #  The surname. Available for search and match calls.
+    FamilyName = "familyName"
+
+    #  The name suffix. Not supported for search or match calls.
+    NameSuffix = "nameSuffix"
+
+    #  The birth date. Available for search and match calls.
+    BirthDate = "birthDate"
+
+    #  The christening date. Not supported for search or match calls.
+    ChristeningDate = "christeningDate"
+
+    #  The death date. Available for search and match calls.
+    DeathDate = "deathDate"
+
+    #  The burial date. Not supported for search or match calls.
+    BurialDate = "burialDate"
+
+    #  The marriage date. Available for search and match calls.
+    MarriageDate = "marriageDate"
+
+    #  The residence date. Not supported for search or match calls.
+    ResidenceDate = "residenceDate"
+
+    #  The immigration date. Not supported for search or match calls.
+    ImmigrationDate = "immigrationDate"
+
+    #  The emigration date. Not supported for search or match calls.
+    EmigrationDate = "emigrationDate"
+
+    #  The birth place. Available for search and match calls.
+    BirthPlace = "birthPlace"
+
+    #  The christening place. Not supported for search or match calls.
+    ChristeningPlace = "christeningPlace"
+
+    #  The death place. Available for search and match calls.
+    DeathPlace = "deathPlace"
+
+    #  The burial place. Not supported for search or match calls.
+    BurialPlace = "burialPlace"
+
+    #  The marriage place. Available for search and match calls.
+    MarriagePlace = "marriagePlace"
+
+    #  The residence place. Not supported for search or match calls.
+    ResidencePlace = "residencePlace"
+
+    #  The immigration place. Not supported for search or match calls.
+    ImmigrationPlace = "immigrationPlace"
+
+    #  The emigration place. Not supported for search or match calls.
+    EmigrationPlace = "emigrationPlace"
+
+    #  The birth year. Not supported for search or match calls.
+    BirthYear = "birthYear"
+
+    #  The christening year. Not supported for search or match calls.
+    ChristeningYear = "christeningYear"
+
+    #  The death year. Not supported for search or match calls.
+    DeathYear = "deathYear"
+
+    #  The burial year. Not supported for search or match calls.
+    BurialYear = "burialYear"
+
+    #  The marriage year. Not supported for search or match calls.
+    MarriageYear = "marriageYear"
+
+    #  The residence year. Not supported for search or match calls.
+    ResidenceYear = "residenceYear"
+
+    #  The immigration year. Not supported for search or match calls.
+    ImmigrationYear = "immigrationYear"
+
+    #  The emigration year. Not supported for search or match calls.
+    EmigrationYear = "emigrationYear"
+
+    #  The birth month. Not supported for search or match calls.
+    BirthMonth = "birthMonth"
+
+    #  The christening month. Not supported for search or match calls.
+    ChristeningMonth = "christeningMonth"
+
+    #  The death month. Not supported for search or match calls.
+    DeathMonth = "deathMonth"
+
+    #  The burial month. Not supported for search or match calls.
+    BurialMonth = "burialMonth"
+
+    #  The marriage month. Not supported for search or match calls.
+    MarriageMonth = "marriageMonth"
+
+    #  The residence month. Not supported for search or match calls.
+    ResidenceMonth = "residenceMonth"
+
+    #  The immigration month. Not supported for search or match calls.
+    ImmigrationMonth = "immigrationMonth"
+
+    #  The emigration month. Not supported for search or match calls.
+    EmigrationMonth = "emigrationMonth"
+
+    #  The birth day. Not supported for search or match calls.
+    BirthDay = "birthDay"
+
+    #  The christening day. Not supported for search or match calls.
+    ChristeningDay = "christeningDay"
+
+    #  The death day. Not supported for search or match calls.
+    DeathDay = "deathDay"
+
+    #  The burial day. Not supported for search or match calls.
+    BurialDay = "burialDay"
+
+    #  The marriage day. Not supported for search or match calls.
+    MarriageDay = "marriageDay"
+
+    #  The residence day. Not supported for search or match calls.
+    ResidenceDay = "residenceDay"
+
+    #  The immigration day. Not supported for search or match calls.
+    ImmigrationDay = "immigrationDay"
+
+    #  The emigration day. Not supported for search or match calls.
+    EmigrationDay = "emigrationDay"
+
+    #  The cemeteryId. Available for search calls.
+    CemeteryId = "cemeteryId"
   end
 
 end
@@ -6019,6 +7220,91 @@ module V2
 
 module Schema
 
+  # Citation Field Type
+  class CitationFieldType
+
+    # (no documentation provided)
+    Actual_Text = "Actual_Text"
+
+    # (no documentation provided)
+    Batch_Number = "Batch_Number"
+
+    # (no documentation provided)
+    Batch_Type = "Batch_Type"
+
+    # (no documentation provided)
+    Book_Number = "Book_Number"
+
+    # (no documentation provided)
+    Call_Number = "Call_Number"
+
+    # (no documentation provided)
+    Description = "Description"
+
+    # (no documentation provided)
+    Event_Date = "Event_Date"
+
+    # (no documentation provided)
+    Event_Role = "Event_Role"
+
+    # (no documentation provided)
+    Event_Type = "Event_Type"
+
+    # (no documentation provided)
+    Frame_Number = "Frame_Number"
+
+    # (no documentation provided)
+    Image_Number = "Image_Number"
+
+    # (no documentation provided)
+    Link = "Link"
+
+    # (no documentation provided)
+    LDS_Temple_Record_Number = "LDS_Temple_Record_Number"
+
+    # (no documentation provided)
+    Location_in_Source = "Location_in_Source"
+
+    # (no documentation provided)
+    Page_Number = "Page_Number"
+
+    # (no documentation provided)
+    Record_Number = "Record_Number"
+
+    # (no documentation provided)
+    Reference_Number = "Reference_Number"
+
+    # (no documentation provided)
+    Serial_Number = "Serial_Number"
+
+    # (no documentation provided)
+    Sheet_Number = "Sheet_Number"
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
   # A Family Tree contributor reference.
   class ContributorReference < Org::Familysearch::Ws::Familytree::V2::Schema::EntityReference 
 
@@ -6081,12 +7367,15 @@ module Schema
   # A contributor of information to new FamilySearch.
   class Contributor < Org::Familysearch::Ws::Familytree::V2::Schema::Contact 
 
+    # the contributor version.
+    attr_accessor :version
     # The user aliases.
     attr_accessor :aliases
 
     # the json hash for this Contributor
     def to_jaxb_json_hash
       _h = super
+      _h['version'] = version.to_jaxb_json_hash unless version.nil?
       if !aliases.nil?
         _ha = Array.new
         aliases.each { | _item | _ha.push _item.to_jaxb_json_hash }
@@ -6098,6 +7387,7 @@ module Schema
     #initializes this Contributor with a json hash
     def init_jaxb_json_hash(_o)
       super _o
+      @version = String.from_json(_o['version']) unless _o['version'].nil?
       if !_o['aliases'].nil?
         @aliases = Array.new
         _oa = _o['aliases']
@@ -6501,7 +7791,7 @@ module Ws
 
 module V1
 
-  # 
+  # A basic property.
   class BasicProperty 
 
     # (no documentation provided)
@@ -6656,7 +7946,7 @@ module Ws
 
 module V1
 
-  # 
+  # Default error implementation.
   class BasicError 
 
     # (no documentation provided)
@@ -6666,9 +7956,9 @@ module V1
     # (no documentation provided)
     attr_accessor :code
     # (no documentation provided)
-    attr_accessor :details
-    # (no documentation provided)
     attr_accessor :message
+    # (no documentation provided)
+    attr_accessor :details
 
     # the json hash for this BasicError
     def to_jaxb_json_hash
@@ -6676,8 +7966,8 @@ module V1
       _h['level'] = level.to_jaxb_json_hash unless level.nil?
       _h['subcode'] = subcode.to_jaxb_json_hash unless subcode.nil?
       _h['code'] = code.to_jaxb_json_hash unless code.nil?
-      _h['details'] = details.to_jaxb_json_hash unless details.nil?
       _h['message'] = message.to_jaxb_json_hash unless message.nil?
+      _h['details'] = details.to_jaxb_json_hash unless details.nil?
       return _h
     end
 
@@ -6691,8 +7981,8 @@ module V1
       @level = String.from_json(_o['level']) unless _o['level'].nil?
       @subcode = Fixnum.from_json(_o['subcode']) unless _o['subcode'].nil?
       @code = Fixnum.from_json(_o['code']) unless _o['code'].nil?
-      @details = String.from_json(_o['details']) unless _o['details'].nil?
       @message = String.from_json(_o['message']) unless _o['message'].nil?
+      @details = String.from_json(_o['details']) unless _o['details'].nil?
     end
 
     # constructs a BasicError from a (parsed) JSON hash
@@ -6723,21 +8013,21 @@ module Ws
 
 module V1
 
-  # 
+  # Base class for v1 root elements.
   class BasicElement 
 
-    # (no documentation provided)
+    # The response code.
     attr_accessor :statusCode
-    # (no documentation provided)
+    # Deprecated flag.
     attr_accessor :deprecated
-    # (no documentation provided)
+    # The status message.
     attr_accessor :statusMessage
-    # (no documentation provided)
+    # The version.
     attr_accessor :version
-    # (no documentation provided)
-    attr_accessor :properties
-    # (no documentation provided)
+    # The errors.
     attr_accessor :errors
+    # The properties.
+    attr_accessor :properties
 
     # the json hash for this BasicElement
     def to_jaxb_json_hash
@@ -6746,15 +8036,15 @@ module V1
       _h['deprecated'] = deprecated.to_jaxb_json_hash unless deprecated.nil?
       _h['statusMessage'] = statusMessage.to_jaxb_json_hash unless statusMessage.nil?
       _h['version'] = version.to_jaxb_json_hash unless version.nil?
-      if !properties.nil?
-        _ha = Array.new
-        properties.each { | _item | _ha.push _item.to_jaxb_json_hash }
-        _h['properties'] = _ha
-      end
       if !errors.nil?
         _ha = Array.new
         errors.each { | _item | _ha.push _item.to_jaxb_json_hash }
         _h['errors'] = _ha
+      end
+      if !properties.nil?
+        _ha = Array.new
+        properties.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['properties'] = _ha
       end
       return _h
     end
@@ -6770,15 +8060,15 @@ module V1
       @deprecated = Boolean.from_json(_o['deprecated']) unless _o['deprecated'].nil?
       @statusMessage = String.from_json(_o['statusMessage']) unless _o['statusMessage'].nil?
       @version = String.from_json(_o['version']) unless _o['version'].nil?
-      if !_o['properties'].nil?
-        @properties = Array.new
-        _oa = _o['properties']
-        _oa.each { | _item | @properties.push Org::Familysearch::Ws::V1::BasicProperty.from_json(_item) }
-      end
       if !_o['errors'].nil?
         @errors = Array.new
         _oa = _o['errors']
         _oa.each { | _item | @errors.push Org::Familysearch::Ws::V1::BasicError.from_json(_item) }
+      end
+      if !_o['properties'].nil?
+        @properties = Array.new
+        _oa = _o['properties']
+        _oa.each { | _item | @properties.push Org::Familysearch::Ws::V1::BasicProperty.from_json(_item) }
       end
     end
 
@@ -6793,6 +8083,212 @@ module V1
       end
     end
   end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V2
+
+module Schema
+
+  # A user of the new FamilySearch.
+  class User < Org::Familysearch::Ws::Familytree::V2::Schema::Contributor 
+
+    # The preferred name of the user.
+    attr_accessor :preferredName
+    # The helper access number.
+    attr_accessor :accessNumber
+    # The user's permissions.
+    attr_accessor :permissions
+    # The current proxy for the user.
+    attr_accessor :proxy
+    # the user preferences.
+    attr_accessor :preferences
+    # (no documentation provided)
+    attr_accessor :officialName
+    # (no documentation provided)
+    attr_accessor :signInName
+    # (no documentation provided)
+    attr_accessor :person
+    # (no documentation provided)
+    attr_accessor :gender
+    # (no documentation provided)
+    attr_accessor :birth
+    # (no documentation provided)
+    attr_accessor :account
+    # (no documentation provided)
+    attr_accessor :alternate
+    # (no documentation provided)
+    attr_accessor :membership
+    # the user identifiers.
+    attr_accessor :identifiers
+    # the user proxy roles.
+    attr_accessor :proxyRoles
+    # the user roles.
+    attr_accessor :roles
+
+    # the json hash for this User
+    def to_jaxb_json_hash
+      _h = super
+      _h['preferredName'] = preferredName.to_jaxb_json_hash unless preferredName.nil?
+      _h['accessNumber'] = accessNumber.to_jaxb_json_hash unless accessNumber.nil?
+      if !permissions.nil?
+        _ha = Array.new
+        permissions.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['permissions'] = _ha
+      end
+      _h['proxy'] = proxy.to_jaxb_json_hash unless proxy.nil?
+      if !preferences.nil?
+        _ha = Array.new
+        preferences.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['preferences'] = _ha
+      end
+      _h['officialName'] = officialName.to_jaxb_json_hash unless officialName.nil?
+      _h['signInName'] = signInName.to_jaxb_json_hash unless signInName.nil?
+      _h['person'] = person.to_jaxb_json_hash unless person.nil?
+      _h['gender'] = gender.to_jaxb_json_hash unless gender.nil?
+      _h['birth'] = birth.to_jaxb_json_hash unless birth.nil?
+      _h['account'] = account.to_jaxb_json_hash unless account.nil?
+      _h['alternate'] = alternate.to_jaxb_json_hash unless alternate.nil?
+      _h['membership'] = membership.to_jaxb_json_hash unless membership.nil?
+      if !identifiers.nil?
+        _ha = Array.new
+        identifiers.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['identifiers'] = _ha
+      end
+      if !proxyRoles.nil?
+        _ha = Array.new
+        proxyRoles.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['proxyRoles'] = _ha
+      end
+      if !roles.nil?
+        _ha = Array.new
+        roles.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['roles'] = _ha
+      end
+      return _h
+    end
+
+    #initializes this User with a json hash
+    def init_jaxb_json_hash(_o)
+      super _o
+      @preferredName = String.from_json(_o['preferredName']) unless _o['preferredName'].nil?
+      @accessNumber = String.from_json(_o['accessNumber']) unless _o['accessNumber'].nil?
+      if !_o['permissions'].nil?
+        @permissions = Array.new
+        _oa = _o['permissions']
+        _oa.each { | _item | @permissions.push String.from_json(_item) }
+      end
+      @proxy = Org::Familysearch::Ws::Familytree::V2::Schema::Proxy.from_json(_o['proxy']) unless _o['proxy'].nil?
+      if !_o['preferences'].nil?
+        @preferences = Array.new
+        _oa = _o['preferences']
+        _oa.each { | _item | @preferences.push Org::Familysearch::Ws::Familytree::V2::Schema::UserPreference.from_json(_item) }
+      end
+      @officialName = String.from_json(_o['officialName']) unless _o['officialName'].nil?
+      @signInName = String.from_json(_o['signInName']) unless _o['signInName'].nil?
+      @person = Org::Familysearch::Ws::Familytree::V2::Schema::UserPerson.from_json(_o['person']) unless _o['person'].nil?
+      @gender = String.from_json(_o['gender']) unless _o['gender'].nil?
+      @birth = Org::Familysearch::Ws::Familytree::V2::Schema::GenDate.from_json(_o['birth']) unless _o['birth'].nil?
+      @account = Org::Familysearch::Ws::Familytree::V2::Schema::UserAccount.from_json(_o['account']) unless _o['account'].nil?
+      @alternate = Org::Familysearch::Ws::Familytree::V2::Schema::PostalAddress.from_json(_o['alternate']) unless _o['alternate'].nil?
+      @membership = Org::Familysearch::Ws::Familytree::V2::Schema::UserMembership.from_json(_o['membership']) unless _o['membership'].nil?
+      if !_o['identifiers'].nil?
+        @identifiers = Array.new
+        _oa = _o['identifiers']
+        _oa.each { | _item | @identifiers.push Org::Familysearch::Ws::Familytree::V2::Schema::UserIdentifier.from_json(_item) }
+      end
+      if !_o['proxyRoles'].nil?
+        @proxyRoles = Array.new
+        _oa = _o['proxyRoles']
+        _oa.each { | _item | @proxyRoles.push Org::Familysearch::Ws::Familytree::V2::Schema::ProxyRole.from_json(_item) }
+      end
+      if !_o['roles'].nil?
+        @roles = Array.new
+        _oa = _o['roles']
+        _oa.each { | _item | @roles.push String.from_json(_item) }
+      end
+    end
+
+    # constructs a User from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+end
+
+module Org
+
+module Familysearch
+
+module Ws
+
+module Familytree
+
+module V1
+
+module Schema
+
+  # 
+  class FamilyTree < Org::Familysearch::Ws::V1::BasicElement 
+
+
+    # the json hash for this FamilyTree
+    def to_jaxb_json_hash
+      _h = super
+      return _h
+    end
+
+    #initializes this FamilyTree with a json hash
+    def init_jaxb_json_hash(_o)
+      super _o
+    end
+
+    # constructs a FamilyTree from a (parsed) JSON hash
+    def self.from_json(o)
+      if o.nil?
+        return nil
+      else
+        inst = new
+        inst.init_jaxb_json_hash o
+        return inst
+      end
+    end
+  end
+
+end
+
+end
 
 end
 
@@ -6893,26 +8389,38 @@ module Ws
 
 module Familytree
 
-module V1
+module V2
 
 module Schema
 
-  # 
-  class FamilyTree < Org::Familysearch::Ws::V1::BasicElement 
+  # A Family Tree parent reference.
+  class ParentReference < Org::Familysearch::Ws::Familytree::V2::Schema::PersonReference 
 
+    # A collection of characteristics for this relationship.
+    attr_accessor :characteristics
 
-    # the json hash for this FamilyTree
+    # the json hash for this ParentReference
     def to_jaxb_json_hash
       _h = super
+      if !characteristics.nil?
+        _ha = Array.new
+        characteristics.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['characteristics'] = _ha
+      end
       return _h
     end
 
-    #initializes this FamilyTree with a json hash
+    #initializes this ParentReference with a json hash
     def init_jaxb_json_hash(_o)
       super _o
+      if !_o['characteristics'].nil?
+        @characteristics = Array.new
+        _oa = _o['characteristics']
+        _oa.each { | _item | @characteristics.push Org::Familysearch::Ws::Familytree::V2::Schema::CharacteristicAssertion.from_json(_item) }
+      end
     end
 
-    # constructs a FamilyTree from a (parsed) JSON hash
+    # constructs a ParentReference from a (parsed) JSON hash
     def self.from_json(o)
       if o.nil?
         return nil
@@ -7044,6 +8552,10 @@ module Schema
     attr_accessor :notes
     # The citations.
     attr_accessor :citations
+    # The relationship queries.
+    attr_accessor :relationshipQueries
+    # The entity versions.
+    attr_accessor :versions
 
     # the json hash for this FamilyTree
     def to_jaxb_json_hash
@@ -7106,6 +8618,16 @@ module Schema
         _ha = Array.new
         citations.each { | _item | _ha.push _item.to_jaxb_json_hash }
         _h['citations'] = _ha
+      end
+      if !relationshipQueries.nil?
+        _ha = Array.new
+        relationshipQueries.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['relationships'] = _ha
+      end
+      if !versions.nil?
+        _ha = Array.new
+        versions.each { | _item | _ha.push _item.to_jaxb_json_hash }
+        _h['versions'] = _ha
       end
       return _h
     end
@@ -7175,6 +8697,16 @@ module Schema
         @citations = Array.new
         _oa = _o['citations']
         _oa.each { | _item | @citations.push Org::Familysearch::Ws::Familytree::V2::Schema::Citation.from_json(_item) }
+      end
+      if !_o['relationships'].nil?
+        @relationshipQueries = Array.new
+        _oa = _o['relationships']
+        _oa.each { | _item | @relationshipQueries.push Org::Familysearch::Ws::Familytree::V2::Schema::RelationshipQuery.from_json(_item) }
+      end
+      if !_o['versions'].nil?
+        @versions = Array.new
+        _oa = _o['versions']
+        _oa.each { | _item | @versions.push Org::Familysearch::Ws::Familytree::V2::Schema::EntityVersion.from_json(_item) }
       end
     end
 

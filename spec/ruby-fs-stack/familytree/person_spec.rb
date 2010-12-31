@@ -430,65 +430,66 @@ describe Org::Familysearch::Ws::Familytree::V2::Schema::Person do
     end
     
     describe "marriages" do
+      
       before(:each) do
-        @person = parse_person('spouse_read.js')
+        @person = parse_person('spouse_read_spouse.js')
       end
-      
+
       it "should accept a spouse id." do
-        @person.marriages('KW3B-VVY')
+        @person.marriages('KWNJ-DJM')
       end
-      
+
       it "should return an array of marriage elements" do
-        marriages = @person.marriages('KW3B-VVY')
+        marriages = @person.marriages('KWNJ-DJM')
         marriages.should be_instance_of(Array)
       end
-      
+
       it "should return all marriages" do
-        marriages = @person.marriages('KW3B-VVY')
-        marriages[0].date.normalized.should == '1853'
-        marriages[1].date.normalized.should == 'Aug 1853'
+        marriages = @person.marriages('KWNJ-DJM')
+        marriages[0].date.normalized.should == '4 November 1847'
+        marriages[1].date.normalized.should == '4 November 1846'
       end
-      
+
       describe "checking for cases where there are no assertsions, events, or marriages" do
         before(:each) do
-          @spouse = @person.relationships.spouses.find{|s|s.requestedId=='KW3B-VVY'}
+          @spouse = @person.relationships.spouses.find{|s|s.requestedId=='KWNJ-DJM'}
         end
-        
+
         it "should return [] if no assertions" do
           @spouse.assertions = nil
-          @person.marriages('KW3B-VVY').should == []
+          @person.marriages('KWNJ-DJM').should == []
         end
-        
+
         it "should return [] if no events" do
           @spouse.assertions.events = nil
-          @person.marriages('KW3B-VVY').should == []
+          @person.marriages('KWNJ-DJM').should == []
         end
-        
+
       end
     end
     
     describe "divorces" do
       before(:each) do
-        @person = parse_person('spouse_read.js')
+        @person = parse_person('spouse_read_spouse.js')
       end
       
       it "should accept a spouse id." do
-        @person.divorces('KW3B-VVY')
+        @person.divorces('KWNJ-DJM')
       end
       
       it "should return an array of marriage elements" do
-        divorces = @person.divorces('KW3B-VVY')
+        divorces = @person.divorces('KWNJ-DJM')
         divorces.should be_instance_of(Array)
       end
       
       it "should return all marriages" do
-        divorces = @person.divorces('KW3B-VVY')
+        divorces = @person.divorces('KWNJ-DJM')
         divorces[0].date.normalized.should == '1912'
       end
       
       describe "checking for cases where there are no assertsions, events, or marriages" do
         before(:each) do
-          @spouse = @person.relationships.spouses.find{|s|s.requestedId=='KW3B-VVY'}
+          @spouse = @person.relationships.spouses.find{|s|s.requestedId=='KWNJ-DJM'}
         end
         
         it "should return [] if no assertions" do
