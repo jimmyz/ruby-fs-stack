@@ -268,8 +268,22 @@ describe FsCommunicator do
       }.should raise_error(RubyFsStack::BadRequest)
     end
     
-    it "should raise a BadRequest on a 401" do
+    it "should raise a Unauthorized on a 401" do
       fake_web(@path,'401',"Unauthorized")
+      lambda{
+        @com.get(@path)
+      }.should raise_error(RubyFsStack::Unauthorized)
+      lambda{
+        @com.post(@path,"")
+      }.should raise_error(RubyFsStack::Unauthorized)
+    end
+    
+    it "should raise an Unauthorized on a 401.23" do
+      response = File.join(File.dirname(__FILE__),'json','fakeweb_expired_session.txt')
+      FakeWeb.register_uri(:get, "https://api.familysearch.org#{@path}?sessionId=SESSID&dataFormat=application/json", 
+                          :response => response)
+      FakeWeb.register_uri(:post, "https://api.familysearch.org#{@path}?sessionId=SESSID&dataFormat=application/json", 
+                          :response => response)
       lambda{
         @com.get(@path)
       }.should raise_error(RubyFsStack::Unauthorized)

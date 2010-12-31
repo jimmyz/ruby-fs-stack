@@ -1,3 +1,4 @@
+require 'uri'
 class FsUtils
   
   def self.querystring_from_hash(hash)
@@ -22,6 +23,6 @@ class FsUtils
   private
   def self.url_encode(string)
     # Taken from http://blade.nagaokaut.ac.jp/cgi-bin/scat.rb/ruby/ruby-talk/156044
-    string.gsub( /[^a-zA-Z0-9\-_\.!~*'()]/n ) {|x| sprintf('%%%02x', x[0]) }
+    URI.escape(string)
   end
 end
